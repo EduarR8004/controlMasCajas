@@ -1,6 +1,5 @@
 // import 'dart:async';
 // //import 'package:controlmas/vistas/baseGeneral/FechasBase.dart';
-// import 'package:controlmas/vistas/baseGeneral/FechasBase.dart';
 // import 'package:intl/intl.dart';
 // import 'package:flutter/material.dart';
 // import 'package:controlmas/vistas/menu.dart';
@@ -10,21 +9,22 @@
 // import 'package:controlmas/modelos/ListarCaja.dart';
 // import 'package:controlmas/vistas/widgets/boton.dart';
 // import 'package:controlmas/controlador/InsertarVenta.dart';
+// import 'package:controlmas/vistas/baseGeneral/FechasBase.dart';
 
-// class ConsultarBasegeneral extends StatefulWidget {
+// class ConsultarBaseGeneralReporte extends StatefulWidget {
 //   final String fechaInicial;
 //   final String fechaFinal;
 //   final String usuario;
   
-//   ConsultarBasegeneral({Key key,this.fechaFinal,this.fechaInicial, this.usuario}) : super();
+//   ConsultarBaseGeneralReporte({Key key,this.fechaFinal,this.fechaInicial, this.usuario}) : super();
  
 //   final String title = "Gestión de Usuarios";
  
 //   @override
-//   ConsultarBasegeneralState createState() => ConsultarBasegeneralState();
+//   ConsultarBaseGeneralReporteState createState() => ConsultarBaseGeneralReporteState();
 // }
  
-// class ConsultarBasegeneralState extends State<ConsultarBasegeneral> {
+// class ConsultarBaseGeneralReporteState extends State<ConsultarBaseGeneralReporte> {
 //   bool sort;
 //   bool validar;
 //   Usuario consulta;
@@ -54,7 +54,7 @@
 //     else
 //     { 
 //       if(widget.usuario==null){
-//         await usuario.listarCaja(widget.fechaInicial,widget.fechaFinal).then((_){
+//         await usuario.listarCajaGeneralRuta(widget.fechaInicial,widget.fechaFinal).then((_){
 //           var preUsuarios=usuario.obtnerListarCaja();
 //           for ( var usuario in preUsuarios)
 //           {
@@ -204,24 +204,6 @@
 //                     tooltip: "Supervisor",
 //                   ),
 //                   DataColumn(
-//                     label: Text("Ingreso",style: TextStyle(
-//                       color:Colors.white,
-//                       fontWeight: FontWeight.bold,
-//                       fontSize:15,
-//                     )),
-//                     numeric: false,
-//                     tooltip: "Ingreso",
-//                   ),
-//                   DataColumn(
-//                     label: Text("Retiro",style: TextStyle(
-//                       color:Colors.white,
-//                       fontWeight: FontWeight.bold,
-//                       fontSize:15,
-//                     )),
-//                     numeric: false,
-//                     tooltip: "Retiro",
-//                   ),
-//                   DataColumn(
 //                     label: Text("Base",style: TextStyle(
 //                       color:Colors.white,
 //                       fontWeight: FontWeight.bold,
@@ -262,12 +244,6 @@
 //                       ),
 //                       DataCell(
 //                         Text( user.administrador.toString(),style: textStyleDataCell),
-//                       ),
-//                       DataCell(
-//                         Text(user.ingreso.toString(),style: textStyleDataCell),
-//                       ),
-//                       DataCell(
-//                         Text( user.retiro.toString(),style: textStyleDataCell),
 //                       ),
 //                       DataCell(
 //                         Text(user.salida.toString(),style: textStyleDataCell)),
@@ -313,24 +289,6 @@
 //                 columnSpacing:10,
 //                 columns: [
 //                   DataColumn(
-//                     label: Text("Ingreso",style: TextStyle(
-//                       color:Colors.white,
-//                       fontWeight: FontWeight.bold,
-//                       fontSize:15,
-//                     )),
-//                     numeric: false,
-//                     tooltip: "Ingreso",
-//                   ),
-//                   DataColumn(
-//                     label: Text("Retiro",style: TextStyle(
-//                       color:Colors.white,
-//                       fontWeight: FontWeight.bold,
-//                       fontSize:15,
-//                     )),
-//                     numeric: false,
-//                     tooltip: "Retiro",
-//                   ),
-//                   DataColumn(
 //                     label: Text("Base",style: TextStyle(
 //                       color:Colors.white,
 //                       fontWeight: FontWeight.bold,
@@ -348,15 +306,6 @@
 //                     numeric: false,
 //                     tooltip: "Entrega",
 //                   ),
-//                   DataColumn(
-//                     label: Text("Saldo",style: TextStyle(
-//                       color:Colors.white,
-//                       fontWeight: FontWeight.bold,
-//                       fontSize:15,
-//                     )),
-//                     numeric: false,
-//                     tooltip: "Saldo",
-//                   ),
 //                 ],
 //                 rows: total.map(
 //                   (user) => DataRow(
@@ -367,18 +316,9 @@
 //                     // },
 //                     cells: [
 //                       DataCell(
-//                         Text(user.ingreso.toStringAsFixed(1),style: textStyleDataCell),
-//                       ),
-//                       DataCell(
-//                         Text( user.retiro.toStringAsFixed(1),style: textStyleDataCell),
-//                       ),
-//                       DataCell(
 //                         Text(user.salida.toStringAsFixed(1),style: textStyleDataCell)),
 //                       DataCell(
 //                         Text( user.entrada.toStringAsFixed(1),style: textStyleDataCell),
-//                       ),
-//                       DataCell(
-//                         Text( ((user.ingreso+user.entrada)-(user.retiro+user.salida)).toStringAsFixed(1),style: textStyleDataCell),
 //                       ),
 //                     ]
 //                   ),
@@ -430,7 +370,7 @@
 //         top: false,
 //         child:Scaffold(
 //           appBar:new AppBar(
-//             title: Text("Caja Total",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize:20,),)
+//             title: Text("Control Caja General Usuario",style:TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize:20,),)
 //             //flexibleSpace:encabezado,
 //             //backgroundColor:Colors.blue
 //             // Colors.transparent,

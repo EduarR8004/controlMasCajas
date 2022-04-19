@@ -431,7 +431,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
 
   ListTile salidaBaseGeneralRuta(BuildContext context) {
     return ListTile(
-      title: Text("Salida semanal ruta",
+      title: Text("Caja ingreso-retiro",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       leading: Icon(
         Icons.arrow_back_ios_outlined,
@@ -444,7 +444,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   
   ListTile consultarBaseRuta(BuildContext context) {
     return ListTile(
-      title: Text("Reporte caja general",
+      title: Text("Caja general usuario",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       leading: Icon(
         Icons.bar_chart_sharp,

@@ -76,6 +76,7 @@ class Insertar {
   String urlOrigen='https://controlproyectos.com.co/webservice';
   String urlAntioquia='https://controlproyectos.com.co/webserviceAnt';
   String pruebas='https://aceitereciclar.000webhostapp.com/webservice';
+  String brasil='https://controlproyectos.com.co/webserviceBrasil';
   Map mapaFinal;
   var params;
   Map cronMap;
@@ -2600,12 +2601,34 @@ class Insertar {
     
   }
 
-  Future <List<ListarCaja>>listarTotalCaja(fechaInicial,fechaFinal,usuario)async{
+  Future <List<ListarCaja>>listarTotalCajaUsuario(fechaInicial,fechaFinal,usuario)async{
     Map mapa={
       'token':tokenGlobal,
       'fechaInicial':fechaInicial,
       'fechaFinal':fechaFinal,
       'usuario':usuario,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/listarTotalCajaGeneralUsuario.php',parametro);
+    List<ListarCaja> listarTotalCaja=[];
+    for ( var prod in map)
+    {
+      listarTotalCaja.add(ListarCaja.fromJson(prod));
+    }
+    return this._totalCaja= listarTotalCaja;
+  }
+
+  Future <List<ListarCaja>>listarTotalCaja(fechaInicial,fechaFinal)async{
+    _totalCaja=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'fechaInicial':fechaInicial,
+      'fechaFinal':fechaFinal,
     };
     _parametrosEnviados=[];
     _parametrosEnviados.add(mapa);
@@ -2621,6 +2644,29 @@ class Insertar {
     }
     return this._totalCaja= listarTotalCaja;
   }
+
+  Future <List<ListarCaja>>listarTotalCajaGeneral(fechaInicial,fechaFinal)async{
+    _totalCaja=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'fechaInicial':fechaInicial,
+      'fechaFinal':fechaFinal,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/totalCajaGeneral.php',parametro);
+    List<ListarCaja> listarTotalCaja=[];
+    for ( var prod in map)
+    {
+      listarTotalCaja.add(ListarCaja.fromJson(prod));
+    }
+    return this._totalCaja= listarTotalCaja;
+  }
+
 
   obtnerListarCaja(){
     return this._listarCaja;
@@ -2819,7 +2865,7 @@ class Insertar {
   callMethodOne(String webservice,params)async {
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+        response = await http.post(Uri.parse(brasil+webservice), headers: {
       "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
     }catch(e){
@@ -2842,7 +2888,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-      response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+      response = await http.post(Uri.parse(brasil+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -2860,7 +2906,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-         response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+         response = await http.post(Uri.parse(brasil+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -2877,7 +2923,7 @@ class Insertar {
   autenticar(user,pass) async {
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen),headers:{
+        response = await http.post(Uri.parse(brasil),headers:{
         "content-type" : "application/json",
     }, body: jsonEncode(<String, String>{
         'usuario': user,

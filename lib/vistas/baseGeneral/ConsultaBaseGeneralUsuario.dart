@@ -82,13 +82,23 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
     }
     else
     {
-      await usuario.listarTotalCaja(widget.fechaInicial,widget.fechaFinal,widget.usuario).then((_){
-        var preUsuarios=usuario.obtnerTotalCaja();
-        for ( var usuario in preUsuarios)
-        {
-          total.add(usuario);
-        }        
-      });
+      if(widget.usuario==null){
+        await usuario.listarTotalCaja(widget.fechaInicial,widget.fechaFinal).then((_){
+          var preUsuarios=usuario.obtnerTotalCaja();
+          for ( var usuario in preUsuarios)
+          {
+            total.add(usuario);
+          }        
+        });
+      }else{
+        await usuario.listarTotalCajaUsuario(widget.fechaInicial,widget.fechaFinal,widget.usuario).then((_){
+          var preUsuarios=usuario.obtnerTotalCaja();
+          for ( var usuario in preUsuarios)
+          {
+            total.add(usuario);
+          }        
+        });
+      }
       return total;
     }
   }
@@ -246,9 +256,9 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
                         Text( user.administrador.toString(),style: textStyleDataCell),
                       ),
                       DataCell(
-                        Text(user.baseRuta.toString(),style: textStyleDataCell)),
+                        Text(user.salida.toString(),style: textStyleDataCell)),
                       DataCell(
-                        Text( user.ingresoRuta.toString(),style: textStyleDataCell),
+                        Text( user.entrada.toString(),style: textStyleDataCell),
                       ),
                       DataCell(
                         Text( user.ruta.toString(),style: textStyleDataCell),
@@ -316,9 +326,9 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
                     // },
                     cells: [
                       DataCell(
-                        Text(user.baseRuta.toStringAsFixed(1),style: textStyleDataCell)),
+                        Text(user.salida.toStringAsFixed(1),style: textStyleDataCell)),
                       DataCell(
-                        Text( user.ingresoRuta.toStringAsFixed(1),style: textStyleDataCell),
+                        Text( user.entrada.toStringAsFixed(1),style: textStyleDataCell),
                       ),
                     ]
                   ),

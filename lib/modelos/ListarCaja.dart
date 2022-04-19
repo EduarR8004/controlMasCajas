@@ -4,8 +4,8 @@ class ListarCaja {
   String fecha;
   String usuario;
   double retiro;
-  double baseRuta;
-  double ingresoRuta;
+  double salida;
+  double entrada;
   String usuarioRuta;
   String administrador;
   String ruta;
@@ -14,8 +14,8 @@ class ListarCaja {
     this.fecha,
     this.usuario,
     this.retiro,
-    this.baseRuta,
-    this.ingresoRuta,
+    this.salida,
+    this.entrada,
     this.usuarioRuta,
     this.administrador,
     this.ruta,
@@ -28,8 +28,8 @@ class ListarCaja {
       'fecha': fecha,
       'usuario': usuario,
       'retiro': retiro,
-      'baseRuta': baseRuta,
-      'ingresoRuta': ingresoRuta,
+      'baseRuta': salida,
+      'ingresoRuta': entrada,
       'usuarioRuta': usuarioRuta,
       'administrador': administrador,
       'ruta': ruta,
@@ -41,8 +41,8 @@ class ListarCaja {
     fecha: json['fecha']==null?json['fecha']='':json['fecha'],
     usuario: json['usuario']==null?json['usuario']='':json['usuario'],
     retiro: json['retiro']==null?json['retiro']=0.0:double.parse(json['retiro']),
-    baseRuta: json['base_ruta']==null?json['base_ruta']=0.0:double.parse(json['base_ruta']),
-    ingresoRuta:json['ingreso_ruta']==null?json['ingreso_ruta']=0.0:double.parse(json['ingreso_ruta']),
+    salida: json['salida']==null?json['salida']=0.0:double.parse(json['salida']),
+    entrada:json['entrada']==null?json['entrada']=0.0:double.parse(json['entrada']),
     usuarioRuta: json['usuario_ruta']==null?json['usuario_ruta']='No aplica':json['usuario_ruta'],
     administrador: json['administrador'],
     ruta: json['ruta']==null?json['ruta']='No aplica':json['ruta'],
