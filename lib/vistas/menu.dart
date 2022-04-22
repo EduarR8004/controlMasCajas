@@ -131,9 +131,9 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       if(objetosUsuario.contains('ABR002') || objetosUsuario.contains("SA000")){
         reportesGenereal.add(entradaBaseGeneralRuta(context));
       }
-      if(objetosUsuario.contains('ABR002') || objetosUsuario.contains("SA000")){
-        reportesGenereal.add(salidaBaseGeneralRuta(context));
-      }
+      // if(objetosUsuario.contains('ABR002') || objetosUsuario.contains("SA000")){
+      //   reportesGenereal.add(salidaBaseGeneralRuta(context));
+      // }
       if(objetosUsuario.contains('ABC004') || objetosUsuario.contains("SA000")){
         reportesGenereal.add(consultarBaseRuta(context));
       }
@@ -229,7 +229,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
 
   salidaBaseGeneral(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => IngresoBaseRutaRetiroDinero())
+      MaterialPageRoute(builder: (context) => IngresoRetiroDinero(false))
     );
   }
 
@@ -429,18 +429,18 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
     );
   }
 
-  ListTile salidaBaseGeneralRuta(BuildContext context) {
-    return ListTile(
-      title: Text("Caja ingreso-retiro",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      leading: Icon(
-        Icons.arrow_back_ios_outlined,
-        size: 25,
-        color: Colors.black,
-      ),
-      onTap: () => salidaBaseGeneral(context),
-    );
-  }
+  // ListTile salidaBaseGeneralRuta(BuildContext context) {
+  //   return ListTile(
+  //     title: Text("Caja ingreso-retiro",
+  //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+  //     leading: Icon(
+  //       Icons.arrow_back_ios_outlined,
+  //       size: 25,
+  //       color: Colors.black,
+  //     ),
+  //     onTap: () => salidaBaseGeneral(context),
+  //   );
+  // }
   
   ListTile consultarBaseRuta(BuildContext context) {
     return ListTile(
@@ -638,3 +638,13 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
     );
   }
 }
+
+// SELECT a.`id`,a.`usuario`,a.`fecha`,a.`ingreso`, concat('Ingreso ',b.nombre,' : ',a.`ingreso`) as Entrada , a.`retiro`,Concat('Retiro ',b.nombre,' : ',a.`retiro`) as Salida
+// FROM `base_general` as a
+// INNER JOIN usuarios_control as b on a.usuario=b.usuario
+// WHERE a.fecha BETWEEN '2022-04-20' AND '2022-04-23'
+// UNION
+// SELECT c.`id`, c.`usuario`,c.`fecha`,c.`entrada`,concat('Entrada ',d.`nombre`,' : ',c.`entrada`) as Entrada, c.`salida`,concat('Salida ',d.`nombre`,' : ',c.`salida`) as Salida
+// FROM `base_general` as c
+// INNER JOIN usuarios_control as d on c.usuario_ruta=d.usuario
+// WHERE c.fecha BETWEEN '2022-04-20' AND '2022-04-23'

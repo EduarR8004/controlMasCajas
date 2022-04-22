@@ -4,8 +4,8 @@ class ListarCaja {
   String fecha;
   String usuario;
   double retiro;
-  double salida;
-  double entrada;
+  String salida;
+  String entrada;
   String usuarioRuta;
   String administrador;
   String ruta;
@@ -41,8 +41,8 @@ class ListarCaja {
     fecha: json['fecha']==null?json['fecha']='':json['fecha'],
     usuario: json['usuario']==null?json['usuario']='':json['usuario'],
     retiro: json['retiro']==null?json['retiro']=0.0:double.parse(json['retiro']),
-    salida: json['salida']==null?json['salida']=0.0:double.parse(json['salida']),
-    entrada:json['entrada']==null?json['entrada']=0.0:double.parse(json['entrada']),
+    salida: json['salida']==null?json['salida']='0.0':json['salida'],
+    entrada:json['entrada']==null?json['entrada']='0.0':json['entrada'],
     usuarioRuta: json['usuario_ruta']==null?json['usuario_ruta']='No aplica':json['usuario_ruta'],
     administrador: json['administrador'],
     ruta: json['ruta']==null?json['ruta']='No aplica':json['ruta'],

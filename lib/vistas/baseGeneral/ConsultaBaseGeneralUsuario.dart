@@ -56,9 +56,11 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
       if(widget.usuario==null){
         await usuario.listarCajaGeneralRuta(widget.fechaInicial,widget.fechaFinal).then((_){
           var preUsuarios=usuario.obtnerListarCaja();
-          for ( var usuario in preUsuarios)
+          for ( ListarCaja usuario in preUsuarios)
           {
-            users.add(usuario);
+            if(usuario.retiro!=0 || usuario.ingreso!=0){
+              users.add(usuario);
+            }
           }        
         });
       }else{
@@ -214,16 +216,7 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
                     tooltip: "Supervisor",
                   ),
                   DataColumn(
-                    label: Text("Base",style: TextStyle(
-                      color:Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize:15,
-                    )),
-                    numeric: false,
-                    tooltip: "Base",
-                  ),
-                  DataColumn(
-                    label: Text("Entrega",style: TextStyle(
+                    label: Text("Entrada",style: TextStyle(
                       color:Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize:15,
@@ -232,14 +225,23 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
                     tooltip: "Entrega",
                   ),
                   DataColumn(
-                    label: Text("Ruta",style: TextStyle(
+                    label: Text("Salida",style: TextStyle(
                       color:Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize:15,
                     )),
                     numeric: false,
-                    tooltip: "Ruta",
+                    tooltip: "Base",
                   ),
+                  // DataColumn(
+                  //   label: Text("Ruta",style: TextStyle(
+                  //     color:Colors.white,
+                  //     fontWeight: FontWeight.bold,
+                  //     fontSize:15,
+                  //   )),
+                  //   numeric: false,
+                  //   tooltip: "Ruta",
+                  // ),
                 ],
                 rows: users.map(
                   (user) => DataRow(
@@ -250,19 +252,19 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
                     // },
                     cells: [
                       DataCell(
-                        Text(user.fecha,style: textStyleDataCell),
+                         Text(user.fecha,style: textStyleDataCell),
                       ),
                       DataCell(
                         Text( user.administrador.toString(),style: textStyleDataCell),
                       ),
                       DataCell(
-                        Text(user.salida.toString(),style: textStyleDataCell)),
-                      DataCell(
-                        Text( user.entrada.toString(),style: textStyleDataCell),
+                        user.ingreso==0?Container():Text( user.entrada.toString(),style: textStyleDataCell),
                       ),
                       DataCell(
-                        Text( user.ruta.toString(),style: textStyleDataCell),
-                      ),
+                        user.retiro==0?Container():Text(user.salida.toString(),style: textStyleDataCell)),
+                      // DataCell(
+                      //   Text( user.ruta.toString(),style: textStyleDataCell),
+                      // ),
                     ]
                   ),
                 ).toList(),
@@ -299,22 +301,31 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
                 columnSpacing:10,
                 columns: [
                   DataColumn(
-                    label: Text("Base",style: TextStyle(
+                    label: Text("Entrada",style: TextStyle(
                       color:Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize:15,
                     )),
                     numeric: false,
-                    tooltip: "Base",
+                    tooltip: "Entrada",
                   ),
                   DataColumn(
-                    label: Text("Entrega",style: TextStyle(
+                    label: Text("Salida",style: TextStyle(
                       color:Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize:15,
                     )),
                     numeric: false,
-                    tooltip: "Entrega",
+                    tooltip: "Salida",
+                  ),
+                  DataColumn(
+                    label: Text("Total",style: TextStyle(
+                      color:Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize:15,
+                    )),
+                    numeric: false,
+                    tooltip: "Total",
                   ),
                 ],
                 rows: total.map(
@@ -326,9 +337,13 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
                     // },
                     cells: [
                       DataCell(
-                        Text(user.salida.toStringAsFixed(1),style: textStyleDataCell)),
+                        Text( (double.parse(user.entrada)+user.ingreso).toString(),style: textStyleDataCell),
+                      ),
                       DataCell(
-                        Text( user.entrada.toStringAsFixed(1),style: textStyleDataCell),
+                        Text((double.parse(user.salida)+ user.retiro).toString(),style: textStyleDataCell)
+                      ),
+                      DataCell(
+                        Text(((double.parse(user.entrada)+user.ingreso)-(double.parse(user.salida)+ user.retiro)).toString(),style: textStyleDataCell)
                       ),
                     ]
                   ),
@@ -438,3 +453,13 @@ class UsuarioEnvio {
   String token;
   UsuarioEnvio({this.token});
 }
+
+// SELECT * FROM((SELECT a.id,a.`usuario` as administrador,a.`fecha`,a.`ingreso`, concat('Ingreso ',b.nombre,' : ',a.`ingreso`) as entrada , a.`retiro`,Concat('Retiro ',b.nombre,' : ',a.`retiro`) as salida
+// FROM `base_general` as a
+// INNER JOIN usuarios_control as b on a.usuario=b.usuario
+// WHERE a.fecha BETWEEN '2022-04-20' AND '2022-04-23' ORDER BY a.fecha DESC)
+// UNION ALL
+// (SELECT c.id,c.`usuario`as administrador,c.`fecha`,c.`entrada`,concat('Entrada ',d.`nombre`,' : ',c.`entrada`) as entrada1, c.`salida`,concat('Salida ',d.`nombre`,' : ',c.`salida`) as salida1
+// FROM `base_general` as c
+// INNER JOIN usuarios_control as d on c.usuario_ruta=d.usuario
+// WHERE c.fecha BETWEEN '2022-04-20' AND '2022-04-23')) consulta ORDER BY consulta.fecha

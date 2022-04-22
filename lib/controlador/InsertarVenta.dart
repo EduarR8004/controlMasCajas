@@ -2668,7 +2668,7 @@ class Insertar {
   }
 
 
-  obtnerListarCaja(){
+  List<ListarCaja>obtnerListarCaja(){
     return this._listarCaja;
   }
   obtnerTotalCaja(){
@@ -2865,7 +2865,7 @@ class Insertar {
   callMethodOne(String webservice,params)async {
     Response response;
     try{
-        response = await http.post(Uri.parse(brasil+webservice), headers: {
+        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
       "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
     }catch(e){
@@ -2888,7 +2888,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-      response = await http.post(Uri.parse(brasil+webservice), headers: {
+      response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -2906,7 +2906,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-         response = await http.post(Uri.parse(brasil+webservice), headers: {
+         response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -2923,7 +2923,7 @@ class Insertar {
   autenticar(user,pass) async {
     Response response;
     try{
-        response = await http.post(Uri.parse(brasil),headers:{
+        response = await http.post(Uri.parse(urlOrigen),headers:{
         "content-type" : "application/json",
     }, body: jsonEncode(<String, String>{
         'usuario': user,
@@ -2939,3 +2939,10 @@ class Insertar {
     }
   }
 }
+
+// SELECT a.`ingreso`, a.`fecha`, a.`usuario`, a.`retiro`, a.`entrada`, a.`salida`, a.`usuario_ruta`,b.nombre as administrador,c.nombre as ruta  FROM `base_general` as a
+//             INNER JOIN usuarios_control as b 
+//             on a.usuario=b.usuario 
+//             LEFT JOIN usuarios_control as c 
+//             on a.usuario_ruta=c.usuario  
+//             WHERE a.fecha BETWEEN :fecha1 AND :fecha2 AND `usuario_ruta` NOT IN ('No aplica')  ORDER BY a.`fecha` DESC,a.`usuario_ruta`
