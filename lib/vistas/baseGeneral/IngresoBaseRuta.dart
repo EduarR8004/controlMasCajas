@@ -1,10 +1,11 @@
-import 'package:controlmas/modelos/CuadresSemana.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:controlmas/vistas/home.dart';
 import 'package:controlmas/vistas/menu.dart';
 import 'package:controlmas/modelos/Usuarios.dart';
 import 'package:controlmas/utiles/Informacion.dart';
 import 'package:controlmas/vistas/widgets/boton.dart';
+import 'package:controlmas/modelos/CuadresSemana.dart';
 import 'package:controlmas/controlador/InsertarVenta.dart';
 
 class IngresoBaseRutaRetiroDinero extends StatefulWidget {
@@ -27,11 +28,11 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
   final format = DateFormat("yyyy-MM-dd");
   GlobalKey<FormState> keyForm = new GlobalKey();
   TextStyle estiloTitulo=TextStyle(fontWeight: FontWeight.bold,fontSize:16,);
-  TextStyle estilo=TextStyle(fontSize:18,);
+  TextStyle estilo=TextStyle(fontSize:16,);
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-    onWillPop: null,
+    onWillPop:  () async => false,
       child:SafeArea(
         top: false,
         child:Scaffold(
@@ -49,7 +50,7 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
                 key: keyForm,
                   child:Container(
                     width: 600,
-                    height: 400,
+                    height:550,
                     margin: new EdgeInsets.fromLTRB(0,20,0,0),
                     color:Colors.white,
                     child:formUI(),
@@ -74,74 +75,101 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
       crossAxisAlignment:CrossAxisAlignment.center,
       children: <Widget>[
         SizedBox(height:25,),
-        Row(
-          mainAxisAlignment:MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment:CrossAxisAlignment.center,
-                children: [
-                  Text('Nombre',style:estiloTitulo,),
-                  Text(widget.nombre,style:estilo),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment:CrossAxisAlignment.center,
-                children: [
-                  Text('Usuario',style:estiloTitulo,),
-                  Text(widget.usuario,style:estilo),
-                ],
-              ),
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment:CrossAxisAlignment.center,
+            children: [
+              Text('Usuario : ',style:estiloTitulo,),
+              Text(widget.usuario==null?'Por favor verificar fechas':widget.usuario,style:estilo),
+            ],
+          ),
         ),
-        Row(
-          mainAxisAlignment:MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text('Dinero asignado',style:estiloTitulo,),
-                  Text(widget.cuadre[0].asignado,style:estilo),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text('Caja ruta',style:estiloTitulo,),
-                  Text(widget.cuadre[1].asignado,style:estilo),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text('Salidas',style:estiloTitulo,),
-                  Text(widget.cuadre[0].salidas,style:estilo),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text('Entradas',style:estiloTitulo,),
-                  Text(widget.cuadre[0].entradas,style:estilo),
-                ],
-              ),
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment:CrossAxisAlignment.start,
+            children: [
+              Text('Nombre : ',style:estiloTitulo,),
+              Text(widget.nombre==null?'por favor verificar fechas':widget.nombre,style:estilo),
+            ],
+          ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Dinero asignado : ',style:estiloTitulo,),
+              Text(widget.cuadre[0].asignado==''?'por favor verificar fechas':widget.cuadre[0].asignado,style:estilo),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Caja Supervisor : ',style:estiloTitulo,),
+              Text(widget.cuadre[1].asignado==''?'asignar caja a la ruta':widget.cuadre[1].asignado,style:estilo),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Ventas : ',style:estiloTitulo,),
+              Text(widget.cuadre[0].ventas==''?'por favor verificar fechas':widget.cuadre[0].ventas,style:estilo),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Cobro : ',style:estiloTitulo,),
+              Text(widget.cuadre[0].recolectado==''?'por favor verificar fechas':widget.cuadre[0].recolectado,style:estilo),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Entrega : ',style:estiloTitulo,),
+              Text(widget.cuadre[0].entrega==''?'por favor verificar fechas':widget.cuadre[0].entrega,style:estilo),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Gasto: ',style:estiloTitulo,),
+              Text(widget.cuadre[0].gasto==''?'por favor verificar fechas':widget.cuadre[0].gasto,style:estilo),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Retiro: ',style:estiloTitulo,),
+              Text(widget.cuadre[0].retiro==''?'por favor verificar fechas':widget.cuadre[0].retiro,style:estilo),
+            ],
+          ),
+        ),
+        widget.cuadre.length>2?
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Total : ',style:estiloTitulo,),
+              Text(((double.parse(widget.cuadre[0].asignado)+double.parse(widget.cuadre[0].recolectado)+double.parse(widget.cuadre[2].ultimaEntrega))-(double.parse(widget.cuadre[0].gasto)+double.parse(widget.cuadre[0].ventas)+double.parse(widget.cuadre[0].retiro)+double.parse(widget.cuadre[0].entrega))).toString(),style:estilo),
+            ],
+          ),
+        ):Container(),
         SizedBox(height:50,),
-        Boton(onPresed:_ingresarDinero,texto:'Aceptar',),
+        widget.cuadre.length>2?Boton(onPresed:_ingresarDinero,texto:'Aceptar',):Container(child: Text('Por favor revise las fechas ingresadas',style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,)),),
          
       ]
     );
@@ -150,21 +178,21 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
   _ingresarDinero()async{
     double valorAsignado = double.parse(widget.cuadre[0].asignado);
     double cajaRuta = double.parse(widget.cuadre[1].asignado);
-    double salida=double.parse(widget.cuadre[0].salidas);
-    double entrada=double.parse(widget.cuadre[0].entradas);
+    double salida=double.parse(widget.cuadre[0].gasto)+double.parse(widget.cuadre[0].ventas)+double.parse(widget.cuadre[0].retiro)+double.parse(widget.cuadre[0].entrega);
+    double entrada=double.parse(widget.cuadre[0].asignado)+double.parse(widget.cuadre[0].recolectado)+double.parse(widget.cuadre[2].ultimaEntrega)+double.parse(widget.cuadre[0].retiro)-salida;
     String usuario=widget.usuario;
     if(valorAsignado > 0){
-      if(valorAsignado==cajaRuta ){
+      if(cajaRuta <= valorAsignado ){
         var session= Insertar();
-        session.crearCuadreSemanal(usuario,entrada,salida)
+        session.crearCuadreSemanal(usuario,entrada,cajaRuta)
         .then((_) {
           successDialog(
             context, 
-            "Entrada exitosa",
+            "Cuadre exitoso",
             neutralAction: (){
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(builder: (context) => IngresoBaseRutaRetiroDinero(widget.editar))
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => Home())
+              );
             },
           );   
         });
@@ -179,3 +207,4 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
     }
   }
 }
+

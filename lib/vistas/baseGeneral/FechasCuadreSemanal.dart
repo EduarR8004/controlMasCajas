@@ -105,8 +105,11 @@ class _FechasCuadreSemanalState extends State<FechasCuadreSemanal> {
 
    _onPressed ()async{
     if(porUsuario==false){
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => ConsultarBaseGeneralUsuario(fechaFinal:_endTimeController.text,fechaInicial:_startTimeController.text,))
+      infoDialog(
+        context, 
+        'Por favor seleccione un usuario',
+        negativeAction: (){
+        },
       );
     }else{
       for ( var par in usuario)
@@ -120,23 +123,32 @@ class _FechasCuadreSemanalState extends State<FechasCuadreSemanal> {
         nombreCuadre=map.nombreCompleto;
       }).toList();
       listarProduccion(usuarioCuadre,nombreCuadre);
-      //  Navigator.of(context).push(
-      //   MaterialPageRoute(builder: (context) => ConsultarBaseGeneralUsuario(fechaFinal:_endTimeController.text,fechaInicial:_startTimeController.text,usuario: codParametro,))
-      // );
     }
   }
 
   listarProduccion(codParametro,nombreCuadre)async{
+    cuadres=[];
     Insertar usuario= Insertar();
     await usuario.listarCierreSemanal(_startTimeController.text,_endTimeController.text,codParametro).then((_){
-      var preUsuarios=usuario.obtenerCierreSemanal();
-      for ( var usuario in preUsuarios)
+      List<CuadreSemana> preUsuarios=usuario.obtenerCierreSemanal();
+      if(preUsuarios.length>0)
       {
-        cuadres.add(usuario);
+        for ( var usuario in preUsuarios)
+        {
+          cuadres.add(usuario);
+        }
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => IngresoBaseRutaRetiroDinero(nombre:nombreCuadre,usuario: codParametro,cuadre:cuadres,))
+        );
+      }else{
+        infoDialog(
+          context, 
+          'Por favor seleccione un usuario',
+          negativeAction: (){
+          },
+        );
       }
-       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => IngresoBaseRutaRetiroDinero(nombre:nombreCuadre,usuario: codParametro,cuadre:cuadres,))
-      );
+      
     });
     
   }

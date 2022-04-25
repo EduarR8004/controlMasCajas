@@ -1,6 +1,5 @@
 import 'dart:core';
 import 'dart:convert';
-import 'package:controlmas/modelos/CuadresSemana.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -22,6 +21,7 @@ import 'package:controlmas/modelos/RutaAdmin.dart';
 import 'package:controlmas/modelos/ConteoDebe.dart';
 import 'package:controlmas/modelos/ListarCaja.dart';
 import 'package:controlmas/modelos/ReporteGasto.dart';
+import 'package:controlmas/modelos/CuadresSemana.dart';
 import 'package:universal_io/prefer_universal/io.dart';
 import 'package:controlmas/modelos/Agendamiento.dart';
 import 'package:controlmas/modelos/Departamento.dart';
@@ -2500,6 +2500,7 @@ class Insertar {
       'fechaInicial':fechaInicial,
       'fechaFinal':fechaFinal,
       'usuario':usuario,
+      'administrador':usuarioGlobal,
     };
     _parametrosEnviados=[];
     _parametrosEnviados.add(mapa);
@@ -2516,7 +2517,7 @@ class Insertar {
     return this._listarCuadreSemana= listarCaja;
   }
 
-  obtenerCierreSemanal(){
+  List<CuadreSemana>obtenerCierreSemanal(){
     return this._listarCuadreSemana;
   }
 

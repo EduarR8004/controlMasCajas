@@ -50,16 +50,16 @@ class _FechasBaseState extends State<FechasBase> {
                     color: Colors.white,
                     height: 100,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      color: Colors.white,
-                      child:new Center(
-                      //margin: new EdgeInsets.fromLTRB(100,0,100,0),
-                        child:dataBody(),
-                      )
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(8.0),
+                  //   child: Container(
+                  //     color: Colors.white,
+                  //     child:new Center(
+                  //     //margin: new EdgeInsets.fromLTRB(100,0,100,0),
+                  //       child:dataBody(),
+                  //     )
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
