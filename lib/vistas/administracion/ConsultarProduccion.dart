@@ -16,8 +16,9 @@ class ConsultarProduccion extends StatefulWidget {
   final String parametro;
   final String fechaInicial;
   final String fechaFinal;
+  final bool todos;
   
-  ConsultarProduccion({Key key,this.parametro,this.fechaFinal,this.fechaInicial}) : super();
+  ConsultarProduccion({Key key,this.parametro,this.fechaFinal,this.fechaInicial,this.todos}) : super();
  
   final String title = "Gestión de Usuarios";
  
@@ -45,17 +46,19 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
   
   Future <List<ReporteDiario>> listarProduccion()async{
     var usuario= Insertar();
-    if(selectedUsers.length > 0){
-        return users;
-    }else if(borrar==true)
+    users=[];
+    if(widget.todos)
     {
-      return users;
-    }else if(users.length > 0)
-    {
-      return users;
-    }
-    else
-    {
+      await usuario.descargarProduccionTodos(widget.fechaInicial,widget.fechaFinal).then((_){
+        var preUsuarios=usuario.obtnerProduccion();
+        for ( var usuario in preUsuarios)
+        { 
+
+          users.add(usuario);
+        }        
+      });
+
+    }else{
       await usuario.descargarProduccion(widget.fechaInicial,widget.fechaFinal,widget.parametro).then((_){
         var preUsuarios=usuario.obtnerProduccion();
         for ( var usuario in preUsuarios)
@@ -64,18 +67,23 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
           users.add(usuario);
         }        
       });
-      return users;
     }
+    return users;
   }
 
   Future <List<ReporteDiario>> listarTotalProduccion()async{
     var usuario= Insertar();
-    if(total.length > 0)
+    total=[];
+    if(widget.todos)
     {
-      return total;
-    }
-    else
-    {
+      await usuario.descargarTotalProduccionTodos(widget.fechaInicial,widget.fechaFinal).then((_){
+        var preUsuarios=usuario.obtnerTotalProduccion();
+        for ( var usuario in preUsuarios)
+        {
+          total.add(usuario);
+        }        
+      });
+    }else{
       await usuario.descargarTotalProduccion(widget.fechaInicial,widget.fechaFinal,widget.parametro).then((_){
         var preUsuarios=usuario.obtnerTotalProduccion();
         for ( var usuario in preUsuarios)
@@ -83,18 +91,14 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
           total.add(usuario);
         }        
       });
-      return total;
     }
+    return total;
   }
     
   @override
   void initState() {
     sort = false;
-    //widget.data;
     selectedUsers = [];
-    //_controller.text=widget.data.parametro;
-    //users =widget.data.usuarios ;
-    //listarUsuario();
     super.initState();
   }
 

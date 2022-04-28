@@ -20,6 +20,7 @@ class _FechasProduccionState extends State<FechasProduccion> {
   Menu menu = new Menu();
   dynamic usuario;
   String selectedRegion;
+  bool todos=true;
   List<Usuario> users=[];
   List<Usuario>pasoParametro=[];
   List<Usuario> _users=[];
@@ -108,25 +109,9 @@ class _FechasProduccionState extends State<FechasProduccion> {
     DateTime parseFinal = DateTime.parse(ffinal);
     int diffDays = parseFinal.difference(parseInicial).inDays;
     if(objetosUsuario.contains('APA001') || objetosUsuario.contains("SA000")){
-      for ( var par in usuario)
-      {
-        pasoParametro.add(par);
-      }
-      var codParametro;
-      pasoParametro.map((Usuario map) {
-        codParametro=map.usuario;
-      }).toList();
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => ConsultarProduccion(fechaFinal:ffinal,fechaInicial:fini ,parametro: codParametro,))
-      );
-    }else{
-      if(diffDays > 15)
-      {
-        infoDialog(
-          context, 
-          'La consulta no puede ser superior a 15 días',
-          negativeAction: (){
-          },
+      if(todos){
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => ConsultarProduccion(fechaFinal:ffinal,fechaInicial:fini ,todos:todos,))
         );
       }else{
         for ( var par in usuario)
@@ -138,8 +123,37 @@ class _FechasProduccionState extends State<FechasProduccion> {
           codParametro=map.usuario;
         }).toList();
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => ConsultarProduccion(fechaFinal:ffinal,fechaInicial:fini ,parametro: codParametro,))
+          MaterialPageRoute(builder: (context) => ConsultarProduccion(fechaFinal:ffinal,fechaInicial:fini ,parametro: codParametro,todos:false,))
         );
+      }
+      
+    }else{
+      if(diffDays > 15)
+      {
+        infoDialog(
+          context, 
+          'La consulta no puede ser superior a 15 días',
+          negativeAction: (){
+          },
+        );
+      }else{
+        if(todos){
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => ConsultarProduccion(fechaFinal:ffinal,fechaInicial:fini ,todos:todos,))
+          );
+        }else{
+          for ( var par in usuario)
+          {
+            pasoParametro.add(par);
+          }
+          var codParametro;
+          pasoParametro.map((Usuario map) {
+            codParametro=map.usuario;
+          }).toList();
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => ConsultarProduccion(fechaFinal:ffinal,fechaInicial:fini ,parametro: codParametro,))
+          );
+        }
       }
     }
   }
@@ -295,6 +309,7 @@ class _FechasProduccionState extends State<FechasProduccion> {
                   setState(() {
                     selectedRegion = newValue;
                     if(newValue !='Seleccione un usuario'){
+                      todos=false;
                       usuario=users.where((a) => a.usuario==newValue);
                     }
                   });

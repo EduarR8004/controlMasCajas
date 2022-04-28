@@ -530,29 +530,21 @@ class _RecoleccionState extends State<Recoleccion> {
           padding: const EdgeInsets.all(8.0),
           child: Text("Dirección :"+" "+widget.data.direccion,style: textStyleDataCell,),
         ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Valor Cuota :"+" " +widget.data.valorCuota.toString(),style: textStyleDataCell,),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(3, 8, 3, 8),
-              child: Text("Cuotas restantes :"+" "+(widget.data.cuotas-widget.data.numeroCuota).toStringAsFixed(1),style: textStyleDataCell,),
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Saldo :"+" "+widget.data.saldo.toString(),style: textStyleDataCell,),
         ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Fecha prestamo :"+" "+format.format((DateTime.fromMillisecondsSinceEpoch(widget.data.fecha,isUtc:false))).toString(),style: textStyleDataCell,),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Saldo :"+" "+widget.data.saldo.toString(),style: textStyleDataCell,),
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Valor Cuota :"+" " +widget.data.valorCuota.toString(),style: textStyleDataCell,),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Total cuotas :"+" "+widget.data.cuotas.toString(),style: textStyleDataCell,),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Fecha prestamo :"+" "+format.format((DateTime.fromMillisecondsSinceEpoch(widget.data.fecha,isUtc:false))).toString(),style: textStyleDataCell,),
         ),
         Row(
           children: [
@@ -566,10 +558,9 @@ class _RecoleccionState extends State<Recoleccion> {
             ),
           ],
         ),
-        
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("Total cuotas :"+" "+widget.data.cuotas.toString(),style: textStyleDataCell,),
+          padding: const EdgeInsets.fromLTRB(3, 8, 3, 8),
+          child: Text("Cuotas restantes :"+" "+(widget.data.cuotas-widget.data.numeroCuota).toStringAsFixed(1),style: textStyleDataCell,),
         ),
         diferencia>1?
         Padding(

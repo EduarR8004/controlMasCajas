@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:convert';
+import 'package:controlmas/modelos/HistorialPago.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -77,6 +78,7 @@ class Insertar {
   String urlAntioquia='https://controlproyectos.com.co/webserviceAnt';
   String pruebas='https://aceitereciclar.000webhostapp.com/webservice';
   String brasil='https://controlproyectos.com.co/webserviceBrasil';
+  String ecuador='https://controlproyectos.com.co/webserviceEcuador';
   Map mapaFinal;
   var params;
   Map cronMap;
@@ -692,6 +694,43 @@ class Insertar {
       return list;
     }
     
+  }
+  Future <List<Ventas>> historicoVentas({filtro=''})async{  
+    var res =await DatabaseProvider.db.rawQuery(
+    " SELECT Cliente.nombre,"
+      "Cliente.idCliente,"
+      "Cliente.primerApellido,"
+      "Cliente.segundoApellido,"
+      "Cliente.alias,"
+      "Cliente.direccion,"
+      "Cliente.ciudad,"
+      "Cliente.departamento,"
+      "Cliente.telefono,"
+      "Cliente.actividadEconomica,"
+      "Cliente.documento,"
+      "HistoricoVenta.idVenta,"
+      "HistoricoVenta.venta,"
+      "HistoricoVenta.cuotas,"
+      "HistoricoVenta.fecha,"
+      "HistoricoVenta.fechaPago,"
+      "HistoricoVenta.interes,"
+      "HistoricoVenta.numeroCuota,"
+      "HistoricoVenta.valorCuota,"
+      "HistoricoVenta.valorTemporal,"
+      "HistoricoVenta.saldo,"
+      "HistoricoVenta.motivo,"
+      "HistoricoVenta.usuario,"
+      "HistoricoVenta.ruta,"
+      "HistoricoVenta.solicitado,"
+      "HistoricoVenta.diaRecoleccion,"
+      "HistoricoVenta.day,"
+      "HistoricoVenta.frecuencia"
+      " FROM Cliente "
+      " INNER JOIN HistoricoVenta on Cliente.documento = HistoricoVenta.documento"
+      " WHERE HistoricoVenta.usuario = ? AND (Cliente.nombre LIKE ? or Cliente.documento LIKE ? or Cliente.alias LIKE ?) ORDER BY HistoricoVenta.solicitado",[usuarioGlobal,'%'+filtro+'%','%'+filtro+'%','%'+filtro+'%']                                        
+    );
+    List<Ventas> list = res.map((c) => Ventas.fromMap(c)).toList();
+    return list;
   }
 
   Future <List<HistorialVenta>> historialRecoleccion(documento)async{  
@@ -1466,7 +1505,34 @@ class Insertar {
   }
 
   enviarVentas({bool actualizar})async{
-    var res = await DatabaseProvider.db.rawQuery("SELECT * FROM Venta WHERE actualizar = ?",["si"]);
+    var res = await DatabaseProvider.db.rawQuery(
+      "SELECT DISTINCT "
+      "documento,"
+      "idVenta,"
+      "venta,"
+      "solicitado,"
+      "cuotas,"
+      "fecha,"
+      "fechaTexto ,"
+      "fechaPago,"
+      "interes ,"
+      "numeroCuota,"
+      "valorCuota,"
+      "saldo,"
+      "estado ,"
+      "frecuencia ,"
+      "motivo ,"
+      "valorTemporal,"
+      "cuotasTemporal,"
+      "estadoTemporal ,"
+      "orden,"
+      "ruta ,"
+      "actualizar ,"
+      "diaRecoleccion ,"
+      "day ,"
+      "usuario"
+      " FROM Venta ",[]
+    );
     _enviarClientes=[];
     for (var registro in res) {
       Map consulta={
@@ -1508,7 +1574,34 @@ class Insertar {
   }
 
   actualizarVentas()async{
-    var res = await DatabaseProvider.db.rawQuery("SELECT * FROM Venta ",[]);
+    var res = await DatabaseProvider.db.rawQuery(
+      "SELECT DISTINCT "
+      "documento,"
+      "idVenta,"
+      "venta,"
+      "solicitado,"
+      "cuotas,"
+      "fecha,"
+      "fechaTexto ,"
+      "fechaPago,"
+      "interes ,"
+      "numeroCuota,"
+      "valorCuota,"
+      "saldo,"
+      "estado ,"
+      "frecuencia ,"
+      "motivo ,"
+      "valorTemporal,"
+      "cuotasTemporal,"
+      "estadoTemporal ,"
+      "orden,"
+      "ruta ,"
+      "actualizar ,"
+      "diaRecoleccion ,"
+      "day ,"
+      "usuario"
+      " FROM Venta ",[]
+    );
     _enviarClientes=[];
     for (var registro in res) {
       Map consulta={
@@ -1551,7 +1644,34 @@ class Insertar {
   }
 
   actualizarVentasCierre()async{
-    var res = await DatabaseProvider.db.rawQuery("SELECT * FROM Venta ",[]);
+    var res = await DatabaseProvider.db.rawQuery(
+      "SELECT DISTINCT "
+      "documento,"
+      "idVenta,"
+      "venta,"
+      "solicitado,"
+      "cuotas,"
+      "fecha,"
+      "fechaTexto ,"
+      "fechaPago,"
+      "interes ,"
+      "numeroCuota,"
+      "valorCuota,"
+      "saldo,"
+      "estado ,"
+      "frecuencia ,"
+      "motivo ,"
+      "valorTemporal,"
+      "cuotasTemporal,"
+      "estadoTemporal ,"
+      "orden,"
+      "ruta ,"
+      "actualizar ,"
+      "diaRecoleccion ,"
+      "day ,"
+      "usuario"
+      " FROM Venta ",[]
+    );
     _enviarClientes=[];
     for (var registro in res) {
       Map consulta={
@@ -1594,7 +1714,34 @@ class Insertar {
   }
 
   actualizarVentasCierreCopia()async{
-    var res = await DatabaseProvider.db.rawQuery("SELECT * FROM CopiaVenta ",[]);
+    var res = await DatabaseProvider.db.rawQuery(
+      "SELECT DISTINCT "
+      "documento,"
+      "idVenta,"
+      "venta,"
+      "solicitado,"
+      "cuotas,"
+      "fecha,"
+      "fechaTexto ,"
+      "fechaPago,"
+      "interes ,"
+      "numeroCuota,"
+      "valorCuota,"
+      "saldo,"
+      "estado ,"
+      "frecuencia ,"
+      "motivo ,"
+      "valorTemporal,"
+      "cuotasTemporal,"
+      "estadoTemporal ,"
+      "orden,"
+      "ruta ,"
+      "actualizar ,"
+      "diaRecoleccion ,"
+      "day ,"
+      "usuario"
+      " FROM Venta ",[]
+    );
     _enviarClientes=[];
     for (var registro in res) {
       Map consulta={
@@ -1679,6 +1826,54 @@ class Insertar {
         "numeroCuota":double.parse(registro["numeroCuota"]) ,
       };
         var p = Venta.fromMap(consulta);
+        await DatabaseProvider.db.addToDatabase(p);
+      }
+    }
+  }
+
+  listarHistoricoVentas()async{
+    var respuesta =await DatabaseProvider.db.rawQuery("SELECT * FROM HistoricoVenta",[]);
+    if(respuesta.length == 0){
+      List map;
+      Map mapa={
+        'token':tokenGlobal, 
+        'usuario':usuarioGlobal,
+      };
+      _enviados=[];
+      _enviados.add(mapa);
+      Map parametro={
+        "lista":_enviados
+      };
+      map=await callMethodList('/historialVenta.php',parametro);
+      for (var registro in map) {
+      Map<String, dynamic> consulta={
+        "day":registro["day"],
+        "estado":registro["estado"],
+        "motivo":registro["motivo"],
+        "ruta":registro["ruta"]='si',
+        "usuario":registro["usuario"],
+        "idVenta":registro["idVenta"],
+        "interes":registro["interes"],
+        "documento":registro["documento"],
+        "editado":registro["editado"]='si', 
+        "frecuencia":registro["frecuencia"],
+        "fechaTexto":registro["fechaTexto"],
+        "orden":int.parse(registro["orden"]), 
+        "fecha":int.parse(registro["fecha"]),
+        "actualizado":registro["editado"]='si', 
+        "saldo":double.parse(registro["saldo"]) ,
+        "venta":double.parse(registro["venta"])  ,
+        "cuotas":double.parse(registro["cuotas"]),
+        "estadoTemporal":registro["estadoTemporal"],
+        "diaRecoleccion":registro["diaRecoleccion"],
+        "fechaPago":int.parse(registro["fechaPago"]),
+        "valorTemporal":registro["valorTemporal"]=0.0, 
+        "cuotasTemporal":registro["cuotasTemporal"]=0.0,
+        "solicitado":double.parse(registro["solicitado"]),
+        "valorCuota":double.parse(registro["valorCuota"]) ,
+        "numeroCuota":double.parse(registro["numeroCuota"]) ,
+      };
+        var p = HistoricoVenta.fromMap(consulta);
         await DatabaseProvider.db.addToDatabase(p);
       }
     }
@@ -2264,11 +2459,23 @@ class Insertar {
     DatabaseProvider.db.deleteAll(new Asignar());
     DatabaseProvider.db.deleteAll(new HistorialVenta());
     DatabaseProvider.db.deleteAll(new Departamento());
+    DatabaseProvider.db.deleteAll(new HistoricoVenta());
     await DatabaseProvider.db.rawQuery(
       " DELETE FROM HistorialVenta"
       " WHERE novedad = ? ",['pago']                                        
     );
     return true;
+  }
+
+  borrarTablas()async{
+    await DatabaseProvider.db.deleteAll(new Clave());
+    await DatabaseProvider.db.deleteAll(new Ciudad());
+    await DatabaseProvider.db.deleteAll(new Venta());
+    await DatabaseProvider.db.deleteAll(new Cliente());
+    await DatabaseProvider.db.deleteAll(new Asignar());
+    await DatabaseProvider.db.deleteAll(new HistorialVenta());
+    await DatabaseProvider.db.deleteAll(new Departamento());
+    await DatabaseProvider.db.deleteAll(new HistoricoVenta());
   }
 
   baseSiguiente(double  base)async{
@@ -2365,6 +2572,27 @@ class Insertar {
       "lista":_parametrosEnviados
     };
     var map = await callMethodList('/listarProduccion.php',parametro);
+    List<ReporteDiario> produccion=[];
+    for ( var prod in map)
+    {
+      produccion.add(ReporteDiario.fromJson(prod));
+    }
+    return this._produccion= produccion;
+  }
+
+  Future <List<ReporteDiario>>descargarProduccionTodos(fechaInicial,fechaFinal)async{
+    Map mapa={
+      'token':tokenGlobal,
+      'fechaInicial':fechaInicial,
+      'fechaFinal':fechaFinal,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/listarProduccionTodos.php',parametro);
     List<ReporteDiario> produccion=[];
     for ( var prod in map)
     {
@@ -2697,6 +2925,27 @@ class Insertar {
     return this._totalProduccion= totalProduccion;
   }
 
+  Future <List<ReporteDiario>>descargarTotalProduccionTodos(fechaInicial,fechaFinal)async{
+    Map mapa={
+      'token':tokenGlobal,
+      'fechaInicial':fechaInicial,
+      'fechaFinal':fechaFinal,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/listarTotalProduccionTodos.php',parametro);
+    List<ReporteDiario> totalProduccion=[];
+    for ( var prod in map)
+    {
+      totalProduccion.add(ReporteDiario.fromJson(prod));
+    }
+    return this._totalProduccion= totalProduccion;
+  }
+
   Future <List<TotalBloqueados>>descargarTotalBloqueados(fechaInicial,fechaFinal,usuario)async{
     Map mapa={
       'token':tokenGlobal,
@@ -2866,7 +3115,7 @@ class Insertar {
   callMethodOne(String webservice,params)async {
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+        response = await http.post(Uri.parse(ecuador+webservice), headers: {
       "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
     }catch(e){
@@ -2889,7 +3138,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-      response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+      response = await http.post(Uri.parse(ecuador+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -2907,7 +3156,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-         response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+         response = await http.post(Uri.parse(ecuador+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -2924,7 +3173,7 @@ class Insertar {
   autenticar(user,pass) async {
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen),headers:{
+        response = await http.post(Uri.parse(ecuador),headers:{
         "content-type" : "application/json",
     }, body: jsonEncode(<String, String>{
         'usuario': user,
@@ -2941,9 +3190,6 @@ class Insertar {
   }
 }
 
-// SELECT a.`ingreso`, a.`fecha`, a.`usuario`, a.`retiro`, a.`entrada`, a.`salida`, a.`usuario_ruta`,b.nombre as administrador,c.nombre as ruta  FROM `base_general` as a
-//             INNER JOIN usuarios_control as b 
-//             on a.usuario=b.usuario 
-//             LEFT JOIN usuarios_control as c 
-//             on a.usuario_ruta=c.usuario  
-//             WHERE a.fecha BETWEEN :fecha1 AND :fecha2 AND `usuario_ruta` NOT IN ('No aplica')  ORDER BY a.`fecha` DESC,a.`usuario_ruta`
+// SELECT documento, count(*) FROM venta
+// GROUP BY documento
+// HAVING COUNT(*)>1;

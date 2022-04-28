@@ -117,21 +117,32 @@ class _State extends State<Login> {
                       print('paso6');
                       session.listarDepartamento().then((_) {
                         session.listarHistorial().then((_) {
-                          print('paso7');
-                          session.listarBase().then((_) {
-                            print('paso8');
-                            pr.hide();
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => Home()));
+                          session.listarHistoricoVentas().then((_) {
+                            print('paso7');
+                            session.listarBase().then((_) {
+                              print('paso8');
+                              pr.hide();
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => Home()));
+                            }).catchError( (onError){
+                              pr.hide();
+                              warningDialog(
+                                context, 
+                                "Error de conexión, por favor intentelo de nuevo",
+                                neutralAction: (){
+                                  
+                                },
+                              );                                     
+                            });
                           }).catchError( (onError){
-                            pr.hide();
-                            warningDialog(
-                              context, 
-                              "Error de conexión, por favor intentelo de nuevo",
-                              neutralAction: (){
-                                
-                              },
-                            );                                     
-                          });
+                          pr.hide();
+                          warningDialog(
+                            context, 
+                            "Error de conexión, por favor intentelo de nuevo",
+                            neutralAction: (){
+                              
+                            },
+                          );                                     
+                        });
                         }).catchError( (onError){
                           pr.hide();
                           warningDialog(

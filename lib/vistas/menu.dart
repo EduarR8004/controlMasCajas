@@ -26,6 +26,7 @@ import 'package:controlmas/vistas/baseGeneral/FechasCuadreSemanal.dart';
 import 'package:controlmas/vistas/administracion/FechasProduccion.dart';
 import 'package:controlmas/vistas/baseGeneral/IngresoRetiroDinero.dart';
 import 'package:controlmas/vistas/administracion/RutaAdministrador.dart';
+import 'package:controlmas/vistas/historialCredito/HistorialCredito.dart';
 import 'package:controlmas/vistas/administracion/ConsultarFechaBloqueados.dart';
 import 'package:controlmas/vistas/administracion/CierreRutaAdministracion.dart';
 
@@ -41,6 +42,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   List<Widget> reportesSemanal =[];
   List<Widget> reportesGenereal =[];
   List<Widget> subMenuUsuarios =[];
+  List<Widget> historiales =[];
 
   @override
   void initState() {
@@ -79,7 +81,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
         menu.add(Configuracion(reportesSemanal,"Control Caja Semanal",Icon(Icons.content_paste_rounded,size:30,color: Colors.black,)));
       }
       if(objetosUsuario.contains('ABC004') || objetosUsuario.contains("SA000")){
-        menu.add(Configuracion(reportesGenereal,"Control Caja General",Icon(Icons.date_range_rounded,size:30,color: Colors.black,)));
+        menu.add(Configuracion(reportesGenereal,"Control Caja General",Icon(Icons.business_center_rounded,size:30,color: Colors.black,)));
       }
       menu.add(listaInicio(context));
       if(Platform.isAndroid){
@@ -97,9 +99,12 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
           menu.add(listaRuta(context));
         }
       }
+      if(objetosUsuario.contains('ABC004') || objetosUsuario.contains("SA000")){
+        menu.add(Configuracion(historiales,"Historiales",Icon(Icons.date_range_rounded,size:30,color: Colors.black,)));
+      }
       if(Platform.isAndroid){
         if(objetosUsuario.contains('HU001') || objetosUsuario.contains("SA000")){
-          menu.add(listaHistorial(context));
+          historiales.add(listaHistorial(context));
         }
       }
       if(objetosUsuario.contains('CC001') || objetosUsuario.contains("SA000")){
@@ -148,6 +153,11 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       }
       if(Platform.isAndroid){
         if(objetosUsuario.contains('VRC001') || objetosUsuario.contains("SA000")){
+          historiales.add(listarHistorialPago(context));
+        }
+      }
+      if(Platform.isAndroid){
+        if(objetosUsuario.contains('VRC001') || objetosUsuario.contains("SA000")){
           menu.add(copiaSeguridad(context));
         }
       }
@@ -157,6 +167,8 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
     var session= Insertar();
     session.enviarClientes(actualizar: false).then((_){
       session.actualizarVentas().then((_){
+        session.enviarHistorial().then((_){
+        });
       });
     });
   }
@@ -239,6 +251,11 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   historial(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => Historial())
+    );
+  }
+  historialPago(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => HistorialCreditoView())
     );
   }
   ruta(BuildContext context) {
@@ -463,6 +480,18 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
         color: Colors.black,
       ),
       onTap: () => historial(context),
+    );
+  }
+  ListTile listarHistorialPago(BuildContext context) {
+    return ListTile(
+      title: Text("Historial pago",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      leading: Icon(
+        Icons.payment_rounded,
+        size: 30,
+        color: Colors.black,
+      ),
+      onTap: () => historialPago(context),
     );
   }
 

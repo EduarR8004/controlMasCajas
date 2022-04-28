@@ -54,10 +54,12 @@ class _HomeState extends State<Home> {
     
     //Utils.showTopSnackBar(context, message, color);
   }
-  _actualizar(){  
+    _actualizar(){  
     var session= Insertar();
     session.enviarClientes(actualizar: false).then((_){
       session.actualizarVentas().then((_){
+        session.enviarHistorial().then((_){
+        });
       });
     });
   }
@@ -100,8 +102,17 @@ class _HomeState extends State<Home> {
                           ),
                           InkWell(
                             onTap: () {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                              Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(true),));});
+                              var session= Insertar();
+                              session.copiaVentas().then((_) {
+                                session.copiaCliente().then((_) {
+                                  session.copiaGasto().then((_) {
+                                    session.borrarTablas().then((_) {
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(true),));});
+                                    });
+                                  });
+                                });
+                              });
                             },
                             child:Text("Cerrar Sesión",
                               style: TextStyle(
