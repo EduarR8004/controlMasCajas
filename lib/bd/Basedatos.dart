@@ -24,7 +24,7 @@ class DatabaseProvider {
 
   Future<Database> getDatabaseInstanace() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.path, "pocket.db");
+    String path = join(directory.path, "control.db");
      return await openDatabase(path, version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
@@ -84,8 +84,8 @@ class DatabaseProvider {
 
         await db.execute(
           "CREATE TABLE IF NOT EXISTS Venta ("
-            "idVenta TEXT primary key,"
-            "documento TEXT,"
+            "idVenta TEXT ,"
+            "documento TEXT primary key,"
             "venta double,"
             "solicitado double,"
             "cuotas double,"

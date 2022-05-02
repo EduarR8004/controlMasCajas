@@ -407,12 +407,13 @@ Widget tablaRecolectado(){
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async{
-              Workmanager.initialize(
-                callbackDispatcher, // The top level function, aka callbackDispatcher
-                isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-              );
-              final result = await Connectivity().checkConnectivity();
-              showConnectivitySnackBar(result);
+              _crearRecoleccion();
+              // Workmanager.initialize(
+              //   callbackDispatcher, // The top level function, aka callbackDispatcher
+              //   isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+              // );
+              // final result = await Connectivity().checkConnectivity();
+              // showConnectivitySnackBar(result);
             },
             child:const Icon(Icons.check),
             //backgroundColor: Color.fromRGBO(56, 124, 43, 1.0),

@@ -1,6 +1,5 @@
 import 'dart:core';
 import 'dart:convert';
-import 'package:controlmas/modelos/HistorialPago.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -22,6 +21,7 @@ import 'package:controlmas/modelos/RutaAdmin.dart';
 import 'package:controlmas/modelos/ConteoDebe.dart';
 import 'package:controlmas/modelos/ListarCaja.dart';
 import 'package:controlmas/modelos/ReporteGasto.dart';
+import 'package:controlmas/modelos/HistorialPago.dart';
 import 'package:controlmas/modelos/CuadresSemana.dart';
 import 'package:universal_io/prefer_universal/io.dart';
 import 'package:controlmas/modelos/Agendamiento.dart';
@@ -945,7 +945,7 @@ class Insertar {
             "DELETE FROM HistorialVenta WHERE documento = ? AND fecha = ?",[item.documento,fecha]                                      
           );
 
-          final venta = HistorialVenta(
+          final historial = HistorialVenta(
             idVenta:item.idVenta,
             documento:item.documento,
             fechaRecoleccion:now.millisecondsSinceEpoch,
@@ -956,7 +956,7 @@ class Insertar {
             usuario:usuarioGlobal,
             novedad:"abono" 
           );
-          await DatabaseProvider.db.addToDatabase(venta);
+          await DatabaseProvider.db.addToDatabase(historial);
           // res = await DatabaseProvider.db.rawQuery(
           //   " SELECT "
           //     "Venta.venta,"
@@ -986,9 +986,22 @@ class Insertar {
               " WHERE documento = ? ",["pago",item.documento]                                        
             );
             await DatabaseProvider.db.rawQuery(
-              " UPDATE HistorialVenta SET novedad = ?"
-              " WHERE documento = ? ",["pago",item.documento]                                        
+              "DELETE FROM HistorialVenta WHERE documento = ? AND fecha = ?",[item.documento,fecha]                                      
             );
+
+            final historialPago = HistorialVenta(
+              idVenta:item.idVenta,
+              documento:item.documento,
+              fechaRecoleccion:now.millisecondsSinceEpoch,
+              fecha:format.format(now),
+              numeroCuota:numeroCuota,
+              valorCuota: valorIngresar,
+              saldo:saldo, 
+              usuario:usuarioGlobal,
+              novedad:"pago" 
+            );
+            await DatabaseProvider.db.addToDatabase(historialPago);
+            
           }
           Map repuesta={
             "respuesta":true,
@@ -1015,7 +1028,7 @@ class Insertar {
         " UPDATE Cliente SET estado = ?"
         " WHERE documento = ? ",["Bloqueado",item.documento]                                        
       );
-      final venta = HistorialVenta(
+      final ventaBloqueo = HistorialVenta(
         idVenta:item.idVenta,
         documento:item.documento,
         fechaRecoleccion:now.millisecondsSinceEpoch,
@@ -1026,7 +1039,7 @@ class Insertar {
         usuario:usuarioGlobal,
         novedad:"Bloqueado" 
       );
-      await DatabaseProvider.db.addToDatabase(venta);
+      await DatabaseProvider.db.addToDatabase(ventaBloqueo);
       Map repuesta={
         "respuesta":true,
       };
@@ -1093,7 +1106,7 @@ class Insertar {
       " UPDATE Cliente SET estado = ?"
       " WHERE documento = ? ",['debe',item.documento]                                        
     );
-    final venta = HistorialVenta(
+    final ventaMotivo = HistorialVenta(
       idVenta:item.idVenta,
       documento:item.documento,
       fechaRecoleccion:now.millisecondsSinceEpoch,
@@ -1104,24 +1117,24 @@ class Insertar {
       usuario:usuarioGlobal, 
       novedad:novedad,
     );
-    await DatabaseProvider.db.addToDatabase(venta);
+    await DatabaseProvider.db.addToDatabase(ventaMotivo);
   }
   eliminarGasto(id)async{
     await DatabaseProvider.db.rawQuery(
       "DELETE FROM Gastos WHERE idGasto = ?",[id]                                      
     );
   }
-  eliminarVenta(Ventas item,clave)async{
-    if(clave!='Continuar'){
-      var consultaClave =await DatabaseProvider.db.rawQuery("SELECT clave FROM Claves WHERE clave= ? ",[clave]);
-      if(consultaClave.length <= 0){
-        Map repuesta={
-          "respuesta":false,
-          "mensaje":"Por favor verificar la clave ingresada",
-        };
-        return repuesta;
-      }
-    }
+  eliminarVenta(Ventas item)async{
+    // if(clave!='Continuar'){
+    //   var consultaClave =await DatabaseProvider.db.rawQuery("SELECT clave FROM Claves WHERE clave= ? ",[clave]);
+    //   if(consultaClave.length <= 0){
+    //     Map repuesta={
+    //       "respuesta":false,
+    //       "mensaje":"Por favor verificar la clave ingresada",
+    //     };
+    //     return repuesta;
+    //   }
+    // }
     await DatabaseProvider.db.rawQuery(
       " DELETE FROM HistorialVenta"
       " WHERE documento = ? ",[item.documento]                                        
@@ -1134,10 +1147,10 @@ class Insertar {
       " DELETE FROM Venta"
       " WHERE documento = ? ",[item.documento]                                        
     );
-    await DatabaseProvider.db.rawQuery(
-      " DELETE FROM Claves"
-      " WHERE clave = ? ",[clave]                                        
-    );
+    // await DatabaseProvider.db.rawQuery(
+    //   " DELETE FROM Claves"
+    //   " WHERE clave = ? ",[clave]                                        
+    // );
     var mapa = {
       "respuesta":this.validacion = true,
       "motivo":"Venta eliminada correctamente"
@@ -1531,7 +1544,7 @@ class Insertar {
       "diaRecoleccion ,"
       "day ,"
       "usuario"
-      " FROM Venta ",[]
+      " FROM Venta GROUP BY documento",[]
     );
     _enviarClientes=[];
     for (var registro in res) {
@@ -1600,7 +1613,7 @@ class Insertar {
       "diaRecoleccion ,"
       "day ,"
       "usuario"
-      " FROM Venta ",[]
+      " FROM Venta GROUP BY documento",[]
     );
     _enviarClientes=[];
     for (var registro in res) {
@@ -1670,7 +1683,7 @@ class Insertar {
       "diaRecoleccion ,"
       "day ,"
       "usuario"
-      " FROM Venta ",[]
+      " FROM Venta GROUP BY documento",[]
     );
     _enviarClientes=[];
     for (var registro in res) {
@@ -1740,7 +1753,7 @@ class Insertar {
       "diaRecoleccion ,"
       "day ,"
       "usuario"
-      " FROM Venta ",[]
+      " FROM Venta GROUP BY documento",[]
     );
     _enviarClientes=[];
     for (var registro in res) {
@@ -1786,10 +1799,12 @@ class Insertar {
   listarVentas()async{
     var respuesta =await DatabaseProvider.db.rawQuery("SELECT * FROM Venta",[]);
     if(respuesta.length == 0){
+      var fechaConsulta = format.format(now);
       List map;
       Map mapa={
         'token':tokenGlobal, 
         'usuario':usuarioGlobal,
+        'fecha':fechaConsulta,
       };
       _enviados=[];
       _enviados.add(mapa);
@@ -3193,3 +3208,4 @@ class Insertar {
 // SELECT documento, count(*) FROM venta
 // GROUP BY documento
 // HAVING COUNT(*)>1;
+//SELECT DISTINCT a.`idVenta`,a.`documento`, a.`venta`, a.`solicitado`,a. `cuotas`, a.`fecha`, a.`fechaTexto`, a.`fechaPago`,a.estado FROM `venta` as a WHERE a.usuario='lineal' AND a.estado!='pago' OR a.documento IN (SELECT `documento`FROM `historial_venta` WHERE usuario='lineal' AND fecha='2022-04-30' AND novedad='pago' ) GROUP BY a.documento;

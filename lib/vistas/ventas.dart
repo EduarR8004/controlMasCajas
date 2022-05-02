@@ -671,25 +671,25 @@ class _NuevaVentaViewState extends State<NuevaVentaView> {
           TextFormField(
             controller: venta,
             focusNode: ventaFocus,
-            onChanged: (text){
-              if(double.parse(venta.text)>= 500){
-                setState(() {
-                  clave = true;
-                  claveVerificar.requestFocus();
-                });
-                warningDialog(
-                  context, 
-                  claveVenta,
-                  negativeAction: (){
-                  },
-                );
-                return;
-              }else{
-                setState(() {
-                  clave= false;    
-                });
-              }
-            },
+            // onChanged: (text){
+            //   if(double.parse(venta.text)>= 500){
+            //     setState(() {
+            //       clave = true;
+            //       claveVerificar.requestFocus();
+            //     });
+            //     warningDialog(
+            //       context, 
+            //       claveVenta,
+            //       negativeAction: (){
+            //       },
+            //     );
+            //     return;
+            //   }else{
+            //     setState(() {
+            //       clave= false;    
+            //     });
+            //   }
+            // },
             decoration: new InputDecoration(
               labelText: 'Venta',
             ),

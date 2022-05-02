@@ -135,14 +135,15 @@ class _RecoleccionState extends State<Recoleccion> {
  
   _eliminarVenta(){
     if(widget.data.numeroCuota==0){
-      if(claveEliminar.text.length==5){
+      // if(claveEliminar.text.length==5){
         warningDialog(
           context, 
           "Esta seguro que desea eliminar la venta",
           negativeText: "Si",
           negativeAction: (){
             var session= Insertar();
-            session.eliminarVenta(widget.data,claveEliminar.text)
+            //session.eliminarVenta(widget.data,claveEliminar.text)
+            session.eliminarVenta(widget.data)
             .then((data) {
               if(data['respuesta']==true){
                   successDialog(
@@ -168,14 +169,14 @@ class _RecoleccionState extends State<Recoleccion> {
           neutralAction: (){
           },
         );
-      }else{
-        warningDialog(
-          context, 
-          "Por favor verificar la clave ingresada",
-          neutralAction: (){
-          },
-        );
-      }
+      // }else{
+      //   warningDialog(
+      //     context, 
+      //     "Por favor verificar la clave ingresada",
+      //     neutralAction: (){
+      //     },
+      //   );
+      // }
     }else{
       warningDialog(
         context, 
@@ -234,52 +235,52 @@ class _RecoleccionState extends State<Recoleccion> {
             },
           );
         }else{
-          if(cuotarecolectada >= 5){
-            setState(() {
-              clave= true;            
-            });
-            if(clavePago.text.length==4)
-            {
-              session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave:clavePago.text )
-              .then((data) {
-                if(data['respuesta']==true){
-                  successDialog(
-                    context, 
-                    "Recolección exitosa",
-                    neutralAction: (){
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => RecoleccionView())
-                      );
-                    },
-                  );
-                }else{
-                  warningDialog(
-                    context, 
-                    data['mensaje'].toString(),
-                    neutralAction: (){
-                    },
-                  );
-                } 
-              }).catchError( (onError){
-                warningDialog(
-                  context, 
-                  "Por favor verificar la información ingresada",
-                  neutralAction: (){
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(builder: (context) => RecoleccionView())
-                    // );
-                  },
-                );                                     
-              });
-            }else{
-              warningDialog(
-                context, 
-                'Por favor verificar la clave',
-                neutralAction: (){
-                },
-              );
-            }
-          }else{
+          // if(cuotarecolectada >= 5){
+          //   setState(() {
+          //     clave= true;            
+          //   });
+          //   if(clavePago.text.length==4)
+          //   {
+          //     session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave:clavePago.text )
+          //     .then((data) {
+          //       if(data['respuesta']==true){
+          //         successDialog(
+          //           context, 
+          //           "Recolección exitosa",
+          //           neutralAction: (){
+          //             Navigator.of(context).push(
+          //               MaterialPageRoute(builder: (context) => RecoleccionView())
+          //             );
+          //           },
+          //         );
+          //       }else{
+          //         warningDialog(
+          //           context, 
+          //           data['mensaje'].toString(),
+          //           neutralAction: (){
+          //           },
+          //         );
+          //       } 
+          //     }).catchError( (onError){
+          //       warningDialog(
+          //         context, 
+          //         "Por favor verificar la información ingresada",
+          //         neutralAction: (){
+          //           // Navigator.of(context).push(
+          //           //   MaterialPageRoute(builder: (context) => RecoleccionView())
+          //           // );
+          //         },
+          //       );                                     
+          //     });
+          //   }else{
+          //     warningDialog(
+          //       context, 
+          //       'Por favor verificar la clave',
+          //       neutralAction: (){
+          //       },
+          //     );
+          //   }
+          // }else{
             session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave:'Continuar' )
             .then((data) {
               if(data['respuesta']==true){
@@ -309,18 +310,18 @@ class _RecoleccionState extends State<Recoleccion> {
                 },
               );                                     
             });
-          }
+          //}
         }
       }else{  
         if(bloqueo){
           coutaIngresar=0;
           cuotarecolectada=0;
         }
-        if(cuotarecolectada >= 5){
-          claveNueva=clavePago.text;
-        }else{
+        // if(cuotarecolectada >= 5){
+        //   claveNueva=clavePago.text;
+        // }else{
           claveNueva='Continuar';
-        }
+        //}
         if(cuotarecolectada > widget.data.saldo  )
         {
           warningDialog(
@@ -373,11 +374,11 @@ class _RecoleccionState extends State<Recoleccion> {
         cuotaRegistro = double.parse(widget.data.valorCuota.toString());
         coutaIngresar=(cuotarecolectada*cuotaRegistro);
         otra = false; 
-        if(cuotarecolectada >= 5){
-          clave = true;
-        }else{
-          clave= false;
-        }
+        // if(cuotarecolectada >= 5){
+        //   clave = true;
+        // }else{
+        //   clave= false;
+        // }
       });
     }else if(newValue=="Otra"){
       setState(() {
@@ -604,22 +605,22 @@ class _RecoleccionState extends State<Recoleccion> {
           ),
         )
         :Container(),
-        eliminar?
-        formItemsDesign(
-          Icons.lock_open_rounded,
-          TextFormField(
-            controller: claveEliminar,
-            decoration: new InputDecoration(
-              labelText: 'Clave Eliminar',
-            ),
-            validator:(value){
-              if (value.isEmpty) {
-                return 'Por favor la clave';
-              }
-            },
-          ),
-        )
-        :Container(),
+        // eliminar?
+        // formItemsDesign(
+        //   Icons.lock_open_rounded,
+        //   TextFormField(
+        //     controller: claveEliminar,
+        //     decoration: new InputDecoration(
+        //       labelText: 'Clave Eliminar',
+        //     ),
+        //     validator:(value){
+        //       if (value.isEmpty) {
+        //         return 'Por favor la clave';
+        //       }
+        //     },
+        //   ),
+        // )
+        // :Container(),
         reportar?formItemsDesign(
           Icons.check,
           DropdownSoatView(texto:dropdown ,documentosLista:novedad,alCambiar: _alCambiarNovedad,dropdownValor: dropdown),
