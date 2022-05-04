@@ -14,6 +14,7 @@ class RecoleccionView extends StatefulWidget {
 
 class _RecoleccionViewState extends State<RecoleccionView> {
   bool boton= true;
+  bool ordenar= false;
   DateTime now = new DateTime.now();
   final format = DateFormat("dd/MM/yyyy");
   TextEditingController  filtro = new TextEditingController();
@@ -33,7 +34,14 @@ class _RecoleccionViewState extends State<RecoleccionView> {
 
   Future<List<Ventas>> ventas(filtro){
     var insertar = Insertar();
-    return insertar.consultarRecoleccion(filtro:filtro,ruta:boton);
+    String ordenConsulta;
+    if(ordenar==true)
+    {
+      ordenConsulta='Cliente.nombre';
+    }else{
+      ordenConsulta='Venta.orden';
+    }
+    return insertar.consultarRecoleccion(filtro:filtro,ruta:boton,orden:ordenConsulta);
   }
 
   formItemsDesign(icon, item) {
@@ -41,10 +49,11 @@ class _RecoleccionViewState extends State<RecoleccionView> {
       padding: EdgeInsets.symmetric(vertical:4),
       child: Card(child: ListTile(
         leading:IconButton(
-          icon: const Icon(Icons.search),
+          icon: const Icon(Icons.autorenew_rounded),
           tooltip: 'Búsqueda',
           onPressed: () {
             setState(() {
+              ordenar=!ordenar;
               ventas(filtro.text);
             });
           },

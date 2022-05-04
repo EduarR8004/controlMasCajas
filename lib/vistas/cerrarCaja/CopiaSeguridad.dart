@@ -158,20 +158,31 @@ class _CopiaSeguridadState extends State<CopiaSeguridad> {
         session.enviarClientesCopia(actualizar: true).then((_){
           session.actualizarVentasCierreCopia().then((_){
             session.enviarGastosCopia().then((_){
-              session.copiaReporteDiario().then((_){
-                pr.hide();
-                successDialog(
-                  context, 
-                  "Cuadre de caja exitoso",
-                  neutralAction: (){
-                    baseInicial=0.0;
-                    tokenGlobal='';
-                    usuarioGlobal='';
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(false),)); 
-                    });
-                  },
-                );
+              session.enviarHistorialCopia().then((_){
+                session.copiaReporteDiario().then((_){
+                  pr.hide();
+                  successDialog(
+                    context, 
+                    "Cuadre de caja exitoso",
+                    neutralAction: (){
+                      baseInicial=0.0;
+                      tokenGlobal='';
+                      usuarioGlobal='';
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(false),)); 
+                      });
+                    },
+                  );
+                }).catchError( (onError){
+                  pr.hide();
+                  warningDialog(
+                    context, 
+                    "Error de conexión, por favor inténtelo de nuevo",
+                    neutralAction: (){
+                      
+                    },
+                  );                                     
+                });
               }).catchError( (onError){
                 pr.hide();
                 warningDialog(

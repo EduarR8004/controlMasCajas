@@ -26,7 +26,6 @@ class Ventas {
   String frecuencia;
   String ruta;
   String diaRecoleccion;
-  String _tableName='Ventas';
 
   Ventas({
     this.idCliente,
@@ -119,8 +118,4 @@ class Ventas {
     ruta:json["ruta"],
     diaRecoleccion:json["diaRecoleccion"],
   );
-
-  String getTableName(){
-     return this._tableName;
-  }
 }

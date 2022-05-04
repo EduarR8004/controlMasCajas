@@ -673,25 +673,25 @@ class _EditarVentaRutaViewState extends State<EditarVentaRutaView> {
           TextFormField(
             controller: venta,
             focusNode: ventaFocus,
-            onChanged: (text){
-              if(double.parse(venta.text)>= 500){
-                setState(() {
-                  clave = true;
-                  claveVerificar.requestFocus();
-                });
-                warningDialog(
-                  context, 
-                  claveVenta,
-                  negativeAction: (){
-                  },
-                );
-                return;
-              }else{
-                setState(() {
-                  clave= false;    
-                });
-              }
-            },
+            // onChanged: (text){
+            //   if(double.parse(venta.text)>= 500){
+            //     setState(() {
+            //       clave = true;
+            //       claveVerificar.requestFocus();
+            //     });
+            //     warningDialog(
+            //       context, 
+            //       claveVenta,
+            //       negativeAction: (){
+            //       },
+            //     );
+            //     return;
+            //   }else{
+            //     setState(() {
+            //       clave= false;    
+            //     });
+            //   }
+            // },
             decoration: new InputDecoration(
               labelText: 'Venta',
             ),
@@ -700,23 +700,23 @@ class _EditarVentaRutaViewState extends State<EditarVentaRutaView> {
             //validator: validateMobile,
           )
         ),
-        clave?
-        formItemsDesign(
-          Icons.lock_open_rounded,
-          TextFormField(
-            controller: clavePago,
-            focusNode: claveVerificar,
-            decoration: new InputDecoration(
-              labelText: 'Clave',
-            ),
-            validator:(value){
-              if (value.isEmpty) {
-                return 'Por favor la clave';
-              }
-            },
-          ),
-        )
-        :Container(),
+        // clave?
+        // formItemsDesign(
+        //   Icons.lock_open_rounded,
+        //   TextFormField(
+        //     controller: clavePago,
+        //     focusNode: claveVerificar,
+        //     decoration: new InputDecoration(
+        //       labelText: 'Clave',
+        //     ),
+        //     validator:(value){
+        //       if (value.isEmpty) {
+        //         return 'Por favor la clave';
+        //       }
+        //     },
+        //   ),
+        // )
+        // :Container(),
         formItemsDesign(
           Icons.check_box,
           TextFormField(

@@ -99,7 +99,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
           menu.add(listaRuta(context));
         }
       }
-      if(objetosUsuario.contains('ABC004') || objetosUsuario.contains("SA000")){
+      if(objetosUsuario.contains('HU001') || objetosUsuario.contains("SA000")){
         menu.add(Configuracion(historiales,"Historiales",Icon(Icons.date_range_rounded,size:30,color: Colors.black,)));
       }
       if(Platform.isAndroid){

@@ -473,18 +473,19 @@ class Insertar {
         "numeroCuota,"
         "valorCuota,"
         "saldo,"
-        "estado ,"
-        "frecuencia ,"
+        "estado,"
+        "frecuencia,"
         "motivo ,"
         "valorTemporal,"
         "cuotasTemporal,"
-        "estadoTemporal ,"
+        "estadoTemporal,"
         "orden,"
         "ruta ,"
-        "actualizar ,"
-        "diaRecoleccion ,"
-        "day ,"
-        "usuario) "
+        "actualizar,"
+        "diaRecoleccion,"
+        "day,"
+        "usuario"
+        ")"
       "SELECT "
         "idVenta,"
         "documento,"
@@ -492,23 +493,23 @@ class Insertar {
         "solicitado,"
         "cuotas,"
         "fecha,"
-        "fechaTexto ,"
+        "fechaTexto,"
         "fechaPago,"
-        "interes ,"
+        "interes,"
         "numeroCuota,"
         "valorCuota,"
         "saldo,"
-        "estado ,"
-        "frecuencia ,"
-        "motivo ,"
+        "estado,"
+        "frecuencia,"
+        "motivo,"
         "valorTemporal,"
         "cuotasTemporal,"
-        "estadoTemporal ,"
+        "estadoTemporal,"
         "orden,"
-        "ruta ,"
-        "actualizar ,"
-        "diaRecoleccion ,"
-        "day ,"
+        "ruta,"
+        "actualizar,"
+        "diaRecoleccion,"
+        "day,"
         "usuario"
         " FROM Venta ",[]
     );
@@ -554,6 +555,37 @@ class Insertar {
       "valor,"
       "usuario"
       " FROM Cliente ",[]
+    );
+  }
+
+  copiaHistorialMovimiento()async{
+    await DatabaseProvider.db.rawQuery(
+      " DELETE FROM CopiaHistorialVenta",[]                                        
+    );
+    await DatabaseProvider.db.rawQuery(
+      "INSERT INTO "
+      "CopiaHistorialVenta ("
+        "idVenta,"
+        "documento,"
+        "fechaRecoleccion,"
+        "fecha,"
+        "numeroCuota,"
+        "valorCuota,"
+        "saldo,"
+        "novedad,"
+        "usuario"
+        ")"
+      "SELECT " 
+      "idVenta,"
+      "documento,"
+      "fechaRecoleccion,"
+      "fecha,"
+      "numeroCuota,"
+      "valorCuota,"
+      "saldo,"
+      "novedad,"
+      "usuario"
+    " FROM HistorialVenta",[]
     );
   }
 
@@ -610,12 +642,48 @@ class Insertar {
 
   Future <List<Venta>> consultarVentas ()async{  
     var res =await DatabaseProvider.db.rawQuery("SELECT * FROM Venta",[]);
-
     List<Venta> list = res.map((c) => Venta.fromMap(c)).toList();
     return list;
   }
 
-  Future <List<Ventas>> consultarRecoleccion({filtro='',bool ruta})async{  
+    obtenerCliente(documento)async{
+    var res =await DatabaseProvider.db.rawQuery(
+      "SELECT Cliente.nombre,"
+      "Cliente.idCliente,"
+      "Cliente.primerApellido,"
+      "Cliente.segundoApellido,"
+      "Cliente.alias,"
+      "Cliente.direccion,"
+      "Cliente.ciudad,"
+      "Cliente.departamento,"
+      "Cliente.telefono,"
+      "Cliente.actividadEconomica,"
+      "Cliente.documento,"
+      "Venta.idVenta,"
+      "Venta.venta,"
+      "Venta.cuotas,"
+      "Venta.fecha,"
+      "Venta.fechaPago,"
+      "Venta.interes,"
+      "Venta.numeroCuota,"
+      "Venta.valorCuota,"
+      "Venta.valorTemporal,"
+      "Venta.saldo,"
+      "Venta.motivo,"
+      "Venta.usuario,"
+      "Venta.ruta,"
+      "Venta.solicitado,"
+      "Venta.diaRecoleccion,"
+      "Venta.day,"
+      "Venta.frecuencia"
+      " FROM Cliente "
+      " INNER JOIN Venta on Cliente.documento = Venta.documento"
+      " WHERE Venta.usuario = ? AND Cliente.documento = ?  ORDER BY Venta.orden",[usuarioGlobal,documento,]                                        
+    );
+    List<Ventas> list = res.map((c) => Ventas.fromMap(c)).toList();
+    return list[0];
+  }
+  Future <List<Ventas>> consultarRecoleccion({filtro='',bool ruta, String orden})async{  
     String dia=DateFormat('EEEE, d').format(now);
     List partirDia=dia.split(",");
     dia=partirDia[0];
@@ -652,7 +720,7 @@ class Insertar {
         "Venta.frecuencia"
         " FROM Cliente "
         " INNER JOIN Venta on Cliente.documento = Venta.documento"
-        " WHERE Venta.usuario = ? AND (Cliente.nombre LIKE ? or Cliente.documento LIKE ? or Cliente.alias LIKE ?) ORDER BY Venta.orden",[usuarioGlobal,'%'+filtro+'%','%'+filtro+'%','%'+filtro+'%']                                        
+        " WHERE Venta.usuario = ? AND (Cliente.nombre LIKE ? or Cliente.documento LIKE ? or Cliente.alias LIKE ?) ORDER BY $orden",[usuarioGlobal,'%'+filtro+'%','%'+filtro+'%','%'+filtro+'%']                                        
       );
       List<Ventas> list = res.map((c) => Ventas.fromMap(c)).toList();
       return list;
@@ -687,7 +755,7 @@ class Insertar {
         "Venta.frecuencia"
         " FROM Cliente "
         " INNER JOIN Venta on Cliente.documento = Venta.documento"
-        " WHERE Venta.usuario = ? AND Venta.ruta = ? AND (Cliente.nombre LIKE ? or Cliente.documento LIKE ? or Cliente.alias LIKE ?) ORDER BY Venta.orden",[usuarioGlobal,'si','%'+filtro+'%','%'+filtro+'%','%'+filtro+'%']
+        " WHERE Venta.usuario = ? AND Venta.ruta = ? AND (Cliente.nombre LIKE ? or Cliente.documento LIKE ? or Cliente.alias LIKE ?) ORDER BY $orden",[usuarioGlobal,'si','%'+filtro+'%','%'+filtro+'%','%'+filtro+'%']
         //" WHERE Venta.usuario = ? AND Venta.ruta = ? AND (Venta.day=? OR Venta.day=?) AND (Cliente.nombre LIKE ? or Cliente.documento LIKE ? or Cliente.alias LIKE ?) ORDER BY Venta.orden",[usuarioGlobal,'si',dia,'Diario','%'+filtro+'%','%'+filtro+'%','%'+filtro+'%']                                       
       );
       List<Ventas> list = res.map((c) => Ventas.fromMap(c)).toList();
@@ -875,6 +943,9 @@ class Insertar {
   }
 
   insertarVenta(Ventas item,double coutaIngresar,double cantidadCuotas,bool bloqueo, {String clave})async{
+    double saldo;
+    int diffHours;
+    DateTime fechaOrden;
     double numeroCuota;
     double valorIngresar;
     double valorTemporal;
@@ -882,7 +953,6 @@ class Insertar {
     double cantidadCuota;
     String estadoTemporal;
     String fecha = format.format(now);
-    double saldo;
     if(clave!='Continuar'){
       var consultaClave =await DatabaseProvider.db.rawQuery("SELECT clave FROM Claves WHERE clave= ? ",[clave]);
       if(consultaClave.length <= 0){
@@ -913,6 +983,7 @@ class Insertar {
           "Venta.numeroCuota,"
           "Venta.valorCuota,"
           "Venta.ruta,"
+          "Venta.orden,"
           "Venta.valorTemporal,"
           "Venta.cuotasTemporal,"
           "Venta.saldo"
@@ -928,19 +999,34 @@ class Insertar {
         nuevoSaldo =(list[0].saldo+valorTemporal)-valorIngresar;
         estadoTemporal=list[0].estado;
         saldo =list[0].saldo;
-
+        fechaOrden= DateTime.fromMillisecondsSinceEpoch(list[0].orden);
+        diffHours = now.difference(fechaOrden).inHours;
         if(valorIngresar <= saldo){
-          await DatabaseProvider.db.rawQuery(
-            " UPDATE Venta SET numeroCuota = ?,"
-            "saldo = ?, "
-            "motivo = ?,"
-            "orden = ?,"
-            "valorTemporal = ?,"
-            "cuotasTemporal = ?,"
-            "actualizar = ?,"
-            "ruta = ?"
-            " WHERE documento = ? ",[cantidadCuota,nuevoSaldo,"abono",now.millisecondsSinceEpoch,valorIngresar,cantidadCuotas,"si","no",item.documento]                                      
-          );
+          if(diffHours < 14){
+            await DatabaseProvider.db.rawQuery(
+              " UPDATE Venta SET numeroCuota = ?,"
+              "saldo = ?, "
+              "motivo = ?,"
+              "valorTemporal = ?,"
+              "cuotasTemporal = ?,"
+              "actualizar = ?,"
+              "ruta = ?"
+              " WHERE documento = ? ",[cantidadCuota,nuevoSaldo,"abono",valorIngresar,cantidadCuotas,"si","no",item.documento]                                      
+            );
+          }else{
+            await DatabaseProvider.db.rawQuery(
+              " UPDATE Venta SET numeroCuota = ?,"
+              "saldo = ?, "
+              "motivo = ?,"
+              "orden = ?,"
+              "valorTemporal = ?,"
+              "cuotasTemporal = ?,"
+              "actualizar = ?,"
+              "ruta = ?"
+              " WHERE documento = ? ",[cantidadCuota,nuevoSaldo,"abono",now.millisecondsSinceEpoch,valorIngresar,cantidadCuotas,"si","no",item.documento]                                      
+            );
+          }
+          
           await DatabaseProvider.db.rawQuery(
             "DELETE FROM HistorialVenta WHERE documento = ? AND fecha = ?",[item.documento,fecha]                                      
           );
@@ -1405,6 +1491,35 @@ class Insertar {
     await callMethodOne('/insertarHistorial.php',parametro);
   }
 
+  enviarHistorialCopia({bool actualizar})async{
+    var res = await DatabaseProvider.db.rawQuery("SELECT * FROM CopiaHistorialVenta",[]);
+    _enviarClientes=[];
+    for (var registro in res) {
+      Map consulta={
+        "fecha":registro["fecha"],
+        "saldo":registro["saldo"],
+        "novedad":registro["novedad"],
+        "usuario":registro["usuario"],
+        "idVenta":registro["idVenta"],
+        "documento":registro["documento"],
+        "valorCuota":registro["valorCuota"],
+        "numeroCuota":registro["numeroCuota"],
+        "fechaRecoleccion":registro["fechaRecoleccion"],
+      };
+       _enviarClientes.add(consulta);
+    }
+    Map mapa={
+      'token':tokenGlobal, 
+      'clientes':_enviarClientes,
+    };
+    _enviados=[];
+    _enviados.add(mapa);
+    Map parametro={
+      "lista":_enviados
+    };
+    await callMethodOne('/insertarHistorial.php',parametro);
+  }
+
   enviarClientesCopia({bool actualizar})async{
     var res = await DatabaseProvider.db.rawQuery("SELECT * FROM CopiaCliente",[]);
     _enviarClientes=[];
@@ -1753,7 +1868,7 @@ class Insertar {
       "diaRecoleccion ,"
       "day ,"
       "usuario"
-      " FROM Venta GROUP BY documento",[]
+      " FROM CopiaVenta GROUP BY documento",[]
     );
     _enviarClientes=[];
     for (var registro in res) {
@@ -2491,6 +2606,7 @@ class Insertar {
     await DatabaseProvider.db.deleteAll(new HistorialVenta());
     await DatabaseProvider.db.deleteAll(new Departamento());
     await DatabaseProvider.db.deleteAll(new HistoricoVenta());
+    return true;
   }
 
   baseSiguiente(double  base)async{
@@ -3171,7 +3287,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-         response = await http.post(Uri.parse(ecuador+webservice), headers: {
+        response = await http.post(Uri.parse(ecuador+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -3184,28 +3300,8 @@ class Insertar {
       return e;
     }
   }
-
-  autenticar(user,pass) async {
-    Response response;
-    try{
-        response = await http.post(Uri.parse(ecuador),headers:{
-        "content-type" : "application/json",
-    }, body: jsonEncode(<String, String>{
-        'usuario': user,
-        'contrasena': pass
-     }));
-    
-        Map data = json.decode(response.body);
-        if (response.statusCode == 200) {
-        }
-    }catch(e){
-         e.toString();
-        //throw new SessionNotFound('The "set-cookie" header was not found');
-    }
-  }
 }
 
-// SELECT documento, count(*) FROM venta
-// GROUP BY documento
-// HAVING COUNT(*)>1;
-//SELECT DISTINCT a.`idVenta`,a.`documento`, a.`venta`, a.`solicitado`,a. `cuotas`, a.`fecha`, a.`fechaTexto`, a.`fechaPago`,a.estado FROM `venta` as a WHERE a.usuario='lineal' AND a.estado!='pago' OR a.documento IN (SELECT `documento`FROM `historial_venta` WHERE usuario='lineal' AND fecha='2022-04-30' AND novedad='pago' ) GROUP BY a.documento;
+//8070109
+
+

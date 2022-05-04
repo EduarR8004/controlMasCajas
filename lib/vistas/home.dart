@@ -107,9 +107,11 @@ class _HomeState extends State<Home> {
                                 session.copiaVentas().then((_) {
                                   session.copiaCliente().then((_) {
                                     session.copiaGasto().then((_) {
-                                      session.borrarTablas().then((_) {
-                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(true),));});
+                                      session.copiaHistorialMovimiento().then((_) {
+                                        session.borrarTablas().then((_) {
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(true),));});
+                                        });
                                       });
                                     });
                                   });

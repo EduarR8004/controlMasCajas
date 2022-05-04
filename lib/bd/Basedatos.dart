@@ -141,9 +141,9 @@ class DatabaseProvider {
         );
 
         await db.execute(
-          "CREATE TABLE IF NOT EXISTS CopiaVenta("
-            "idVenta TEXT,"
-            "documento TEXT,"
+          "CREATE TABLE IF NOT EXISTS CopiaVenta ("
+            "idVenta TEXT ,"
+            "documento TEXT primary key,"
             "venta double,"
             "solicitado double,"
             "cuotas double,"
@@ -183,6 +183,20 @@ class DatabaseProvider {
       
         await db.execute(
           "CREATE TABLE IF NOT EXISTS HistorialVenta ("
+            "idVenta TEXT,"
+            "documento TEXT,"
+            "fechaRecoleccion INT,"
+            "fecha TEXT,"
+            "numeroCuota FLOAT,"
+            "valorCuota FLOAT,"
+            "saldo FLOAT,"
+            "novedad TEXT,"
+            "usuario TEXT"
+          ")"
+        );
+
+        await db.execute(
+          "CREATE TABLE IF NOT EXISTS CopiaHistorialVenta ("
             "idVenta TEXT,"
             "documento TEXT,"
             "fechaRecoleccion INT,"

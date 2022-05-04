@@ -698,23 +698,23 @@ class _NuevaVentaViewState extends State<NuevaVentaView> {
             //validator: validateMobile,
           )
         ),
-        clave?
-        formItemsDesign(
-          Icons.lock_open_rounded,
-          TextFormField(
-            controller: clavePago,
-            focusNode: claveVerificar,
-            decoration: new InputDecoration(
-              labelText: 'Clave',
-            ),
-            validator:(value){
-              if (value.isEmpty) {
-                return 'Por favor la clave';
-              }
-            },
-          ),
-        )
-        :Container(),
+        // clave?
+        // formItemsDesign(
+        //   Icons.lock_open_rounded,
+        //   TextFormField(
+        //     controller: clavePago,
+        //     focusNode: claveVerificar,
+        //     decoration: new InputDecoration(
+        //       labelText: 'Clave',
+        //     ),
+        //     validator:(value){
+        //       if (value.isEmpty) {
+        //         return 'Por favor la clave';
+        //       }
+        //     },
+        //   ),
+        // )
+        // :Container(),
         formItemsDesign(
           Icons.check_box,
           TextFormField(

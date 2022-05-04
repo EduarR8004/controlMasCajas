@@ -163,7 +163,19 @@ class _CerrarCajaState extends State<CerrarCaja> {
                 //   //indent: 20,
                 //   //endIndent: 20,
                 // ),
-                Text("Entrega : "+resultado.toStringAsFixed(1) ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: color))
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0,0,10,0),
+                      child: Text("Entrega : "+resultado.toStringAsFixed(1) ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: color)),
+                    ),
+                    Text('|'),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10,0,0,0),
+                      child: Text("Retiro : "+baseDia.text ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: color)),
+                    ),
+                  ],
+                ),
               ],
             ),
           );
@@ -173,30 +185,6 @@ class _CerrarCajaState extends State<CerrarCaja> {
       },
     );
   }
-
-  Widget tablaEntrega(){
-    return FutureBuilder<double>(
-      //llamamos al método, que está en la carpeta db file database.dart
-      future: porEntregar(),
-      builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-        if (snapshot.hasData) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Entrega: "+entrega.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
-              ],
-            ),
-          );
-        }else {
-          return Center(child: CircularProgressIndicator());
-        }
-      },
-    );
-  }
-
   
   Widget tablaAsignado(){
     return FutureBuilder<List<Asignar>>(
