@@ -63,6 +63,7 @@ class Insertar {
   List<ConteoDebe> _nuevaVenta=[];
   List<ReporteGasto> _reporteGasto;
   List<ConteoDebe> _recolectado=[];
+  List<ConteoDebe> _recolectadoMismoDia=[];
   List <Agendamiento> agendamientos;
   List<ConteoDebe> _porRecolectar=[];
   List<ReporteDiario> _totalProduccion;
@@ -877,8 +878,24 @@ class Insertar {
     return this._recolectado=list;
   }
 
+  Future<List<ConteoDebe>> recoleccionVentaMismoDia()async{
+    var fechaConsulta = format.format(now);
+    var res =await DatabaseProvider.db.rawQuery(
+      " SELECT count(DISTINCT HistorialVenta.documento) as documentos ,"
+        "HistorialVenta.numeroCuota,"
+        "sum(DISTINCT HistorialVenta.valorCuota) as valorCuotas"
+        " FROM HistorialVenta "
+        " WHERE HistorialVenta.documento IN(SELECT documento FROM Venta WHERE fechaTexto = ? ) ",[fechaConsulta]                                        
+    );
+    List<ConteoDebe> list = res.map((c) => ConteoDebe.fromMap(c)).toList();
+    return this._recolectadoMismoDia=list;
+  }
+
   obtenerClientesVisitados(){
     return this._recolectado;
+  }
+  obtenerClientesVisitadosMismoDia(){
+    return this._recolectadoMismoDia;
   }
 
   obtenerclientesVisitar(){
@@ -1403,6 +1420,37 @@ class Insertar {
     };
     await callMethodList('/insertarGastos.php',parametro);
     DatabaseProvider.db.deleteAll(new Gasto());
+  }
+  baseConsulta()async{
+    _enviarGastos=[];
+    final format = DateFormat("yyyy-MM-dd");
+    String fecha = format.format(now); 
+    List<dynamic> res =await DatabaseProvider.db.rawQuery(
+      " SELECT sum(Asignacion.valor) as base,"
+      "fecha,"
+      "usuario"
+      " FROM Asignacion "
+      " WHERE fecha = ? ",[fecha]                                        
+    );
+    for (var registro in res) {
+      Map consulta={
+        "base":registro['base'],
+        "fecha":registro['fecha'],
+        "usuario":registro['usuario'],
+      };
+       _enviarGastos.add(consulta);
+    }
+    Map mapa={
+      'token':tokenGlobal, 
+      'base':_enviarGastos,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    await callMethodOne('/insertarBaseRutaAdmin.php',parametro);
   }
   enviarGastosCopia()async{
     var res = await DatabaseProvider.db.rawQuery("SELECT * FROM CopiaGastos",[]);
@@ -2631,6 +2679,7 @@ class Insertar {
       await callMethodOne('/insertarBase.php',parametro);
     }
   }
+  
   copiaBaseSiguiente(double  base)async{
     if(base > 0){
       
@@ -3149,6 +3198,31 @@ class Insertar {
     return this._recolectadosAdmin= totalProduccionAdmin;
   }
 
+  Future<List<ConteoDebeAdmin>> consultarBaseAdmin(fechaInicial,fechaFinal,usuario)async{
+    var fechaConsulta = format.format(now);
+    _recolectadosAdmin=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'fechaTexto':fechaConsulta,
+      'fechaInicial':fechaInicial,
+      'fechaFinal':fechaFinal,
+      'usuario':usuario,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/totalClientesVisitadosUsuario.php',parametro);
+    List<ConteoDebeAdmin> totalProduccionAdmin=[];
+    for ( var prod in map)
+    {
+      totalProduccionAdmin.add(ConteoDebeAdmin.fromMap(prod));
+    }
+    return this._recolectadosAdmin= totalProduccionAdmin;
+  }
+
   Future<List<ConteoDebeAdmin>> totalValoresVentasAdmin()async{
     var fechaConsulta = format.format(now);
     _recolectadosAdmin=[];
@@ -3246,7 +3320,7 @@ class Insertar {
   callMethodOne(String webservice,params)async {
     Response response;
     try{
-        response = await http.post(Uri.parse(ecuador+webservice), headers: {
+        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
       "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
     }catch(e){
@@ -3269,7 +3343,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-      response = await http.post(Uri.parse(ecuador+webservice), headers: {
+      response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -3287,7 +3361,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-        response = await http.post(Uri.parse(ecuador+webservice), headers: {
+        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;

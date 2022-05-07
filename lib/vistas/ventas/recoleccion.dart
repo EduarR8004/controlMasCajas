@@ -206,8 +206,11 @@ class _RecoleccionState extends State<Recoleccion> {
             "Ingreso de novedad exitosa",
             neutralAction: (){
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => Recoleccion(data:widget.data))
+                MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
               );
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(builder: (context) => Recoleccion(data:widget.data))
+              // );
             },
           );    
         });
@@ -288,15 +291,15 @@ class _RecoleccionState extends State<Recoleccion> {
                   context, 
                   "Recolección exitosa",
                   neutralAction: (){
-                    session.obtenerCliente(widget.data.documento).then((data) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => Recoleccion(data:data))
-                      );
-                    });
+                    // session.obtenerCliente(widget.data.documento).then((data) {
+                    //   Navigator.of(context).push(
+                    //     MaterialPageRoute(builder: (context) => Recoleccion(data:data))
+                    //   );
+                    // });
                     
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
+                    );
                   },
                 );
               }else{
@@ -344,14 +347,14 @@ class _RecoleccionState extends State<Recoleccion> {
                 context, 
                 "Recolección exitosa",
                 neutralAction: (){ 
-                  session.obtenerCliente(widget.data.documento).then((data) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Recoleccion(data:data))
-                    );
-                  });
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
-                  // );
+                  // session.obtenerCliente(widget.data.documento).then((data) {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) => Recoleccion(data:data))
+                  //   );
+                  // });
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
+                  );
                 },
               );
             }else{

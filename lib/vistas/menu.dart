@@ -168,6 +168,8 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
     session.enviarClientes(actualizar: false).then((_){
       session.actualizarVentas().then((_){
         session.enviarHistorial().then((_){
+          session.baseConsulta().then((_){
+          });
         });
       });
     });

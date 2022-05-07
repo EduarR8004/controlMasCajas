@@ -104,11 +104,11 @@ class _EditarVentaRutaViewState extends State<EditarVentaRutaView> {
     actividadEconomica.text = widget.cliente.actividadEconomica==null?'':widget.cliente.actividadEconomica.trim();
     venta.text=widget.cliente.solicitado.toString();
     valorEvaluar=widget.cliente.solicitado;
-    if(valorEvaluar >=500){
-      clave=true;
-    }else if(valorEvaluar < 500){
-      clave=false;
-    }
+    // if(valorEvaluar >=500){
+    //   clave=true;
+    // }else if(valorEvaluar < 500){
+    //   clave=false;
+    // }
     documento.addListener(() {
       if (documento.hasFocus){
         print("tiene el foco");

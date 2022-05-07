@@ -1,3 +1,4 @@
+import 'package:controlmas/modelos/ConteoDebeAdmin.dart';
 import 'package:controlmas/modelos/TotalRutaAdmin.dart';
 import 'package:controlmas/modelos/Usuarios.dart';
 import 'package:intl/intl.dart';
@@ -21,14 +22,15 @@ class _RutaAdminViewState extends State<RutaAdminView> {
   String usuario;
   bool mostrar= false;
   String fechaConsulta;
-  String selectedRegion;
   DateTime parseFinal;
   DateTime parseInicial;
+  String selectedRegion;
   List<Usuario> users=[];
-  RutaAdminTotal _porAgendar;
   List<Usuario> _users=[];
+  ConteoDebeAdmin _porAgendar;
   List<RutaAdminTotal> agendado=[];
   DateTime now = new DateTime.now();
+  List<ConteoDebeAdmin> recolectado=[];
   final format = DateFormat("dd/MM/yyyy hh:mm");
   final formatSumar = DateFormat("yyyy-MM-dd");
 
@@ -55,13 +57,14 @@ class _RutaAdminViewState extends State<RutaAdminView> {
     var insertar = Insertar();
     return insertar.descargarRuta(usuario);
   }
-  Future <List<RutaAdminTotal>>consultaTotal()async{
+  Future<List<ConteoDebeAdmin>>valoresRecolectados(usuario)async{
     var session= Insertar();
-    await session.descargarTotalRuta(parseInicial.millisecondsSinceEpoch, parseFinal.millisecondsSinceEpoch,usuario).then((_){
-      agendado=session.obtenerTotalRuta();
+    await session.valoresRecolectadosAdmin(parseInicial.millisecondsSinceEpoch, parseFinal.millisecondsSinceEpoch,usuario).then((_){
+      recolectado=session.obtenerClientesRecolectadosAdmin();
     });
-    return agendado;            
+    return recolectado;
   }
+  
   Future <List<Usuario>> listarUsuario()async{
     var usuario= Insertar();
     if(users.length > 0)
@@ -300,12 +303,12 @@ class _RutaAdminViewState extends State<RutaAdminView> {
   }
 
   Widget tablaTotal(){
-    return FutureBuilder<List<RutaAdminTotal>>(
+    return FutureBuilder<List<ConteoDebeAdmin>>(
       //llamamos al método, que está en la carpeta db file database.dart
-      future: consultaTotal(),
-      builder: (BuildContext context, AsyncSnapshot<List<RutaAdminTotal>> snapshot) {
+      future: valoresRecolectados(usuario),
+      builder: (BuildContext context, AsyncSnapshot<List<ConteoDebeAdmin>> snapshot) {
         if (snapshot.hasData) {
-          _porAgendar = agendado[0];
+          _porAgendar = recolectado[0];
           return Padding(
             padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
             child: Column(
@@ -314,7 +317,7 @@ class _RutaAdminViewState extends State<RutaAdminView> {
               children: [
                 Row(
                   children: [
-                    _porAgendar.total==null?Text("Valor día: "+"0",style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color:Colors.blueGrey)):Text("Valor día: "+_porAgendar.total.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color:Colors.blueGrey)),
+                    _porAgendar.valorCuotas==null?Text("Valor día: "+"0",style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color:Colors.blueGrey)):Text("Valor día: "+_porAgendar.valorCuotas.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color:Colors.blueGrey)),
                   ],
                 ),
               ],

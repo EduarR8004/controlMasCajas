@@ -26,11 +26,11 @@ class ConteoDebe {
   }
 
   factory ConteoDebe.fromMap(Map<String ,dynamic>json)=> new ConteoDebe(
-    documentos: json['documentos'],
+    documentos: json['documentos']==null?0:json['documentos'],
     venta: json['venta']==null?0.0:json['venta'],
     valorCuotas: json['valorCuotas']==null?0.0:json['valorCuotas'],
-    saldo: json['saldo'],
-    frecuencia: json['frecuencia'],
+    saldo: json['saldo']==null?0.0:json['saldo'],
+    frecuencia: json['frecuencia']==null?'':json['frecuencia'],
   );
 
 }

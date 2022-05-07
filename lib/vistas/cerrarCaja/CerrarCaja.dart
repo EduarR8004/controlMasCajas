@@ -31,9 +31,11 @@ class _CerrarCajaState extends State<CerrarCaja> {
   ConteoDebe _nuevaVenta;
   ConteoDebe _recolectado;
   ConteoDebe _porRecolectar;
+  ConteoDebe _recolectadoMismoDia;
   List<Asignar> asignado=[];
   List<ConteoDebe> nuevaVenta;
   List<ConteoDebe> recolectado=[];
+  List<ConteoDebe> recolectadoMismoDia=[];
   DateTime now = new DateTime.now();
   List<ConteoDebe> porRecolectar=[];
   GlobalKey<FormState> keyForm = new GlobalKey();
@@ -105,6 +107,14 @@ class _CerrarCajaState extends State<CerrarCaja> {
       recolectado=session.obtenerClientesVisitados();
     });
     return recolectado;
+  }
+
+   Future<List<ConteoDebe>>valoresRecolectadosMismoDia()async{
+    var session= Insertar();
+    await session.recoleccionVentaMismoDia().then((_){
+      recolectadoMismoDia=session.obtenerClientesVisitadosMismoDia();
+    });
+    return recolectadoMismoDia;
   }
 
   Future<List<Gasto>>gastosDia()async{
@@ -196,6 +206,7 @@ class _CerrarCajaState extends State<CerrarCaja> {
           return Padding(
             padding: const EdgeInsets.fromLTRB(8, 0, 2, 0),
             child: Column(
+              mainAxisSize:MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -253,6 +264,7 @@ class _CerrarCajaState extends State<CerrarCaja> {
         return Padding(
           padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
           child: Column(
+            mainAxisSize:MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -285,7 +297,8 @@ class _CerrarCajaState extends State<CerrarCaja> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Clientes por visitar: "+_porRecolectar.documentos.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+              Text("Clientes a visitar: "+_porRecolectar.documentos.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+              
               _porRecolectar.valorCuotas==null?Text("Total a recaudar: "+"0",style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)):Text("Total a recaudar: "+_porRecolectar.valorCuotas.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
             ],
           ),
@@ -347,6 +360,30 @@ Widget tablaRecolectado(){
   );
 }
 
+Widget tablaRecolectadoMismoDia(){
+  return FutureBuilder<List<ConteoDebe>>(
+    //llamamos al método, que está en la carpeta db file database.dart
+    future: valoresRecolectadosMismoDia(),
+    builder: (BuildContext context, AsyncSnapshot<List<ConteoDebe>> snapshot) {
+      if (snapshot.hasData) {
+        _recolectadoMismoDia = recolectadoMismoDia[0];
+        return Padding(
+          padding:const EdgeInsets.fromLTRB(8, 2,0, 2),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _recolectadoMismoDia.valorCuotas!=0?Text("Recaudo ventas nuevas: "+_recolectadoMismoDia.valorCuotas.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)):Text("Recaudo ventas nuevas : 0",style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+            ],
+          ),
+        );
+      }else {
+        return Center(child: CircularProgressIndicator());
+      }
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
@@ -384,7 +421,7 @@ Widget tablaRecolectado(){
                 key: keyForm,
                   child:Container( 
                     width: 700,
-                    height:535,
+                    height:570,
                     margin: new EdgeInsets.fromLTRB(0,20,0,0),
                     color:Colors.white,
                     child:formUI(),
@@ -412,115 +449,137 @@ Widget tablaRecolectado(){
   }
 
   Widget formUI() {
-    return  Column(
-      mainAxisAlignment:MainAxisAlignment.start,
-      crossAxisAlignment:CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: SizedBox(
-            child:tablaAsignado(),
-          ),
-        ),
-        const Divider(
-          height: 1,
-          thickness: 2,
-          //indent: 20,
-          //endIndent: 20,
-        ),
-        Expanded(
-          child: SizedBox(
-            child:tablaBase(),
-          ),
-        ),
-        const Divider(
-          height: 1,
-          thickness: 2,
-          //indent: 20,
-          //endIndent: 20,
-        ),
-        Expanded(
-          child: SizedBox(
-            child:tablaPorRecolectar(),
-          ),
-        ),
-        const Divider(
-          height: 5,
-          thickness: 2,
-          //indent: 20,
-          //endIndent: 20,
-        ),
-        Expanded(
-          child: SizedBox(
-            child:tablaRecolectado(),
-          ),
-        ),
-        const Divider(
-          height: 8,
-          thickness: 2,
-          //indent: 20,
-          //endIndent: 20,
-        ),
-        Expanded(
-          child: SizedBox(
-            height:10,
-            child:tablaNuevaVenta(),
-          ),
-        ),
-        const Divider(
-          height: 8,
-          thickness: 2,
-          //indent: 20,
-          //endIndent: 20,
-        ),
-        Expanded(
-          child: SizedBox(
-            child:tablaGastos(),
-          ),
-        ),
-        const Divider(
-          height: 8,
-          thickness: 2,
-          //indent: 20,
-          //endIndent: 20,
-        ),
-        dia=='Saturday'?Container():formItemsDesign(
-          Icons.money_off,
-          TextFormField(
-            controller: baseDia,
-            focusNode: retiroNode,
-            keyboardType: TextInputType.number,
-            decoration: new InputDecoration(
-              labelText: 'Retiro',
+    return  
+    Container( 
+      child:
+        Column(
+        mainAxisAlignment:MainAxisAlignment.start,
+        crossAxisAlignment:CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height:60,
+            child: SizedBox(
+              child:tablaAsignado(),
             ),
-            validator:(value){
-              if (value.isEmpty) {
-                return 'Por favor Ingrese el valor recibido';
-              }
-            },
-            onChanged:(text){
-              setState(() {
-                retiro=text==''?0.0:double.parse(text);  
-                tablaGastos();        
-              });
-            },
           ),
-        ),
-        formItemsDesign(
-          Icons.attach_money,
-          TextFormField(
-            controller: couta,
-            keyboardType: TextInputType.number,
-            decoration: new InputDecoration(
-              labelText: 'Cerrar Caja',
+          const Divider(
+            height: 1,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:45,
+            child: SizedBox(
+              child:tablaBase(),
             ),
-            validator:(value){
-              if (value.isEmpty) {
-                return 'Por favor Ingrese el valor recibido';
-              }
-            },
           ),
-        ),  
-      ]
+          const Divider(
+            height: 1,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:50,
+            child: SizedBox(
+              child:tablaPorRecolectar(),
+            ),
+          ),
+          const Divider(
+            height: 5,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:35,
+            child: SizedBox(
+              child:tablaRecolectadoMismoDia(),
+            ),
+          ),
+          const Divider(
+            height: 8,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:60,
+            child: SizedBox(
+              child:tablaRecolectado(),
+            ),
+          ),
+          const Divider(
+            height: 8,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:60,
+            child: SizedBox(
+              height:10,
+              child:tablaNuevaVenta(),
+            ),
+          ),
+          const Divider(
+            height: 8,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:60,
+            child: SizedBox(
+              child:tablaGastos(),
+            ),
+          ),
+          const Divider(
+            height: 8,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          dia=='Saturday'?Container():formItemsDesign(
+            Icons.money_off,
+            TextFormField(
+              controller: baseDia,
+              focusNode: retiroNode,
+              keyboardType: TextInputType.number,
+              decoration: new InputDecoration(
+                labelText: 'Retiro',
+              ),
+              validator:(value){
+                if (value.isEmpty) {
+                  return 'Por favor Ingrese el valor recibido';
+                }
+              },
+              onChanged:(text){
+                setState(() {
+                  retiro=text==''?0.0:double.parse(text);  
+                  tablaGastos();        
+                });
+              },
+            ),
+          ),
+          formItemsDesign(
+            Icons.attach_money,
+            TextFormField(
+              controller: couta,
+              keyboardType: TextInputType.number,
+              decoration: new InputDecoration(
+                labelText: 'Cerrar Caja',
+              ),
+              validator:(value){
+                if (value.isEmpty) {
+                  return 'Por favor Ingrese el valor recibido';
+                }
+              },
+            ),
+          ),  
+        ]
+      )
     );
   }
 

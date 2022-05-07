@@ -19,8 +19,8 @@ class Asignar {
 
   factory Asignar.fromMap(Map<String, dynamic> json) {
     return Asignar(
-      usuario: json['usuario'],
-      fecha: json['fecha'],
+      usuario: json['usuario']==null?'':json['usuario'],
+      fecha: json['fecha']==null?'':json['fecha'],
       valor: json['valor']==null?0.0:json['valor'],
     );
   }

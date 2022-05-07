@@ -38,7 +38,6 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
   ConteoDebeAdmin _porRecolectar;
   List<ConteoDebeAdmin> nuevaVenta;
   ConteoDebeAdmin _totalNuevaVenta;
-  ConteoDebeAdmin _totalRecolectado;
   List<ConteoDebeAdmin> totalNuevaVenta;
   DateTime now = new DateTime.now();
   List<ConteoDebeAdmin> recolectado=[];
