@@ -448,7 +448,7 @@ class _RecoleccionState extends State<Recoleccion> {
 
   Future<List<HistorialVenta>> ventas(){
     var insertar = Insertar();
-    return insertar.historialRecoleccion(widget.data.documento);
+    return insertar.historialRecoleccion(widget.data.idVenta);
   }
 
   Widget cardCuenta(HistorialVenta item){

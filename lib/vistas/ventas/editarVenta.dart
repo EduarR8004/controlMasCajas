@@ -1,7 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:controlmas/vistas/menu.dart';
-import 'package:controlmas/bd/Basedatos.dart';
 import 'package:controlmas/modelos/Ventas.dart';
 import 'package:controlmas/modelos/Ciudad.dart';
 import 'package:controlmas/modelos/Cliente.dart';
@@ -35,17 +34,18 @@ class _EditarVentaRutaViewState extends State<EditarVentaRutaView> {
   FocusNode sApellido;
   FocusNode documento;
   FocusNode ventaFocus;
-  dynamic valorAgenda= true;
   double valorEvaluar;
   bool muestraDia=false;
   String dropdownInicial;
   List <Ciudad>citiesList;
+  dynamic valorAgenda= true;
   FocusNode claveVerificar;
   String frecuencia="Frecuencia";
   List <Cliente> listaBloqueados;
   List <Departamento> statesList;
   DateTime now = new DateTime.now();
   String dropdown ="Seleccione un día";
+  final format = DateFormat("yyyy-MM-dd");
   List <String> activo=['Activo','Inactivo'];
   GlobalKey<FormState> keyForm = new GlobalKey();
   String cuotasError="Ingrese el numero de cuotas";
@@ -152,11 +152,9 @@ class _EditarVentaRutaViewState extends State<EditarVentaRutaView> {
   
   crearCliente()async{  
     var session= Insertar();
-    await DatabaseProvider.db.rawQuery(
-      " DELETE FROM Venta"
-      " WHERE documento = ? ",[documentoNumero.text.trim()]                                        
-    );
     session.insertar(
+      idVenta: widget.cliente.idVenta,
+      idCliente: widget.cliente.idCliente,
       nombre:nombreCliente.text.trim(),
       direccion:direccion.text.trim(),
       cuotas:cuotas.text.trim(),
@@ -174,6 +172,7 @@ class _EditarVentaRutaViewState extends State<EditarVentaRutaView> {
       clave:clave?clavePago.text:'Continuar',
       day: day,
       diaRecoleccion: dropdown,
+      historial: false
     ).then((data) {
       if(data['respuesta']){
         if(data['motivo'].toString()=="Cliente bloqueado, por favor cumuniquese con el supervisor"){

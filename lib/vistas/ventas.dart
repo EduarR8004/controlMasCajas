@@ -17,8 +17,9 @@ class NuevaVentaView extends StatefulWidget {
   final Cliente cliente;
   final bool nuevo;
   final String valor;
+  final bool historial;
  
-  NuevaVentaView(this.editar,this.nuevo,{this.cliente,this.valor}): assert(editar == true || cliente ==null);
+  NuevaVentaView(this.editar,this.nuevo,this.historial,{this.cliente,this.valor}): assert(editar == true || cliente ==null);
   @override
   _NuevaVentaViewState createState() => _NuevaVentaViewState();
 }
@@ -157,35 +158,31 @@ class _NuevaVentaViewState extends State<NuevaVentaView> {
   crearCliente()async{  
     var session= Insertar();
     //await pr.show();
-    session.insertar(
-      nombre:nombreCliente.text.trim(),
-      direccion:direccion.text.trim(),
-      cuotas:cuotas.text.trim(),
-      valorVenta:venta.text.trim(),
-      telefono: telefono1.text.trim(),
-      departamento:_myState,
-      ciudad:_myCity,
-      primerApellido:primerApellido.text.trim(),
-      segundoApellido:segundoApellido.text.trim(),
-      alias: alias.text.trim(),
-      actividadEconomica:actividadEconomica.text.trim(),
-      documento:documentoNumero.text.trim(),
-      frecuencia:frecuencia.trim(),
-      tipo:widget.nuevo,
-      clave:clave?clavePago.text:'Continuar',
-      day: day,
-      diaRecoleccion: dropdown,
-    ).then((data) {
-      if(data['respuesta']){
-        if(data['motivo'].toString()=="Cliente bloqueado, por favor cumuniquese con el supervisor"){
-          warningDialog(
-            context, 
-            data['motivo'].toString(),
-            neutralAction: (){
-            },
-          );
-        }else{
-          if(data['clave']==false){
+
+    if(widget.editar == true){
+      session.insertar(
+        idCliente:widget.cliente.idCliente,
+        nombre:nombreCliente.text.trim(),
+        direccion:direccion.text.trim(),
+        cuotas:cuotas.text.trim(),
+        valorVenta:venta.text.trim(),
+        telefono: telefono1.text.trim(),
+        departamento:_myState,
+        ciudad:_myCity,
+        primerApellido:primerApellido.text.trim(),
+        segundoApellido:segundoApellido.text.trim(),
+        alias: alias.text.trim(),
+        actividadEconomica:actividadEconomica.text.trim(),
+        documento:documentoNumero.text.trim(),
+        frecuencia:frecuencia.trim(),
+        tipo:widget.nuevo,
+        clave:clave?clavePago.text:'Continuar',
+        day: day,
+        diaRecoleccion: dropdown,
+        historial: widget.historial,
+      ).then((data) {
+        if(data['respuesta']){
+          if(data['motivo'].toString()=="Cliente bloqueado, por favor cumuniquese con el supervisor"){
             warningDialog(
               context, 
               data['motivo'].toString(),
@@ -193,26 +190,93 @@ class _NuevaVentaViewState extends State<NuevaVentaView> {
               },
             );
           }else{
-            successDialog(
+            if(data['clave']==false){
+              warningDialog(
+                context, 
+                data['motivo'].toString(),
+                neutralAction: (){
+                },
+              );
+            }else{
+              successDialog(
+                context, 
+                data['motivo'].toString(),
+                neutralAction: (){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => RecoleccionView(boton: true,))
+                  );
+                },
+              );
+            }
+          }
+        }else{
+          warningDialog(
+            context, 
+            data['motivo'].toString(),
+            neutralAction: (){
+            },
+          );  
+        }      
+      });
+    }else{
+      session.insertar(
+        nombre:nombreCliente.text.trim(),
+        direccion:direccion.text.trim(),
+        cuotas:cuotas.text.trim(),
+        valorVenta:venta.text.trim(),
+        telefono: telefono1.text.trim(),
+        departamento:_myState,
+        ciudad:_myCity,
+        primerApellido:primerApellido.text.trim(),
+        segundoApellido:segundoApellido.text.trim(),
+        alias: alias.text.trim(),
+        actividadEconomica:actividadEconomica.text.trim(),
+        documento:documentoNumero.text.trim(),
+        frecuencia:frecuencia.trim(),
+        tipo:widget.nuevo,
+        clave:clave?clavePago.text:'Continuar',
+        day: day,
+        diaRecoleccion: dropdown,
+        historial: widget.historial,
+      ).then((data) {
+        if(data['respuesta']){
+          if(data['motivo'].toString()=="Cliente bloqueado, por favor cumuniquese con el supervisor"){
+            warningDialog(
               context, 
               data['motivo'].toString(),
               neutralAction: (){
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => RecoleccionView(boton: true,))
-                );
               },
             );
+          }else{
+            if(data['clave']==false){
+              warningDialog(
+                context, 
+                data['motivo'].toString(),
+                neutralAction: (){
+                },
+              );
+            }else{
+              successDialog(
+                context, 
+                data['motivo'].toString(),
+                neutralAction: (){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => RecoleccionView(boton: true,))
+                  );
+                },
+              );
+            }
           }
-        }
-      }else{
-        warningDialog(
-          context, 
-          data['motivo'].toString(),
-          neutralAction: (){
-          },
-        );  
-      }      
-    });
+        }else{
+          warningDialog(
+            context, 
+            data['motivo'].toString(),
+            neutralAction: (){
+            },
+          );  
+        }      
+      });
+    } 
   }
    
    consultarVentas(){

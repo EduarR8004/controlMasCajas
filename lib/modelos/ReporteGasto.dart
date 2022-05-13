@@ -2,7 +2,7 @@ class ReporteGasto {
   String usuario;
   String nombre;
   String fecha;
-  String valor;
+  double valor;
   String tipo;
   String observaciones;
   ReporteGasto({
@@ -27,12 +27,12 @@ class ReporteGasto {
 
   factory ReporteGasto.fromJson(Map<String, dynamic> json) {
     return ReporteGasto(
-      nombre:json["nombre"]==null?json["nombre"]=0:json["nombre"],
-      usuario: json['usuario']==null?json['usuario']=0:json['usuario'],
-      fecha: json['fecha']==null?json['fecha']=0:json['fecha'],
-      valor: json['valor']==null?json['valor']=0:json['valor'],
-      tipo: json['tipo']==null?json['tipo']=0:json['tipo'],
-      observaciones:json['observaciones']==null?json['observaciones']=0:json['observaciones'],
+      nombre:json["nombre"]==null?json["nombre"]='':json["nombre"],
+      usuario: json['usuario']==null?json['usuario']='':json['usuario'],
+      fecha: json['fecha']==null?json['fecha']='':json['fecha'],
+      valor: json['valor']==null?json['valor']=0.0:double.parse(json['valor']) ,
+      tipo: json['tipo']==null?json['tipo']='':json['tipo'],
+      observaciones:json['observaciones']==null?json['observaciones']='':json['observaciones'],
     );
   }
 

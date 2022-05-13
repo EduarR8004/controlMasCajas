@@ -59,6 +59,8 @@ class _HomeState extends State<Home> {
     session.enviarClientes(actualizar: false).then((_){
       session.actualizarVentas().then((_){
         session.enviarHistorial().then((_){
+          session.enviarGastos().then((_){
+          });
         });
       });
     });
@@ -219,7 +221,7 @@ class _HomeState extends State<Home> {
 
   onPressedVenta(){
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => NuevaVentaView(false,false))
+      MaterialPageRoute(builder: (context) => NuevaVentaView(false,false,false))
     );
   }
   onPressedRuta(){

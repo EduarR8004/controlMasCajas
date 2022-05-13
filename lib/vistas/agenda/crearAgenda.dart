@@ -131,7 +131,7 @@ class _CrearAgendaState extends State<CrearAgenda> {
       cliente=data;
       if(cliente.length > 0){
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => NuevaVentaView(true,true,cliente:cliente[0],valor: valor.text))); }
+          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => NuevaVentaView(true,true,true,cliente:cliente[0],valor: valor.text))); }
         );
       }else{
         final movimiento = Cliente(
@@ -142,7 +142,7 @@ class _CrearAgendaState extends State<CrearAgenda> {
           valor:double.parse(valor.text),
         );
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => NuevaVentaView(true,false,cliente:movimiento))); }
+          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => NuevaVentaView(true,false,true,cliente:movimiento))); }
         );
       }
     });

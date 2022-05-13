@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:convert';
+import 'package:controlmas/modelos/AsignarAdmin.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -55,6 +56,7 @@ class Insertar {
   List _enviarBaseRuta=[];
   List <Cliente> clientes;
   List<Asignar> _asignado=[];
+  List<AsignarAdmin> _asignadoAdmin=[];
   List _parametrosEnviados=[];
   List<ListarCaja> _listarCaja;
   List<RutaAdmin> _rutaAdmin=[];
@@ -91,6 +93,8 @@ class Insertar {
     HapticFeedback.heavyImpact();
   }
   Future<Map>insertar ({
+    idVenta,
+    idCliente,
     nombre,
     direccion,
     telefono,
@@ -107,7 +111,8 @@ class Insertar {
     bool tipo,
     String clave,
     day,
-    diaRecoleccion
+    diaRecoleccion,
+    bool historial
   })async{  
     if(clave!='Continuar'){
       var consultaClave =await DatabaseProvider.db.rawQuery("SELECT clave FROM Claves WHERE clave= ? ",[clave]);
@@ -195,7 +200,7 @@ class Insertar {
       return mapa;
     }else{
       var res =await DatabaseProvider.db.rawQuery("SELECT * FROM Cliente WHERE documento = ?",[documento]);
-      if(res.length <= 0 && tipo==false)
+      if(res.length <= 0 && tipo==false && historial==false)
       { 
         final movimiento = Cliente(
           idCliente:now.millisecondsSinceEpoch.toString().trim(),
@@ -262,56 +267,108 @@ class Insertar {
         };
         return mapa; 
 
-      }else if(res.length >0 && tipo==true){
+      }else if(res.length >0 && tipo==true && historial==false){
         // var contarCliente=await DatabaseProvider.db.rawQuery("SELECT * FROM Cliente WHERE documento = ? AND estado = ?",[documento,"debe"]);
         // if(contarCliente.length <= 0 && tipo==false)
         // { 
-          await DatabaseProvider.db.rawQuery(
-            " UPDATE Cliente SET estado = ? "
-            " WHERE documento = ? ",["debe",documento]                                            
-          );
-
-          final venta = Venta(
-            idVenta:now.millisecondsSinceEpoch.toString().trim(),
-            documento:documento,
-            venta:totalVenta,
-            cuotas:cuota,
-            fecha:
-            //1649658030000,
+        await DatabaseProvider.db.rawQuery(
+          "UPDATE venta SET "
+          "documento=?,"
+          "venta=?,"
+          "solicitado=?,"
+          "cuotas=?,"
+          "fecha=?,"
+          "fechaTexto=?,"
+          "fechaPago=?,"
+          "interes=?,"
+          "numeroCuota=?,"
+          "valorCuota=?,"
+          "saldo=?,"
+          "estado=?,"
+          "frecuencia=?,"
+          "motivo=?,"
+          "valorTemporal=?,"
+          "cuotasTemporal=?,"
+          "estadoTemporal=?,"
+          "orden=?,"
+          "ruta=?,"
+          "actualizar=?,"
+          "diaRecoleccion=?,"
+          "day=?,"
+          "usuario=?"
+          "WHERE idVenta=?"
+          ,[
+            documento, 
+            totalVenta,
+            valorNeto,
+            cuota,
             now.millisecondsSinceEpoch,
-            fechaPago: fechaPagara.millisecondsSinceEpoch,
-            interes:intereses,
-            numeroCuota:0,
-            valorCuota: coutaPagar,
-            saldo:totalVenta, 
-            estado:"debe",
-            usuario:usuarioGlobal, 
-            frecuencia:frecuencia,
-            solicitado:valorNeto,
-            motivo:"Prestamo",
-            orden: now.millisecondsSinceEpoch,
-            valorTemporal: 0,
-            cuotasTemporal:0,
-            estadoTemporal:"debe",
-            fechaTexto:fechaConsulta,
-            ruta:"no",
-            actualizar:"si",
-            day: day,
-            diaRecoleccion: diaRecoleccion
+            fechaConsulta,
+            fechaPagara.millisecondsSinceEpoch,
+            intereses,
+            0,
+            coutaPagar,
+            totalVenta,
+            'debe',
+            frecuencia,
+            "Prestamo",
+            0,
+            0,
+            'debe',
+            now.millisecondsSinceEpoch,
+            'no',
+            'si',
+            diaRecoleccion,
+            day,
+            usuarioGlobal,
+            idVenta,
+          ]                                        
+        );
+        await DatabaseProvider.db.rawQuery(
+          "UPDATE Cliente "
+          "SET nombre=?,"
+          "primerApellido=?,"
+          "segundoApellido=?,"
+          "alias=?,"
+          "direccion=?,"
+          "ciudad=?,"
+          "departamento=?,"
+          "telefono=?,"
+          "actividadEconomica=?,"
+          "documento=?,"
+          "fecha=?,"
+          "estado=?,"
+          "usuario=? "
+          "WHERE idCliente=? "
+          ,[
+            nombre,
+            primerApellido,
+            segundoApellido,
+            alias,
+            direccion,
+            ciudad,
+            departamento,
+            telefono,
+            actividadEconomica,
+            documento,
+            now.millisecondsSinceEpoch,
+            'debe',
+            usuarioGlobal,
+            idCliente,
+          ]
+        );
+        var agenda =await DatabaseProvider.db.rawQuery("SELECT * FROM Agendamiento WHERE documento = ?",[documento]);
+        if(agenda.length>0){
+          await DatabaseProvider.db.rawQuery(
+            " DELETE FROM Agendamiento"
+            " WHERE documento = ? ",[documento]                                        
           );
-          var agenda =await DatabaseProvider.db.rawQuery("SELECT * FROM Agendamiento WHERE documento = ?",[documento]);
-          if(agenda.length>0){
-            await DatabaseProvider.db.rawQuery(
-              " DELETE FROM Agendamiento"
-              " WHERE documento = ? ",[documento]                                        
-            );
-          }
-          await DatabaseProvider.db.addToDatabase(venta);
-          var mapa = {
-            "respuesta":this.validacion = true,
-            "motivo":"Venta creada correctamente"
-          };
-          return mapa; 
+        }
+        var mapa = {
+          "respuesta":this.validacion = true,
+          "motivo":"Venta creada correctamente"
+        };
+        return mapa; 
         // }else{
         //   var mapa = {
         //     "respuesta":this.validacion = true,
@@ -319,6 +376,85 @@ class Insertar {
         //   };
         //   return mapa; 
         // }
+      }else if(res.length >0 && tipo==true && historial){
+        await DatabaseProvider.db.rawQuery(
+          "UPDATE Cliente "
+          "SET nombre=?,"
+          "primerApellido=?,"
+          "segundoApellido=?,"
+          "alias=?,"
+          "direccion=?,"
+          "ciudad=?,"
+          "departamento=?,"
+          "telefono=?,"
+          "actividadEconomica=?,"
+          "documento=?,"
+          "fecha=?,"
+          "estado=?,"
+          "usuario=? "
+          "WHERE idCliente=? "
+          ,[
+            nombre,
+            primerApellido,
+            segundoApellido,
+            alias,
+            direccion,
+            ciudad,
+            departamento,
+            telefono,
+            actividadEconomica,
+            documento,
+            now.millisecondsSinceEpoch,
+            'debe',
+            usuarioGlobal,
+            idCliente,
+          ]
+        );
+        final venta = Venta(
+          idVenta: now.millisecondsSinceEpoch.toString().trim(),
+          documento:documento,
+          venta:totalVenta,
+          cuotas:cuota,
+          fecha:
+          //1649658030000,
+          now.millisecondsSinceEpoch,
+          fechaPago: fechaPagara.millisecondsSinceEpoch,
+          interes:intereses,
+          numeroCuota:0,
+          valorCuota: coutaPagar,
+          saldo:totalVenta, 
+          estado:"debe",
+          usuario:usuarioGlobal, 
+          frecuencia:frecuencia,
+          solicitado:valorNeto,
+          valorTemporal: 0,
+          cuotasTemporal:0,
+          estadoTemporal:"debe",
+          motivo:"Prestamo",
+          orden: now.millisecondsSinceEpoch,
+          fechaTexto:fechaConsulta.trim(),
+          ruta:"no",
+          actualizar:'si',
+          day: day,
+          diaRecoleccion: diaRecoleccion
+        );
+        var agenda =await DatabaseProvider.db.rawQuery("SELECT * FROM Agendamiento WHERE documento = ?",[documento]);
+        if(agenda.length>0){
+          await DatabaseProvider.db.rawQuery(
+            " DELETE FROM Agendamiento"
+            " WHERE documento = ? ",[documento]                                        
+          );
+          await DatabaseProvider.db.rawQuery(
+            " DELETE FROM Cliente"
+            " WHERE documento = ? AND estado = ? ",[documento,'pago']                                        
+          );
+        }
+        await DatabaseProvider.db.addToDatabase(venta);
+        var mapa = {
+          "respuesta":this.validacion = true,
+          "motivo":"Venta creada correctamente"
+        };
+        return mapa; 
       }else{
         var mapa = {
           "respuesta":this.validacion = false,
@@ -802,7 +938,7 @@ class Insertar {
     return list;
   }
 
-  Future <List<HistorialVenta>> historialRecoleccion(documento)async{  
+  Future <List<HistorialVenta>> historialRecoleccion(idVenta)async{  
     var res =await DatabaseProvider.db.rawQuery(
       " SELECT HistorialVenta.documento,"
         "HistorialVenta.fechaRecoleccion,"
@@ -812,7 +948,7 @@ class Insertar {
         "HistorialVenta.novedad,"
         "HistorialVenta.usuario "
         "FROM HistorialVenta "
-        " WHERE HistorialVenta.documento = ? ORDER BY HistorialVenta.fechaRecoleccion DESC ",[documento]                                          
+        " WHERE HistorialVenta.idVenta = ? ORDER BY HistorialVenta.fechaRecoleccion DESC ",[idVenta]                                          
     );
     List<HistorialVenta> list = res.map((c) => HistorialVenta.fromMap(c)).toList();
     return list;
@@ -885,7 +1021,7 @@ class Insertar {
         "HistorialVenta.numeroCuota,"
         "sum(DISTINCT HistorialVenta.valorCuota) as valorCuotas"
         " FROM HistorialVenta "
-        " WHERE HistorialVenta.documento IN(SELECT documento FROM Venta WHERE fechaTexto = ? ) ",[fechaConsulta]                                        
+        " WHERE HistorialVenta.idVenta IN(SELECT idVenta FROM Venta WHERE fechaTexto = ? ) ",[fechaConsulta]                                        
     );
     List<ConteoDebe> list = res.map((c) => ConteoDebe.fromMap(c)).toList();
     return this._recolectadoMismoDia=list;
@@ -1005,7 +1141,7 @@ class Insertar {
           "Venta.cuotasTemporal,"
           "Venta.saldo"
           " FROM Venta "
-          " WHERE Venta.documento = ? ",[item.documento]                                          
+          " WHERE Venta.idVenta = ? ",[item.idVenta]                                          
         );
       
         List<Venta> list = res.map((c) => Venta.fromMap(c)).toList();
@@ -1028,7 +1164,7 @@ class Insertar {
               "cuotasTemporal = ?,"
               "actualizar = ?,"
               "ruta = ?"
-              " WHERE documento = ? ",[cantidadCuota,nuevoSaldo,"abono",valorIngresar,cantidadCuotas,"si","no",item.documento]                                      
+              " WHERE idVenta  = ? ",[cantidadCuota,nuevoSaldo,"abono",valorIngresar,cantidadCuotas,"si","no",item.idVenta]                                      
             );
           }else{
             await DatabaseProvider.db.rawQuery(
@@ -1040,12 +1176,12 @@ class Insertar {
               "cuotasTemporal = ?,"
               "actualizar = ?,"
               "ruta = ?"
-              " WHERE documento = ? ",[cantidadCuota,nuevoSaldo,"abono",now.millisecondsSinceEpoch,valorIngresar,cantidadCuotas,"si","no",item.documento]                                      
+              " WHERE idVenta = ? ",[cantidadCuota,nuevoSaldo,"abono",now.millisecondsSinceEpoch,valorIngresar,cantidadCuotas,"si","no",item.idVenta]                                      
             );
           }
           
           await DatabaseProvider.db.rawQuery(
-            "DELETE FROM HistorialVenta WHERE documento = ? AND fecha = ?",[item.documento,fecha]                                      
+            "DELETE FROM HistorialVenta WHERE idVenta = ? AND fecha = ?",[item.idVenta,fecha]                                      
           );
 
           final historial = HistorialVenta(
@@ -1081,7 +1217,7 @@ class Insertar {
                 "motivo = ?,"
                 "actualizar = ?,"
                 "ruta = ?"
-                " WHERE documento = ? ",["pago",estadoTemporal,"pago","si","no",item.documento]                                            
+                " WHERE idVenta = ? ",["pago",estadoTemporal,"pago","si","no",item.idVenta]                                            
             );
 
             await DatabaseProvider.db.rawQuery(
@@ -1089,7 +1225,7 @@ class Insertar {
               " WHERE documento = ? ",["pago",item.documento]                                        
             );
             await DatabaseProvider.db.rawQuery(
-              "DELETE FROM HistorialVenta WHERE documento = ? AND fecha = ?",[item.documento,fecha]                                      
+              "DELETE FROM HistorialVenta WHERE idVenta = ? AND fecha = ?",[item.idVenta,fecha]                                      
             );
 
             final historialPago = HistorialVenta(
@@ -1125,7 +1261,7 @@ class Insertar {
           "ruta = ?,"
           "actualizar = ?,"
           "orden = ?"
-          " WHERE documento = ? ",["Bloqueado","no","si",now.millisecondsSinceEpoch,item.documento]                                            
+          " WHERE idVenta = ? ",["Bloqueado","no","si",now.millisecondsSinceEpoch,item.idVenta]                                            
       );
       await DatabaseProvider.db.rawQuery(
         " UPDATE Cliente SET estado = ?"
@@ -1151,7 +1287,7 @@ class Insertar {
     
   }
   
-  reportarMotivo(item,String novedad)async{
+  reportarMotivo(Ventas item,String novedad)async{
      String fecha = format.format(now);
     // await DatabaseProvider.db.rawQuery(
     //   "UPDATE Venta SET motivo =?,"
@@ -1161,7 +1297,7 @@ class Insertar {
     //   " WHERE documento =? ",[novedad,'no',now.millisecondsSinceEpoch,0,item.documento]                                      
     // );
     await DatabaseProvider.db.rawQuery(
-      "DELETE FROM HistorialVenta WHERE documento = ? AND fecha = ?",[item.documento,fecha]                                      
+      "DELETE FROM HistorialVenta WHERE idVenta = ? AND fecha = ?",[item.idVenta,fecha]                                      
     );
     var res = await DatabaseProvider.db.rawQuery(
       " SELECT "
@@ -1178,7 +1314,7 @@ class Insertar {
       "Venta.estadoTemporal,"
       "Venta.saldo"
       " FROM Venta "
-      " WHERE Venta.documento = ? ",[item.documento]                                          
+      " WHERE Venta.idVenta = ? ",[item.idVenta]                                          
     );
     List<Venta> list = res.map((c) => Venta.fromMap(c)).toList();
     double numeroCuota;
@@ -1203,7 +1339,7 @@ class Insertar {
       "cuotasTemporal = ?,"
       "actualizar = ?,"
       "ruta = ?"
-      " WHERE documento = ? ",[numeroCuota,nuevoSaldo,novedad,now.millisecondsSinceEpoch,'debe',cantidadCuota,"si","no",item.documento]                                      
+      " WHERE idVenta = ? ",[numeroCuota,nuevoSaldo,novedad,now.millisecondsSinceEpoch,'debe',cantidadCuota,"si","no",item.idVenta]                                      
     );
     await DatabaseProvider.db.rawQuery(
       " UPDATE Cliente SET estado = ?"
@@ -1240,7 +1376,7 @@ class Insertar {
     // }
     await DatabaseProvider.db.rawQuery(
       " DELETE FROM HistorialVenta"
-      " WHERE documento = ? ",[item.documento]                                        
+      " WHERE idVenta = ? ",[item.idVenta]                                        
     );
     await DatabaseProvider.db.rawQuery(
       " DELETE FROM Cliente"
@@ -2645,6 +2781,31 @@ class Insertar {
     return true;
   }
 
+  reporteDiarioAdmin(recolectado,gasto,ventas,asignado,entrega,valorBaseDia,usuario)async{
+    final format = DateFormat("yyyy-MM-dd");
+    var outputFormat = DateFormat('hh:mm a');
+    var fecha = format.format(now);
+    var hora = outputFormat.format(now);
+    Map mapa={
+      'fecha':fecha,
+      'hora': hora,
+      'token':tokenGlobal, 
+      'recolectado':recolectado,
+      'gasto':gasto,
+      'ventas':ventas,
+      'usuario':usuario,
+      'asignado':asignado,
+      'entrega':entrega,
+      'retiro':valorBaseDia,
+    };
+     _enviarProduccion.add(mapa);
+
+    Map parametro={
+      "lista":_enviarProduccion
+    };
+    await callMethodOne('/produccion.php',parametro);
+  }
+
   borrarTablas()async{
     await DatabaseProvider.db.deleteAll(new Clave());
     await DatabaseProvider.db.deleteAll(new Ciudad());
@@ -2669,6 +2830,29 @@ class Insertar {
         'fecha':fecha,
         'base':base,
         'usuario':usuarioGlobal,
+      };
+      _parametrosEnviados=[];
+      _parametrosEnviados.add(mapa);
+
+      Map parametro={
+        "lista":_parametrosEnviados
+      };
+      await callMethodOne('/insertarBase.php',parametro);
+    }
+  }
+
+  baseSiguienteAdmin(double  base,usuario)async{
+    if(base > 0){
+      
+      final format = DateFormat("yyyy-MM-dd");
+      var newDate = new DateTime(now.year, now.month, now.day+1);
+      var fecha = format.format(newDate);
+      
+      Map mapa={
+        'token':tokenGlobal, 
+        'fecha':fecha,
+        'base':base,
+        'usuario':usuario,
       };
       _parametrosEnviados=[];
       _parametrosEnviados.add(mapa);
@@ -2794,6 +2978,28 @@ class Insertar {
       "lista":_parametrosEnviados
     };
     var map = await callMethodList('/listarGastos.php',parametro);
+    List<ReporteGasto> reporteGasto=[];
+    for ( var prod in map)
+    {
+      reporteGasto.add(ReporteGasto.fromJson(prod));
+    }
+    return this._reporteGasto = reporteGasto;
+  }
+  Future <List<ReporteGasto>>gastosRutaAdmin(usuario)async{
+    String fechaConsulta = format.format(now);
+    this._reporteGasto=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'fecha':fechaConsulta,
+      'usuario':usuario,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/listarSumaGasto.php',parametro);
     List<ReporteGasto> reporteGasto=[];
     for ( var prod in map)
     {
@@ -3174,7 +3380,7 @@ class Insertar {
   }
 
    Future<List<ConteoDebeAdmin>> valoresRecolectadosAdmin(fechaInicial,fechaFinal,usuario)async{
-    var fechaConsulta = format.format(now);
+    String fechaConsulta = format.format(now);
     _recolectadosAdmin=[];
     Map mapa={
       'token':tokenGlobal,
@@ -3245,6 +3451,30 @@ class Insertar {
     return this._ventasHoyGeneral= totalProduccionAdmin;
   }
 
+  Future<List<AsignarAdmin>> dineroAsignadoAdmin(usuario)async{
+    var fechaConsulta = format.format(now);
+    _recolectadosAdmin=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'fechaTexto':fechaConsulta,
+      'usuario':usuario,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/listarBaseRutaAdmin.php',parametro);
+    List<AsignarAdmin> totalProduccionAdmin=[];
+    for ( var prod in map)
+    {
+      totalProduccionAdmin.add(AsignarAdmin.fromMap(prod));
+    }
+    return this._asignadoAdmin= totalProduccionAdmin;
+  }
+
+
   Future<List<ConteoDebeAdmin>> valoresVentasHoyUsuarioAdmin(usuario)async{
     var fechaConsulta = format.format(now);
     _ventasHoyGeneral=[];
@@ -3267,7 +3497,9 @@ class Insertar {
     }
     return this._ventasHoyUsuario= totalProduccionAdmin;
   }
-
+  obtenerBaseAdmin(){
+    return this._asignadoAdmin;
+  }
   obtenerClientesVisitarAdmin(){
     return this._porRecolectarAdmin;
   }
@@ -3320,7 +3552,7 @@ class Insertar {
   callMethodOne(String webservice,params)async {
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+        response = await http.post(Uri.parse(urlAntioquia+webservice), headers: {
       "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
     }catch(e){
@@ -3343,7 +3575,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-      response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+      response = await http.post(Uri.parse(urlAntioquia+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -3361,7 +3593,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+        response = await http.post(Uri.parse(urlAntioquia+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;

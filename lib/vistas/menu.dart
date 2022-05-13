@@ -169,6 +169,8 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       session.actualizarVentas().then((_){
         session.enviarHistorial().then((_){
           session.baseConsulta().then((_){
+            session.enviarGastos().then((_){
+              });
           });
         });
       });
@@ -209,7 +211,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
 
   nuevaVenta(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => NuevaVentaView(false,false))
+      MaterialPageRoute(builder: (context) => NuevaVentaView(false,false,false))
     );
   }
   asignarBaseRuta(BuildContext context) {
@@ -386,7 +388,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   }
     estadoRutaAdmin(BuildContext context) {
     return ListTile(
-      title: Text("Estado ruta",
+      title: Text("Estado-Cierre ruta",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       leading: Icon(
         Icons.point_of_sale,

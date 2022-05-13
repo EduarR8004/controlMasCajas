@@ -1,22 +1,19 @@
-import 'package:controlmas/utiles/Informacion.dart';
-import 'package:controlmas/vistas/home.dart';
-import 'package:controlmas/vistas/widgets/boton.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:controlmas/vistas/menu.dart';
-import 'package:controlmas/modelos/Usuarios.dart';
-import 'package:controlmas/modelos/AsignarAdmin.dart';
+import 'package:controlmas/modelos/Gasto.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:controlmas/modelos/ReporteGasto.dart';
+import 'package:controlmas/modelos/Asignar.dart';
+import 'package:controlmas/modelos/Usuarios.dart';
 import 'package:controlmas/modelos/ConteoDebeAdmin.dart';
 import 'package:controlmas/controlador/InsertarVenta.dart';
-class CerrarCajaAdministrador extends StatefulWidget {
+class ReporteCajaAdministrador extends StatefulWidget {
 
   @override
-  _CerrarCajaAdministradorState createState() => _CerrarCajaAdministradorState();
+  _ReporteCajaAdministradorState createState() => _ReporteCajaAdministradorState();
 }
 
-class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
+class _ReporteCajaAdministradorState extends State<ReporteCajaAdministrador> {
   String dia;
   String ini;
   String ffinal;
@@ -25,20 +22,17 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
   String usuario;
   double retiro=0;
   ProgressDialog pr;
+  List<Gasto> gastos;
   bool mostrar= false;
   String fechaConsulta;
   FocusNode retiroNode;
   String selectedRegion;
   Menu menu = new Menu();
-  double valorEntrega;
-  DateTime parseFinal;
-  ReporteGasto _gastos;
-  DateTime parseInicial;
   List<Usuario> users=[];
   List<Usuario> _users=[];
-  AsignarAdmin _asignado;
-  List<ReporteGasto> gastos;
-  List<AsignarAdmin> asignado;
+  DateTime parseFinal;
+  DateTime parseInicial;
+  List<Asignar> asignado=[];
   ConteoDebeAdmin _nuevaVenta;
   ConteoDebeAdmin _recolectado;
   ConteoDebeAdmin _porRecolectar;
@@ -89,14 +83,6 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
     return nuevaVenta;
   }
 
-  Future<List<ReporteGasto>>gastosRutaAdmin()async{
-    var session= Insertar();
-    await session.gastosRutaAdmin(usuario).then((_){
-      gastos=session.obtenerGastosFecha();
-    });
-    return gastos;
-  }
-
   Future<List<ConteoDebeAdmin>>valoresVentasNuevasGeneral()async{
     var session= Insertar();
     await session.totalValoresVentasAdmin().then((_){
@@ -104,6 +90,14 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
     });
     return totalNuevaVenta;
   }
+
+  // Future<List<Gasto>>gastosDia()async{
+  //   var session= Insertar();
+  //   await session.consultarGasto().then((_){
+  //     gastos=session.obtenerGastos();
+  //   });
+  //   return gastos;
+  // }
 
   Future<List<ConteoDebeAdmin>> valoresPorRecolectar(usuario)async{
     var session= Insertar();
@@ -113,13 +107,13 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
      return porRecolectar;
   }
 
-  Future<List<AsignarAdmin>> dineroAsignado()async{
-    var session= Insertar();
-     await session.dineroAsignadoAdmin(usuario).then((_){
-       asignado=session.obtenerBaseAdmin();
-     });
-     return asignado;
-  }
+  // Future<List<ConteoDebe>> nuevasVentas()async{
+  //   var session= Insertar();
+  //    await session.ventasNuevas().then((_){
+  //      nuevaVenta=session.obtenerNuevasVentas();
+  //    });
+  //    return nuevaVenta;
+  // }
 
   Future <List<Usuario>> listarUsuario()async{
     var usuario= Insertar();
@@ -138,57 +132,6 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
       });
       return users;
     }
-  }
-  
-  validarCierre(){
-    warningDialog(
-      context, 
-      "Desea realizar el cierre de la ruta? El usuario seleccionado no podra seguir actualizando la información",
-      negativeText: "Si",
-      negativeAction: (){
-        crearCierre();
-      },
-      neutralText: "No",
-      neutralAction: (){
-      },
-    );
-  }
-
-  crearCierre()async{
-    await pr.show();
-    Insertar session= Insertar();
-    session.baseSiguienteAdmin(valorEntrega,usuario).then((_){
-      session.reporteDiarioAdmin(_recolectado.valorCuotas.toString(),_gastos.valor.toString(),_nuevaVenta.venta.toString(),_asignado.base,valorEntrega.toString(),valorEntrega.toString(),usuario).then((_){
-        pr.hide();
-        successDialog(
-          context, 
-          "Cuadre de caja exitoso",
-          neutralAction: (){
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Home(),)); 
-            });
-          },
-        );
-      }).catchError( (onError){
-        pr.hide();
-        warningDialog(
-          context, 
-          "Error de conexión, por favor inténtelo de nuevo",
-          neutralAction: (){
-            
-          },
-        );                                     
-      });
-    }).catchError( (onError){
-      pr.hide();
-      warningDialog(
-        context, 
-        "Error de conexión, por favor inténtelo de nuevo",
-        neutralAction: (){
-          
-        },
-      );                                     
-    });
   }
 
   Widget dataBody() {
@@ -262,61 +205,58 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
     );
   }
 
+  // Widget tablaEntrega(){
+  //   return FutureBuilder<double>(
+  //     //llamamos al método, que está en la carpeta db file database.dart
+  //     future: porEntregar(),
+  //     builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+  //       if (snapshot.hasData) {
+  //         return Padding(
+  //           padding: const EdgeInsets.all(8.0),
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.start,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text("Entrega: "+entrega.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+  //             ],
+  //           ),
+  //         );
+  //       }else {
+  //         return Center(child: CircularProgressIndicator());
+  //       }
+  //     },
+  //   );
+  // }
 
-  Widget tablaGasto(){
-  return FutureBuilder<List<ReporteGasto>>(
-    //llamamos al método, que está en la carpeta db file database.dart
-    future: gastosRutaAdmin(),
-    builder: (BuildContext context, AsyncSnapshot<List<ReporteGasto>> snapshot) {
-      if (snapshot.hasData) {
-        _gastos = gastos[0];
-        valorEntrega=(_asignado.base+_recolectado.valorCuotas)-(_nuevaVenta.venta+_gastos.valor);
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Gastos: "+_gastos.valor.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
-              Text("Entrega: "+valorEntrega.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)) 
-            ],
-          ),
-        );
-      }else {
-        return Center(child: CircularProgressIndicator());
-      }
-    },
-  );
-}
-
- 
-
-  Widget tablaBase(){
-  return FutureBuilder<List<AsignarAdmin>>(
-    //llamamos al método, que está en la carpeta db file database.dart
-    future: dineroAsignado(),
-    builder: (BuildContext context, AsyncSnapshot<List<AsignarAdmin>> snapshot) {
-      if (snapshot.hasData) {
-        _asignado = asignado[0];
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-                  Text("Dinero asignado: "+_asignado.base.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
-                  // SizedBox(width: 10),
-                  // Text("Base: "+_asignado.valor.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
-                
-            ],
-          ),
-        );
-      }else {
-        return Center(child: CircularProgressIndicator());
-      }
-    },
-  );
-}
+//   Widget tablaBase(){
+//   return FutureBuilder<List<ConteoDebe>>(
+//     //llamamos al método, que está en la carpeta db file database.dart
+//     future: valoresPorRecolectar(),
+//     builder: (BuildContext context, AsyncSnapshot<List<ConteoDebe>> snapshot) {
+//       if (snapshot.hasData) {
+//         _porRecolectar = porRecolectar[0];
+//         return Padding(
+//           padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Row(
+//                 children: [
+//                   Text("Base Ini: "+baseInicial.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: Colors.green)),
+//                   SizedBox(width: 10),
+//                   Text("Base Act: "+_asignado.valor.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+//                 ],
+//               ),
+//             ],
+//           ),
+//         );
+//       }else {
+//         return Center(child: CircularProgressIndicator());
+//       }
+//     },
+//   );
+// }
   Widget tablaPorRecolectar(){
   return FutureBuilder<List<ConteoDebeAdmin>>(
     //llamamos al método, que está en la carpeta db file database.dart
@@ -356,7 +296,7 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Nuevas Ventas: "+_nuevaVenta.documentos.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
-              Text("Valor : "+_nuevaVenta.venta.toString() ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+              Text("Valor : "+_nuevaVenta.venta.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
             ],
           ),
         );
@@ -418,22 +358,6 @@ Widget tablaRecolectado(){
 
  @override
   Widget build(BuildContext context) {
-    pr = new ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
-    pr.style(
-      message: 'Sincronizando la información',
-      borderRadius: 10.0,
-      backgroundColor: Colors.white,
-      progressWidget: CircularProgressIndicator(),
-      elevation: 10.0,
-      insetAnimCurve: Curves.easeInOut,
-      progress: 0.0,
-      maxProgress: 100.0,
-      textAlign:TextAlign.center,
-      progressTextStyle: TextStyle(
-      color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
-      messageTextStyle: TextStyle(
-      color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
-    );
     return WillPopScope(
     onWillPop: () async => false,
       child:SafeArea(
@@ -453,7 +377,7 @@ Widget tablaRecolectado(){
                 key: keyForm,
                   child:Container( 
                     width: 700,
-                    height:500,
+                    height:400,
                     alignment: Alignment.center,
                     margin: new EdgeInsets.fromLTRB(0,20,0,0),
                     color:Colors.white,
@@ -510,32 +434,16 @@ Widget tablaRecolectado(){
           ),
         ):Container(),
         separador(),
-        // Container(height:20,),
-        // mostrar?Text('Ventas Generales',style:TextStyle(fontWeight: FontWeight.bold,color: Colors.blueGrey,fontSize:20,)):Container(),
-        // Container(height:10,),
-        // mostrar?
-        // Expanded(
-        //   child: SizedBox(
-        //     height:10,
-        //     child:tablaNuevaVentaGeneral(),
-        //   ),
-        // ):Container(),   
+        Container(height:20,),
+        mostrar?Text('Ventas Generales',style:TextStyle(fontWeight: FontWeight.bold,color: Colors.blueGrey,fontSize:20,)):Container(),
+        Container(height:10,),
         mostrar?
         Expanded(
           child: SizedBox(
             height:10,
-            child:tablaBase(),
+            child:tablaNuevaVentaGeneral(),
           ),
-        ):Container(),  
-        separador(), 
-        mostrar?
-        Expanded(
-          child: SizedBox(
-            height:10,
-            child:tablaGasto(),
-          ),
-        ):Container(),
-        mostrar?Boton(onPresed: validarCierre,texto:'Aceptar',):Container(),
+        ):Container(),        
       ]
     );
   }

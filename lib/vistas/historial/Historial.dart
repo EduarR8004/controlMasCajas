@@ -174,7 +174,7 @@ class _HistorialState extends State<Historial> {
             positiveText:'Ventas',
             positiveAction:(){
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => NuevaVentaView(true,true,cliente:item,))); }
+                Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => NuevaVentaView(true,true,true,cliente:item,))); }
               );
             } 
           ); 
