@@ -45,7 +45,7 @@ class _RecoleccionState extends State<Recoleccion> {
   double cuotarecolectada,cuotaRegistro,coutaIngresar,valorIngresar;
   TextStyle textStyleDataCell = TextStyle(fontSize:15,fontWeight:FontWeight.bold);
   List<String> novedad=["Reportar Novedad","No pago","No encontrado","Pasar mañana"];
-  List<String> cantidadCuotas=["Cantidad de Cuotas","Otra","Novedad","Bloqueado","Eliminar","1","2","3","4","5","6","7","8","9","10"];
+  List<String> cantidadCuotas=["Cantidad de Cuotas","Otra","No pago","Bloqueado","Eliminar","1","2","3","4","5","6","7","8","9","10"];
   
   @override
   void initState() {
@@ -195,11 +195,88 @@ class _RecoleccionState extends State<Recoleccion> {
       throw 'Could not launch $url';
     }
   }
+
+  pagoSinClave(){
+    Insertar session= Insertar();
+    session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave:'Continuar' )
+    .then((data) {
+      if(data['respuesta']==true){
+        successDialog(
+          context, 
+          "Recolección exitosa",
+          neutralAction: (){
+            // session.obtenerCliente(widget.data.documento).then((data) {
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => Recoleccion(data:data))
+            //   );
+            // });
+            
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
+            );
+          },
+        );
+      }else{
+        warningDialog(
+          context, 
+          data['mensaje'].toString(),
+          neutralAction: (){
+          },
+        );
+      } 
+    }).catchError( (onError){
+      warningDialog(
+        context, 
+        "Por favor verificar la información ingresada",
+        neutralAction: (){
+          
+        },
+      );                                     
+    });
+  }
+
+  pagoConClave(){
+    Insertar session= Insertar();
+    session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave: claveNueva)
+    .then((data) {
+      if(data['respuesta']==true){
+        successDialog(
+          context, 
+          "Recolección exitosa",
+          neutralAction: (){ 
+            // session.obtenerCliente(widget.data.documento).then((data) {
+            //   Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => Recoleccion(data:data))
+            //   );
+            // });
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
+            );
+          },
+        );
+      }else{
+        warningDialog(
+          context, 
+          data['mensaje'].toString(),
+          neutralAction: (){
+          },
+        );
+      } 
+    }).catchError( (onError){
+      warningDialog(
+        context, 
+        "Por favor verificar la información ingresada",
+        neutralAction: (){
+          
+        },
+      );                                     
+    });
+  }
   _crearRecoleccion()async{  
     if(reportar){
-      if(dropdown!='Reportar Novedad'){
+      if(dropdownCuotas=='No pago'){
         var session= Insertar();
-        session.reportarMotivo(widget.data,dropdown)
+        session.reportarMotivo(widget.data,dropdownCuotas)
         .then((_) {
           successDialog(
             context, 
@@ -224,7 +301,7 @@ class _RecoleccionState extends State<Recoleccion> {
       }
       
     }else{
-      var session= Insertar();
+      
       if(otra){
         coutaIngresar=double.parse(couta.text);
         cuotaRegistro = double.parse(widget.data.valorCuota.toString());
@@ -284,41 +361,22 @@ class _RecoleccionState extends State<Recoleccion> {
           //     );
           //   }
           // }else{
-            session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave:'Continuar' )
-            .then((data) {
-              if(data['respuesta']==true){
-                successDialog(
-                  context, 
-                  "Recolección exitosa",
-                  neutralAction: (){
-                    // session.obtenerCliente(widget.data.documento).then((data) {
-                    //   Navigator.of(context).push(
-                    //     MaterialPageRoute(builder: (context) => Recoleccion(data:data))
-                    //   );
-                    // });
-                    
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
-                    );
-                  },
-                );
-              }else{
-                warningDialog(
-                  context, 
-                  data['mensaje'].toString(),
-                  neutralAction: (){
-                  },
-                );
-              } 
-            }).catchError( (onError){
-              warningDialog(
-                context, 
-                "Por favor verificar la información ingresada",
-                neutralAction: (){
-                  
-                },
-              );                                     
-            });
+          if(coutaIngresar  == widget.data.saldo  )
+          {
+            warningDialog(
+              context, 
+              'Esta cancelando el total del credito, ya no podra modificar la venta. Desea continuar?',
+              negativeText: "No",
+              negativeAction: (){
+              },
+              neutralText: "Si",
+              neutralAction: (){
+                pagoSinClave();
+              },
+            );
+          }else{
+            pagoSinClave();
+          }
           //}
         }
       }else{  
@@ -340,47 +398,29 @@ class _RecoleccionState extends State<Recoleccion> {
             },
           );
         }else{
-          session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave: claveNueva)
-          .then((data) {
-            if(data['respuesta']==true){
-              successDialog(
-                context, 
-                "Recolección exitosa",
-                neutralAction: (){ 
-                  // session.obtenerCliente(widget.data.documento).then((data) {
-                  //   Navigator.of(context).push(
-                  //     MaterialPageRoute(builder: (context) => Recoleccion(data:data))
-                  //   );
-                  // });
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => RecoleccionView(boton:false,))
-                  );
-                },
-              );
-            }else{
-              warningDialog(
-                context, 
-                data['mensaje'].toString(),
-                neutralAction: (){
-                },
-              );
-            } 
-          }).catchError( (onError){
+          if(coutaIngresar  == widget.data.saldo  )
+          {
             warningDialog(
               context, 
-              "Por favor verificar la información ingresada",
-              neutralAction: (){
-                
+              'Esta cancelando el total del credito, ya no podra modificar la venta. Desea continuar?',
+              negativeText: "No",
+              negativeAction: (){
               },
-            );                                     
-          });
+              neutralText: "Si",
+              neutralAction: (){
+                pagoConClave();
+              },
+            );
+          }else{
+            pagoConClave();
+          }
         }
       }
     }
   }
 
   void _alCambiar(newValue){
-    if(newValue!="Cantidad de Cuotas" && newValue!="Otra"&& newValue!="Novedad" && newValue!="Bloqueado" && newValue!="Eliminar")
+    if(newValue!="Cantidad de Cuotas" && newValue!="Otra"&& newValue!="No pago" && newValue!="Bloqueado" && newValue!="Eliminar")
     { 
       setState(() {
         dropdownCuotas =newValue.toString();
@@ -401,7 +441,7 @@ class _RecoleccionState extends State<Recoleccion> {
         clave= false;
       });
       
-    }else if(newValue=="Novedad"){
+    }else if(newValue=="No pago"){
       setState(() {
         dropdownCuotas =newValue.toString();
         reportar = true;   
@@ -582,7 +622,7 @@ class _RecoleccionState extends State<Recoleccion> {
           padding: const EdgeInsets.all(8.0),
           child: Text("Dias de mora :"+" " +diferencia.toString(),style: TextStyle(fontSize:15,fontWeight:FontWeight.bold,color: Colors.red),),
         ):Container(),
-        reportar?Container():
+        //reportar?Container():
         formItemsDesign(
           Icons.check,
           DropdownSoatView(texto:dropdownCuotas ,documentosLista:cantidadCuotas,alCambiar: _alCambiar,dropdownValor: dropdownCuotas),
@@ -635,10 +675,10 @@ class _RecoleccionState extends State<Recoleccion> {
         //   ),
         // )
         // :Container(),
-        reportar?formItemsDesign(
-          Icons.check,
-          DropdownSoatView(texto:dropdown ,documentosLista:novedad,alCambiar: _alCambiarNovedad,dropdownValor: dropdown),
-        ):Container(),
+        // reportar?formItemsDesign(
+        //   Icons.check,
+        //   DropdownSoatView(texto:dropdown ,documentosLista:novedad,alCambiar: _alCambiarNovedad,dropdownValor: dropdown),
+        // ):Container(),
         eliminar?Container():Boton(onPresed: _crearRecoleccion,texto:'Aceptar',),
         eliminar?Boton(onPresed: _eliminarVenta,texto:'Eliminar',):Container(),
         Expanded(

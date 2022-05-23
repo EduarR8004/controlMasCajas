@@ -1,5 +1,6 @@
 class Cliente {
   String idCliente;
+  String idVenta;
   String nombre;
   String primerApellido;
   String segundoApellido;
@@ -18,6 +19,7 @@ class Cliente {
 
   Cliente({
     this.nombre,
+    this.idVenta,
     this.primerApellido,
     this.segundoApellido,
     this.alias,
@@ -40,6 +42,7 @@ class Cliente {
   Map<String, dynamic>toMap() {
     return {
       "documento":documento,
+      "idVenta":idVenta,
       "nombre": nombre,
       "direccion":direccion,
       "telefono":telefono,
@@ -60,6 +63,7 @@ class Cliente {
   // recibir lo datos pasar de Map a json
   factory Cliente.fromMap(Map<String ,dynamic>json)=> new Cliente(
     nombre:json["nombre"],
+    idVenta:json["idVenta"],
     direccion:json["direccion"],
     telefono:json["telefono"],
     ciudad:json["ciudad"],
