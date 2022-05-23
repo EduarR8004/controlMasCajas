@@ -23,7 +23,7 @@ class _GastosState extends State<Gastos> {
   TextEditingController  observaciones = new TextEditingController();
   GlobalKey<FormState> keyForm = new GlobalKey();
   String dropdown ="Ingrese el gasto";
-  List<String> listaGasto=["Ingrese el gasto","Comisión","Moto","Plan celular","Gasolina","Alimentación","Otros"];
+  List<String> listaGasto=["Ingrese el gasto","Alimentación","Comisión","Gasolina","Moto","Plan celular","Programa","Sueldo supervisor","Otros"];
   Menu menu = new Menu();
   @override
   void initState() {

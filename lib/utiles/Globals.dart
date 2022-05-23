@@ -5,3 +5,4 @@ String usuarioGlobal;
 String zona;
 String administrador;
 double baseInicial=0.0;
+double retiroAlmacenado=0.0;

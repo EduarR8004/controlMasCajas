@@ -1,3 +1,4 @@
+import 'package:controlmas/modelos/CajaInicial.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
@@ -22,22 +23,23 @@ class _CerrarCajaState extends State<CerrarCaja> {
   Gasto _gasto;
   double entrega;
   List partirDia;
-  double retiro=0;
+  double retiro=retiroAlmacenado;
   ProgressDialog pr;
   Asignar _asignado;
-  FocusNode retiroNode;
   List<Gasto> gastos;
+  FocusNode retiroNode;
   Menu menu = new Menu();
   ConteoDebe _nuevaVenta;
   ConteoDebe _recolectado;
   ConteoDebe _porRecolectar;
-  ConteoDebe _recolectadoMismoDia;
   List<Asignar> asignado=[];
   List<ConteoDebe> nuevaVenta;
   List<ConteoDebe> recolectado=[];
-  List<ConteoDebe> recolectadoMismoDia=[];
+  ConteoDebe _recolectadoMismoDia;
   DateTime now = new DateTime.now();
   List<ConteoDebe> porRecolectar=[];
+  List<CajaInicial> asignadoInicial=[];
+  List<ConteoDebe> recolectadoMismoDia=[];
   GlobalKey<FormState> keyForm = new GlobalKey();
   TextStyle textStyleDataCell = TextStyle(fontSize:15,);
   TextEditingController  couta = new TextEditingController();
@@ -54,12 +56,14 @@ class _CerrarCajaState extends State<CerrarCaja> {
     dia=partirDia[0];
     valoresRecolectados();
     valoresPorRecolectar();
+    dineroAsignadoInicial();
     retiroNode.addListener(() {
       if (retiroNode.hasFocus){
         print("tiene el foco");
       } else {
         setState(() {
           retiro=double.parse(baseDia.text); 
+          retiroAlmacenado=retiro;
           tablaGastos(); 
         });
       }
@@ -95,6 +99,14 @@ class _CerrarCajaState extends State<CerrarCaja> {
     });
     base.text= 0.0.toString();
     return asignado;
+  }
+  Future<List<CajaInicial>>dineroAsignadoInicial()async{
+    var session= Insertar();
+    await session.consultarDineroAsignadoInicial().then((_){
+      asignadoInicial=session.obtenerDineroAsignadoInicial();
+    });
+    base.text= 0.0.toString();
+    return asignadoInicial;
   }
   Future <double>porEntregar()async{
     double resultado =(_asignado.valor+_recolectado.valorCuotas)-(_nuevaVenta.venta+_gasto.valor);
@@ -182,7 +194,7 @@ class _CerrarCajaState extends State<CerrarCaja> {
                     Text('|'),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10,0,0,0),
-                      child: Text("Retiro : "+baseDia.text ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: color)),
+                      child: Text("Retiro : "+retiroAlmacenado.toString() ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: color)),
                     ),
                   ],
                 ),
@@ -253,7 +265,17 @@ class _CerrarCajaState extends State<CerrarCaja> {
       },
     );
   }
-  
+  Widget bases(){
+    double resultado;
+    if(asignadoInicial[0].valor > _asignado.valor){
+      resultado=asignadoInicial[0].valor-_asignado.valor;
+    }else if(asignadoInicial[0].valor < _asignado.valor){
+      resultado=_asignado.valor-asignadoInicial[0].valor;
+    }else{
+      resultado =0;
+    }
+     return Text("Día: "+resultado.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:17,));
+  }
   Widget tablaBase(){
   return FutureBuilder<List<ConteoDebe>>(
     //llamamos al método, que está en la carpeta db file database.dart
@@ -270,9 +292,16 @@ class _CerrarCajaState extends State<CerrarCaja> {
             children: [
               Row(
                 children: [
-                  Text("Base Ini: "+baseInicial.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: Colors.green)),
+                  Text("Base",style: TextStyle(fontWeight:FontWeight.bold,fontSize:17)),
                   SizedBox(width: 10),
-                  Text("Base Act: "+_asignado.valor.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+                  Text("Ini: "+asignadoInicial[0].valor.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:17,color: Colors.green)),
+                  SizedBox(width: 10),
+                  bases(),
+                  SizedBox(width: 10),
+                  Text("Act: "+_asignado.valor.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:17,)),
+                  
+                  
+                  
                 ],
               ),
             ],
@@ -541,7 +570,7 @@ Widget tablaRecolectadoMismoDia(){
             //indent: 20,
             //endIndent: 20,
           ),
-          dia=='Saturday'?Container():formItemsDesign(
+          formItemsDesign(
             Icons.money_off,
             TextFormField(
               controller: baseDia,
@@ -558,6 +587,7 @@ Widget tablaRecolectadoMismoDia(){
               onChanged:(text){
                 setState(() {
                   retiro=text==''?0.0:double.parse(text);  
+                  retiroAlmacenado=retiro;
                   tablaGastos();        
                 });
               },
