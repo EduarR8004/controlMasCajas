@@ -124,7 +124,7 @@ class _RecoleccionViewState extends State<RecoleccionView> {
             Text(item.valorCuota.toStringAsFixed(1),style: TextStyle(fontWeight:FontWeight.bold,color: Colors.black,fontSize:18,)),
             iconoEstado,
             SizedBox(width: 12.0),
-            Text(item.valorTemporal.toStringAsFixed(1),style: TextStyle(fontSize:18,color: color)),
+            Text(item.valorDia.toStringAsFixed(1),style: TextStyle(fontSize:18,color: color)),
             
           ],
         ), 

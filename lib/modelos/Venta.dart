@@ -3,6 +3,7 @@ class Venta {
   int fecha;
   String documento;
   double venta;
+  double valorDia;
   double cuotas;
   String fechaTexto;
   int fechaPago;
@@ -29,6 +30,7 @@ class Venta {
     this.idVenta,
     this.documento,
     this.venta,
+    this.valorDia,
     this.cuotas,
     this.fecha,
     this.interes,
@@ -58,6 +60,7 @@ class Venta {
     "fechaPago":fechaPago,
     "documento":documento,
     "venta":venta,
+    "valorDia":valorDia,
     "cuotas":cuotas,
     "fecha":fecha,
     "interes":interes,
@@ -85,6 +88,7 @@ class Venta {
     idVenta:json["idVenta"],
     documento:json["documento"],
     venta:json["venta"],
+    valorDia:json["valorDia"],
     cuotas:json["cuotas"],
     fecha:json["fecha"],
     fechaPago:json["fechaPago"],

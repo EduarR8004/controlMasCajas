@@ -95,20 +95,20 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
             ],
           ),
         ),
+        // Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: Row(
+        //     children: [
+        //       Text('Dinero asignado : ',style:estiloTitulo,),
+        //       Text(widget.cuadre[0].asignado==''?'por favor verificar fechas':widget.cuadre[0].asignado,style:estilo),
+        //     ],
+        //   ),
+        // ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              Text('Dinero asignado : ',style:estiloTitulo,),
-              Text(widget.cuadre[0].asignado==''?'por favor verificar fechas':widget.cuadre[0].asignado,style:estilo),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text('Caja Supervisor : ',style:estiloTitulo,),
+              Text('Base Supervisor Semanal : ',style:estiloTitulo,),
               Text(widget.cuadre[1].asignado==''?'asignar caja a la ruta':widget.cuadre[1].asignado,style:estilo),
             ],
           ),
@@ -117,7 +117,7 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              Text('Ventas : ',style:estiloTitulo,),
+              Text('Ventas Semanal : ',style:estiloTitulo,),
               Text(widget.cuadre[0].ventas==''?'por favor verificar fechas':widget.cuadre[0].ventas,style:estilo),
             ],
           ),
@@ -126,25 +126,7 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              Text('Cobro : ',style:estiloTitulo,),
-              Text(widget.cuadre[0].recolectado==''?'por favor verificar fechas':widget.cuadre[0].recolectado,style:estilo),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text('Entrega : ',style:estiloTitulo,),
-              Text(widget.cuadre[0].entrega==''?'por favor verificar fechas':widget.cuadre[0].entrega,style:estilo),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text('Gasto: ',style:estiloTitulo,),
+              Text('Gasto Semanal: ',style:estiloTitulo,),
               Text(widget.cuadre[0].gasto==''?'por favor verificar fechas':widget.cuadre[0].gasto,style:estilo),
             ],
           ),
@@ -153,7 +135,26 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              Text('Retiro: ',style:estiloTitulo,),
+              Text('Cobro Semanal : ',style:estiloTitulo,),
+              Text(widget.cuadre[0].recolectado==''?'por favor verificar fechas':widget.cuadre[0].recolectado,style:estilo),
+            ],
+          ),
+        ),
+        // Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: Row(
+        //     children: [
+        //       Text('Entrega Semanal : ',style:estiloTitulo,),
+        //       Text(widget.cuadre[0].entrega==''?'por favor verificar fechas':widget.cuadre[0].entrega,style:estilo),
+        //     ],
+        //   ),
+        // ),
+        
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text('Retiro Semanal: ',style:estiloTitulo,),
               Text(widget.cuadre[0].retiro==''?'por favor verificar fechas':widget.cuadre[0].retiro,style:estilo),
             ],
           ),
@@ -163,7 +164,7 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              Text('Total : ',style:estiloTitulo,),
+              Text('Última entrega : ',style:estiloTitulo,),
               Text(((double.parse(widget.cuadre[0].asignado)+double.parse(widget.cuadre[0].recolectado)+double.parse(widget.cuadre[2].ultimaEntrega))-(double.parse(widget.cuadre[0].gasto)+double.parse(widget.cuadre[0].ventas)+double.parse(widget.cuadre[0].retiro)+double.parse(widget.cuadre[0].entrega))).toString(),style:estilo),
             ],
           ),

@@ -8,7 +8,6 @@ import 'package:controlmas/modelos/CuadresSemana.dart';
 import 'package:controlmas/controlador/InsertarVenta.dart';
 import 'package:controlmas/vistas/baseGeneral/IngresoBaseRuta.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:controlmas/vistas/baseGeneral/ConsultaBaseGeneralUsuario.dart';
 
 
 class FechasCuadreSemanal extends StatefulWidget {

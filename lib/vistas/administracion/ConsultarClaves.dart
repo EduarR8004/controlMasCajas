@@ -20,7 +20,7 @@ class _ClavesViewState extends State<ClavesView> {
   }
   Future<List<Clave>> claves(){
     var insertar = Insertar();
-    return insertar.consultarClaves();
+    return insertar.listarClavesAdmin();
   }
 
   Widget cardCuenta(Clave item){
@@ -29,11 +29,17 @@ class _ClavesViewState extends State<ClavesView> {
       child:
       ListTile(
         leading:Icon(Icons.lock_open_rounded,size:30),
-        title: Row(
+        title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text("Usuario: "+item.usuario,style: TextStyle(
+              fontSize: 18,)
+            ),
             Text(item.clave,style: TextStyle(
+              fontSize: 18,)
+            ),
+            Text("Tipo: "+item.tipo,style: TextStyle(
               fontSize: 18,)
             ),
           ],

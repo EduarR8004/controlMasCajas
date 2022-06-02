@@ -14,9 +14,11 @@ class Ventas {
   String documento;
   String motivo;
   double venta;
+  double valorDia;
   double cuotas;
   double solicitado;
   double valorTemporal;
+  double cuotasTemporal;
   int fecha;
   int fechaPago;
   String interes;
@@ -41,9 +43,11 @@ class Ventas {
     this.actividadEconomica,
     this.documento,
     this.venta,
+    this.valorDia,
     this.solicitado,
     this.cuotas,
     this.valorTemporal,
+    this.cuotasTemporal,
     this.fecha,
     this.interes,
     this.fechaPago,
@@ -73,9 +77,11 @@ class Ventas {
     "fechaPago":fechaPago,
     "documento":documento,
     "venta":venta,
+    "valorDia":valorDia,
     "solicitado":solicitado,
     "cuotas":cuotas,
     "valorTemporal":valorTemporal,
+    "cuotasTemporal":cuotasTemporal,
     "fecha":fecha,
     "interes":interes,
     "numeroCuota":numeroCuota,
@@ -94,6 +100,7 @@ class Ventas {
     idCliente:json["idCliente"],
     documento:json["documento"],
     venta:json["venta"],
+    valorDia:json["valorDia"],
     solicitado:json["solicitado"],
     cuotas:json["cuotas"],
     fecha:json["fecha"],
@@ -102,6 +109,7 @@ class Ventas {
     numeroCuota:json["numeroCuota"],
     valorCuota:json["valorCuota"],
     valorTemporal:json["valorTemporal"],
+    cuotasTemporal:json["cuotasTemporal"],
     usuario:json["usuario"],
     saldo:json["saldo"],
     alias:json["alias"],

@@ -386,6 +386,17 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
                 columnSpacing:10,
                 columns: [
                   DataColumn(
+                    label: Text("Nombre",
+                      style: TextStyle(
+                        color:Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize:15,
+                      ),textAlign: TextAlign.center,
+                    ),
+                    numeric: false,
+                    tooltip: "Usuario",
+                  ),
+                  DataColumn(
                     label: Text("Base-S",
                       style: TextStyle(
                         color:Colors.white,
@@ -396,17 +407,17 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
                     numeric: false,
                     tooltip: "Base",
                   ),
-                  DataColumn(
-                    label: Text("Base-U",
-                      style: TextStyle(
-                        color:Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize:15,
-                      ),textAlign: TextAlign.center,
-                    ),
-                    numeric: false,
-                    tooltip: "Base",
-                  ),
+                  // DataColumn(
+                  //   label: Text("Base-U",
+                  //     style: TextStyle(
+                  //       color:Colors.white,
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize:15,
+                  //     ),textAlign: TextAlign.center,
+                  //   ),
+                  //   numeric: false,
+                  //   tooltip: "Base",
+                  // ),
                   DataColumn(
                     label: Text("Cobro",style: TextStyle(
                       color:Colors.white,
@@ -458,11 +469,14 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
                   (user) => DataRow(
                     cells: [
                       DataCell(
-                        Text( user.baseRuta.toString(),style: textStyleDataCell,textAlign: TextAlign.center,),
+                        Text( user.nombre.toString(),style: textStyleDataCell,textAlign: TextAlign.center,),
                       ),
                       DataCell(
-                        Text( user.asignado.toString(),style: textStyleDataCell,textAlign: TextAlign.center,),
+                        Text( user.baseRuta.toString(),style: textStyleDataCell,textAlign: TextAlign.center,),
                       ),
+                      // DataCell(
+                      //   Text( user.asignado.toString(),style: textStyleDataCell,textAlign: TextAlign.center,),
+                      // ),
                       DataCell(
                         Text(double.parse(user.recolectado).toStringAsFixed(1),style: textStyleDataCell)),
                       DataCell(

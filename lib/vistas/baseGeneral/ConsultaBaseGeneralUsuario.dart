@@ -85,8 +85,8 @@ class ConsultarBaseGeneralUsuarioState extends State<ConsultarBaseGeneralUsuario
     else
     {
       if(widget.usuario==null){
-        await usuario.listarTotalCaja(widget.fechaInicial,widget.fechaFinal).then((_){
-          var preUsuarios=usuario.obtnerTotalCaja();
+        await usuario.totalCajaGeneral().then((_){
+          var preUsuarios=usuario.obtnerListarCaja();
           for ( var usuario in preUsuarios)
           {
             total.add(usuario);

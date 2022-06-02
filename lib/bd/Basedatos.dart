@@ -24,7 +24,7 @@ class DatabaseProvider {
 
   Future<Database> getDatabaseInstanace() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.path, "cmas.db");
+    String path = join(directory.path, "cmax.db");
      return await openDatabase(path, version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
@@ -51,6 +51,7 @@ class DatabaseProvider {
         await db.execute(
           "CREATE TABLE IF NOT EXISTS CopiaCliente ("
              "idCliente TEXT,"
+             "idVenta TEXT ,"
              "nombre TEXT,"
              "primerApellido TEXT,"
              "segundoApellido TEXT,"
@@ -85,9 +86,10 @@ class DatabaseProvider {
 
         await db.execute(
           "CREATE TABLE IF NOT EXISTS Venta ("
-            "idVenta TEXT ,"
-            "documento TEXT primary key,"
+            "idVenta TEXT primary key,"
+            "documento TEXT,"
             "venta double,"
+            "valorDia double,"
             "solicitado double,"
             "cuotas double,"
             "fecha INT,"
@@ -108,7 +110,6 @@ class DatabaseProvider {
             "actualizar TEXT,"
             "diaRecoleccion TEXT,"
             "day TEXT,"
-            "cuotaDia double,"
             "usuario TEXT"
           ")"
         );
@@ -144,8 +145,8 @@ class DatabaseProvider {
 
         await db.execute(
           "CREATE TABLE IF NOT EXISTS CopiaVenta ("
-            "idVenta TEXT ,"
-            "documento TEXT primary key,"
+            "idVenta TEXT primary key,"
+            "documento TEXT,"
             "venta double,"
             "solicitado double,"
             "cuotas double,"

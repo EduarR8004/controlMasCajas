@@ -108,11 +108,11 @@ class _NuevaVentaViewState extends State<NuevaVentaView> {
       venta.text=widget.cliente.valor==null?'':valorAgenda[0];
       venta.text=widget.valor==null && widget.cliente.valor==null?'':widget.valor;
       valorEvaluar=widget.valor!=null || widget.cliente.valor!=null?double.parse(venta.text):0.0;
-      if(valorEvaluar >=500){
-        clave=true;
-      }else if(valorEvaluar < 500){
-        clave=false;
-      }
+      // if(valorEvaluar >=500){
+      //   clave=true;
+      // }else if(valorEvaluar < 500){
+      //   clave=false;
+      // }
     }
     documento.addListener(() {
       if (documento.hasFocus){
@@ -735,25 +735,25 @@ class _NuevaVentaViewState extends State<NuevaVentaView> {
           TextFormField(
             controller: venta,
             focusNode: ventaFocus,
-            onChanged: (text){
-              if(double.parse(venta.text)>= 500){
-                setState(() {
-                  clave = true;
-                  claveVerificar.requestFocus();
-                });
-                warningDialog(
-                  context, 
-                  claveVenta,
-                  negativeAction: (){
-                  },
-                );
-                return;
-              }else{
-                setState(() {
-                  clave= false;    
-                });
-              }
-            },
+            // onChanged: (text){
+            //   if(double.parse(venta.text)>= 500){
+            //     setState(() {
+            //       clave = true;
+            //       claveVerificar.requestFocus();
+            //     });
+            //     warningDialog(
+            //       context, 
+            //       claveVenta,
+            //       negativeAction: (){
+            //       },
+            //     );
+            //     return;
+            //   }else{
+            //     setState(() {
+            //       clave= false;    
+            //     });
+            //   }
+            // },
             decoration: new InputDecoration(
               labelText: 'Venta',
             ),
@@ -762,23 +762,23 @@ class _NuevaVentaViewState extends State<NuevaVentaView> {
             //validator: validateMobile,
           )
         ),
-        clave?
-        formItemsDesign(
-          Icons.lock_open_rounded,
-          TextFormField(
-            controller: clavePago,
-            focusNode: claveVerificar,
-            decoration: new InputDecoration(
-              labelText: 'Clave',
-            ),
-            validator:(value){
-              if (value.isEmpty) {
-                return 'Por favor la clave';
-              }
-            },
-          ),
-        )
-        :Container(),
+        // clave?
+        // formItemsDesign(
+        //   Icons.lock_open_rounded,
+        //   TextFormField(
+        //     controller: clavePago,
+        //     focusNode: claveVerificar,
+        //     decoration: new InputDecoration(
+        //       labelText: 'Clave',
+        //     ),
+        //     validator:(value){
+        //       if (value.isEmpty) {
+        //         return 'Por favor la clave';
+        //       }
+        //     },
+        //   ),
+        // )
+        // :Container(),
         formItemsDesign(
           Icons.check_box,
           TextFormField(

@@ -1,3 +1,4 @@
+import 'package:controlmas/modelos/Claves.dart';
 import 'package:controlmas/vistas/widgets/boton.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _CopiaSeguridadState extends State<CopiaSeguridad> {
   FocusNode retiroNode;
   List<Gasto> gastos;
   Menu menu = new Menu();
+  FocusNode claveVerificar;
   List<Asignar> asignado=[];
   List<ConteoDebe> nuevaVenta;
   List<ConteoDebe> recolectado=[];
@@ -34,6 +36,8 @@ class _CopiaSeguridadState extends State<CopiaSeguridad> {
   List<ConteoDebe> porRecolectar=[];
   GlobalKey<FormState> keyForm = new GlobalKey();
   TextStyle textStyleDataCell = TextStyle(fontSize:15,);
+  String claveVenta='Por favor ingrese la clave de autorización';
+  TextEditingController  clavePago = new TextEditingController();
   
   @override
   void initState() {
@@ -67,6 +71,10 @@ class _CopiaSeguridadState extends State<CopiaSeguridad> {
   });
   }
 
+  Future<List<Clave>> claves(){
+    var insertar = Insertar();
+    return insertar.consultarListaClaves();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,32 +155,74 @@ class _CopiaSeguridadState extends State<CopiaSeguridad> {
           padding: const EdgeInsets.all(8.0),
           child: Text('Esta funcionalidad permite enviar al servidor la informacion del ultimo cierre realizado,solo debe dar clic en el boton aceptar',style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,)),
         ),
+        formItemsDesign(
+          Icons.lock_open_rounded,
+          TextFormField(
+            controller: clavePago,
+            focusNode: claveVerificar,
+            decoration: new InputDecoration(
+              labelText: 'Clave',
+            ),
+            validator:(value){
+              if (value.isEmpty) {
+                return 'Por favor la clave';
+              }
+            },
+          ),
+        ),
         Boton(onPresed:onPressed,texto:'Aceptar',),
       ]
     );
   }
-
-   _crearRecoleccion()async{  
-        var session= Insertar();
-        await pr.show();
-        session.enviarClientesCopia(actualizar: true).then((_){
-          session.actualizarVentasCierreCopia().then((_){
-            session.enviarGastosCopia().then((_){
-              session.enviarHistorialCopia().then((_){
-                session.copiaReporteDiario().then((_){
-                  pr.hide();
-                  successDialog(
-                    context, 
-                    "Cuadre de caja exitoso",
-                    neutralAction: (){
-                      baseInicial=0.0;
-                      tokenGlobal='';
-                      usuarioGlobal='';
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(false),)); 
-                      });
-                    },
-                  );
+  formItemsDesign(icon, item) {
+   return Padding(
+     padding: EdgeInsets.symmetric(vertical:4),
+     child: Card(child: ListTile(leading: Icon(icon), title: item)),
+   );
+ }
+  _crearRecoleccion()async{  
+    var session= Insertar();
+    if(clavePago.text==''){
+      warningDialog(
+        context, 
+        claveVenta,
+        neutralAction: (){
+          claveVerificar.requestFocus();
+        },
+      );
+      return;
+    }else{
+      await pr.show();
+      session.verificarClave(clavePago.text).then((data) {
+        if(data['respuesta']==true){
+          session.enviarClientesCopia(actualizar: true).then((_){
+            session.actualizarVentasCierreCopia().then((_){
+              session.enviarGastosCopia().then((_){
+                session.enviarHistorialCopia().then((_){
+                  session.copiaReporteDiario().then((_){
+                    pr.hide();
+                    successDialog(
+                      context, 
+                      "Cuadre de caja exitoso",
+                      neutralAction: (){
+                        baseInicial=0.0;
+                        tokenGlobal='';
+                        usuarioGlobal='';
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(false),)); 
+                        });
+                      },
+                    );
+                  }).catchError( (onError){
+                    pr.hide();
+                    warningDialog(
+                      context, 
+                      "Error de conexión, por favor inténtelo de nuevo",
+                      neutralAction: (){
+                        
+                      },
+                    );                                     
+                  });
                 }).catchError( (onError){
                   pr.hide();
                   warningDialog(
@@ -197,7 +247,7 @@ class _CopiaSeguridadState extends State<CopiaSeguridad> {
               pr.hide();
               warningDialog(
                 context, 
-                "Error de conexión, por favor inténtelo de nuevo",
+                "Error de conexión, por favor intentelo de nuevo",
                 neutralAction: (){
                   
                 },
@@ -213,18 +263,17 @@ class _CopiaSeguridadState extends State<CopiaSeguridad> {
               },
             );                                     
           });
-        }).catchError( (onError){
+        }else{
           pr.hide();
           warningDialog(
             context, 
-            "Error de conexión, por favor intentelo de nuevo",
+            data['motivo'].toString(),
             neutralAction: (){
-              
             },
-          );                                     
-        });
-      
-   
+          );
+        } 
+      });
+    }
   }
 }
 

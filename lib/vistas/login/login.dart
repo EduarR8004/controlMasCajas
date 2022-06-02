@@ -273,11 +273,18 @@ class _State extends State<Login> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                             SizedBox(height: 50),
-                              Text("Control Más",style: TextStyle(
-                                color: Color.fromRGBO(83, 86, 90, 1.0),
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold
-                              )),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Control",style: TextStyle(
+                                  color: Color.fromRGBO(83, 86, 90, 1.0),
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold
+                                  )),
+                                  Icon(Icons.add_circle, size:60,color:Colors.blueGrey),
+                                ],
+                              ),
                               SizedBox(height: 10),
                               Icon(Icons.bar_chart_sharp, size:150,color:Colors.blueGrey),
                               SizedBox(height: 10),

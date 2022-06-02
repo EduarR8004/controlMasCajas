@@ -13,6 +13,7 @@ class RutaAdmin {
   String documento;
   String motivo;
   double venta;
+  double valorDia;
   double cuotas;
   double solicitado;
   int fecha;
@@ -40,6 +41,7 @@ class RutaAdmin {
     this.actividadEconomica,
     this.documento,
     this.venta,
+    this.valorDia,
     this.cuotas,
     this.solicitado,
     this.fecha,
@@ -72,6 +74,7 @@ class RutaAdmin {
     "fechaPago":fechaPago,
     "documento":documento,
     "venta":venta,
+    "valorDia":valorDia,
     "cuotas":cuotas,
     "solicitado":solicitado,
     "fecha":fecha,
@@ -94,6 +97,7 @@ class RutaAdmin {
     id:int.parse(json["id"]),
     documento:json["documento"],
     venta:double.parse(json["venta"]),
+    valorDia:double.parse(json["valorDia"]),
     cuotas:double.parse(json["cuotas"]),
     solicitado:double.parse(json["solicitado"]),
     fecha:int.parse(json["fecha"]),

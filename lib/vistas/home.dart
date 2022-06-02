@@ -1,3 +1,4 @@
+import 'package:controlmas/vistas/portada.dart';
 import 'package:universal_io/io.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
@@ -82,7 +83,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:<Widget>[
-                  Text("Control Más",style: TextStyle(
+                  Text("ControlMax",style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
                     fontWeight: FontWeight.bold
@@ -112,7 +113,7 @@ class _HomeState extends State<Home> {
                                       session.copiaHistorialMovimiento().then((_) {
                                         session.borrarTablas().then((_) {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(true),));});
+                                          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Portada(editar: false,),));});
                                         });
                                       });
                                     });
@@ -168,11 +169,18 @@ class _HomeState extends State<Home> {
                   child:Column(
                     children: [
                       SizedBox(height: 30),
-                      Text("Control Más",style: TextStyle(
-                        color: Color.fromRGBO(83, 86, 90, 1.0),
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold
-                      )),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Control",style: TextStyle(
+                          color: Color.fromRGBO(83, 86, 90, 1.0),
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold
+                          )),
+                          Icon(Icons.add_circle, size:60,color:Colors.blueGrey),
+                        ],
+                      ),
                       SizedBox(height: 20),
                       Container(
                         height: 120,

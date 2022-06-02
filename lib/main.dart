@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:controlmas/vistas/portada.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:controlmas/vistas/login/login.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
         )
       ),
-      home: 
+      home://portada(),
       Login(false),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -45,6 +46,14 @@ class MyApp extends StatelessWidget {
       ],
     ),
   );
+ 
+  Widget portada(){
+    if(Platform.isAndroid){
+      return Portada(editar: false,);
+    }else{  
+      return Login(false);
+    }
+  }
 }
 
 class MyHttpOverrides extends HttpOverrides{

@@ -20,13 +20,13 @@ class CuadreSemana {
 
   factory CuadreSemana.fromJson(Map<String, dynamic> map) {
     return CuadreSemana(
-      gasto: map['gasto'] ?? '',
-      retiro: map['retiro'] ?? '',
-      ventas: map['ventas'] ?? '',
-      entrega: map['entrega'] ?? '',
-      asignado: map['asignado'] ?? '',
-      recolectado: map['recolectado'] ?? '',
-      ultimaEntrega: map['ultimaEntrega'] ?? '',
+      gasto: map['gasto'] ?? '0',
+      retiro: map['retiro'] ?? '0',
+      ventas: map['ventas'] ?? '0',
+      entrega: map['entrega'] ?? '0',
+      asignado: map['asignado'] ?? '0',
+      recolectado: map['recolectado'] ?? '0',
+      ultimaEntrega: map['ultimaEntrega'] ?? '0',
     );
   }
 

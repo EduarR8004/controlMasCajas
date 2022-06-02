@@ -214,7 +214,7 @@ class _RutaAdminViewState extends State<RutaAdminView> {
                 Text(item.valorCuota.toStringAsFixed(1),style: TextStyle(fontSize:15,)),
                 iconoEstado,
                 SizedBox(width: 5.0),
-                Text(item.valorTemporal.toStringAsFixed(1),style: TextStyle(fontSize:15,color: color)),
+                Text(item.valorDia.toStringAsFixed(1),style: TextStyle(fontSize:15,color: color)),
                 SizedBox(width: 5.0),
               ],
             ),

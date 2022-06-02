@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:controlmas/vistas/claves/clavesVigentes.dart';
+import 'package:controlmas/vistas/portada.dart';
 import 'package:universal_io/io.dart';
 import 'package:flutter/material.dart';
 import 'package:controlmas/vistas/home.dart';
@@ -85,6 +87,9 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       }
       menu.add(listaInicio(context));
       if(Platform.isAndroid){
+        menu.add(listaPortada(context));
+      }
+      if(Platform.isAndroid){
         if(objetosUsuario.contains('AD001') || objetosUsuario.contains("SA000")){
           menu.add(listaAgenda(context));
         }
@@ -99,8 +104,15 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
           menu.add(listaRuta(context));
         }
       }
-      if(objetosUsuario.contains('HU001') || objetosUsuario.contains("SA000")){
-        menu.add(Configuracion(historiales,"Historiales",Icon(Icons.date_range_rounded,size:30,color: Colors.black,)));
+      if(Platform.isAndroid){
+        if(objetosUsuario.contains('VRC001') || objetosUsuario.contains("SA000")){
+          menu.add(listaClavesVigentes(context));
+        }
+      }
+      if(Platform.isAndroid){
+        if(objetosUsuario.contains('HU001') || objetosUsuario.contains("SA000")){
+          menu.add(Configuracion(historiales,"Historiales",Icon(Icons.date_range_rounded,size:30,color: Colors.black,)));
+        }
       }
       if(Platform.isAndroid){
         if(objetosUsuario.contains('HU001') || objetosUsuario.contains("SA000")){
@@ -143,8 +155,10 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       if(objetosUsuario.contains('AB001') || objetosUsuario.contains("SA000")){
         subMenu.add(listarBloqueados(context));
       }
-      if(objetosUsuario.contains('VRC001') || objetosUsuario.contains("SA000")){
-        menu.add(listaGasto(context));
+      if(Platform.isAndroid){
+        if(objetosUsuario.contains('VRC001') || objetosUsuario.contains("SA000")){
+          menu.add(listaGasto(context));
+        }
       }
       if(Platform.isAndroid){
         if(objetosUsuario.contains('VRC001') || objetosUsuario.contains("SA000")){
@@ -181,6 +195,11 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       MaterialPageRoute(builder: (context) => Home())
     );
   }
+  portada(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => Portada(editar: true,))
+    );
+  }
   produccion(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => FechasProduccion())
@@ -200,6 +219,12 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   rutaAdmin(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => RutaAdminView())
+    );
+  }
+
+  clavesVigentes(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ClavesVigentes())
     );
   }
   
@@ -437,7 +462,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   }
   ListTile entradaBaseGeneralRuta(BuildContext context) {
     return ListTile(
-      title: Text("Cuadre semanal",
+      title: Text("Cuadre semana por usuario",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       leading: Icon(
         Icons.arrow_forward_ios_outlined,
@@ -463,7 +488,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   
   ListTile consultarBaseRuta(BuildContext context) {
     return ListTile(
-      title: Text("Caja general usuario",
+      title: Text("Caja general",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       leading: Icon(
         Icons.bar_chart_sharp,
@@ -642,13 +667,27 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
     );
   }
 
+  ListTile listaClavesVigentes(BuildContext context) {
+    return ListTile(
+      title: Text("Claves vigentes",
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+      ),
+      leading: Icon(
+        Icons.arrow_circle_down,
+        size: 25,
+        color: Colors.black,
+      ),
+      onTap: () => clavesVigentes(context),
+    );
+  }
+
   DrawerHeader header() {
     return DrawerHeader(
       decoration: BoxDecoration(color:Colors.blueGrey),
       child:Row(
         children: [
           Icon(Icons.bar_chart_sharp , size:80,color:Colors.white),
-          Text("Control Más",style: TextStyle(
+          Text("ControlMax",style: TextStyle(
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold
@@ -666,6 +705,16 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       )),
       leading: Icon(Icons.home,size:30,color: Colors.black,),
       onTap: ()=> inicio(context),
+    );
+  }
+  ListTile listaPortada(BuildContext context) {
+    return ListTile(
+      title: Text("Portada",style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold
+      )),
+      leading: Icon(Icons.add_alert_rounded,size:30,color: Colors.black,),
+      onTap: ()=> portada(context),
     );
   }
 }
