@@ -454,15 +454,15 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
                     numeric: false,
                     tooltip: "Retiro",
                   ),
-                  DataColumn(
-                    label: Text("Caja",style: TextStyle(
-                      color:Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize:15,
-                    )),
-                    numeric: false,
-                    tooltip: "Caja",
-                  ),
+                  // DataColumn(
+                  //   label: Text("Caja",style: TextStyle(
+                  //     color:Colors.white,
+                  //     fontWeight: FontWeight.bold,
+                  //     fontSize:15,
+                  //   )),
+                  //   numeric: false,
+                  //   tooltip: "Caja",
+                  // ),
                   
                 ],
                 rows: total.map(
@@ -488,9 +488,9 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
                       DataCell(
                         Text( double.parse(user.retiro).toStringAsFixed(1),style: textStyleDataCell),
                       ),
-                      DataCell(
-                        Text( ((double.parse(user.asignado)+double.parse(user.recolectado))-(double.parse(user.ventas)+double.parse(user.retiro)+double.parse(user.gasto))).toStringAsFixed(1),style: textStyleDataCell),
-                      ),
+                      // DataCell(
+                      //   Text( ((double.parse(user.asignado)+double.parse(user.recolectado))-(double.parse(user.ventas)+double.parse(user.retiro)+double.parse(user.gasto))).toStringAsFixed(1),style: textStyleDataCell),
+                      // ),
                     ]
                   ),
                 ).toList(),

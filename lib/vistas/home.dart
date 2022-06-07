@@ -1,4 +1,5 @@
 import 'package:controlmas/vistas/portada.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:universal_io/io.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
@@ -25,9 +26,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  ProgressDialog pr;
+  double tamano=120;
+  double espacio=30;
   List<String> objMenu=[];
    @override
   void initState() {
+    if(objetosUsuario.contains('VCVN001')){
+      tamano=150;
+    }else{
+      espacio=90;
+      tamano=350;
+    }
     super.initState();
     // if(Platform.isAndroid){
     //   _asignarDineroInicial();
@@ -69,6 +79,22 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var menu = new Menu();
+    pr = new ProgressDialog(context,type: ProgressDialogType.Normal, isDismissible: false, showLogs: true);
+    pr.style(
+      message: 'Estamos actualizando la información',
+      borderRadius: 10.0,
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+      progress: 0.0,
+      maxProgress: 100.0,
+      textAlign:TextAlign.center,
+      progressTextStyle: TextStyle(
+      color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+      messageTextStyle: TextStyle(
+      color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
     return WillPopScope(
       onWillPop: () async => false,
       child:SafeArea(
@@ -104,7 +130,7 @@ class _HomeState extends State<Home> {
                             },
                           ),
                           InkWell(
-                            onTap: () {
+                            onTap: ()async {
                               if(Platform.isAndroid){
                                 var session= Insertar();
                                 session.copiaVentas().then((_) {
@@ -112,13 +138,14 @@ class _HomeState extends State<Home> {
                                     session.copiaGasto().then((_) {
                                       session.copiaHistorialMovimiento().then((_) {
                                         session.borrarTablas().then((_) {
+                                          pr.hide();
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                           Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Portada(editar: false,),));});
                                         });
                                       });
                                     });
                                   });
-                                });
+                                });   
                               }else{
                                 WidgetsBinding.instance.addPostFrameCallback((_) {
                                   Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(true),));}
@@ -164,30 +191,33 @@ class _HomeState extends State<Home> {
               child:Center(
                 child: Container(
                   width: 600,
-                  height: 630,
+                  height: 700,
                   color:Colors.white,
                   child:Column(
                     children: [
-                      SizedBox(height: 30),
+                      SizedBox(height: espacio),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Control",style: TextStyle(
+                          Text("ControlMax",style: TextStyle(
                           color: Color.fromRGBO(83, 86, 90, 1.0),
-                          fontSize: 40,
+                          fontSize: 45,
                           fontWeight: FontWeight.bold
                           )),
-                          Icon(Icons.add_circle, size:60,color:Colors.blueGrey),
+                          //Icon(Icons.add_circle, size:60,color:Colors.blueGrey),
                         ],
                       ),
-                      SizedBox(height: 20),
-                      Container(
-                        height: 120,
-                        width: 180,
-                        child: Icon(Icons.bar_chart_sharp, size:120,color:Colors.blueGrey),
-                        margin: EdgeInsets.all(10),
-                        padding: EdgeInsets.symmetric(horizontal:10),                             
+                      SizedBox(height:15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: Icon(Icons.bar_chart_sharp, size:tamano,color:Colors.blueGrey),
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.symmetric(horizontal:10),                             
+                          )
+                        ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -209,7 +239,13 @@ class _HomeState extends State<Home> {
                           miCardGastos():Container(),
                           objMenu.contains("VRC001") || objMenu.contains("SA000")?
                           miCardCerrarCaja():Container(),
-                      ],
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          miCardInformacion()
+                        ],
                       )
                     ],
                   )
@@ -247,6 +283,69 @@ class _HomeState extends State<Home> {
       MaterialPageRoute(builder: (context) => DataTableGastos())
     );
   }
+  onPressedInformacion() async{
+    var session= Insertar();
+    await pr.show();
+    session.enviarClientes(actualizar: true).then((data){
+      if(data.length > 0)
+      session.actualizarVentas().then((_){
+        session.enviarHistorial().then((_){
+          session.enviarGastos().then((_){
+            session.copiaVentas().then((_) {
+              session.copiaCliente().then((_) {
+                session.copiaGasto().then((_) {
+                  session.copiaHistorialMovimiento().then((_) {
+                    session.borrarTablas().then((_) {
+                      pr.hide();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Portada(editar: false,),));});
+                    });
+                  });
+                });
+              });
+            });
+          }).catchError( (onError){
+            pr.hide();
+            warningDialog(
+              context, 
+              "Error de conexión, por favor intentelo de nuevo",
+              neutralAction: (){
+                
+              },
+            );                                     
+          });
+        }).catchError( (onError){
+          pr.hide();
+          warningDialog(
+            context, 
+            "Error de conexión, por favor intentelo de nuevo",
+            neutralAction: (){
+              
+            },
+          );                                     
+        });
+      }).catchError( (onError){
+        pr.hide();
+        warningDialog(
+          context, 
+          "Error de conexión, por favor intentelo de nuevo",
+          neutralAction: (){
+            
+          },
+        );                                     
+      });
+    }).catchError( (onError){
+      pr.hide();
+      warningDialog(
+        context, 
+        "Error de conexión, por favor intentelo de nuevo",
+        neutralAction: (){
+          
+        },
+      );                                     
+    });
+  }
+
   onPressedListarAgenda(){
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => ListarAgenda())
@@ -493,6 +592,50 @@ class _HomeState extends State<Home> {
             Container(
               padding: EdgeInsets.all(5),
               child: Text('Gastos'),
+            ),
+            // Container(
+            //   padding: EdgeInsets.all(5),
+            //   child: Text('Caja'),
+            // ),
+          ],
+        ),
+      )
+    );
+  }
+
+  Card miCardInformacion() {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      margin: EdgeInsets.all(8),
+      elevation: 10,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: Column(
+          children: <Widget>[
+            InkWell(
+              onTap: ()async{
+                if(Platform.isAndroid){
+                  onPressedInformacion();
+                }else{
+                  warningDialog(
+                    context, 
+                    "Esta funcionalidad solo esta desponible en su teléfono móvil",
+                    neutralAction: (){
+                      
+                    },
+                  );
+                }
+              },
+              child: 
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Icon(Icons.upload_rounded,size:80,color:Colors.blueGrey),
+              ),
+            ),
+            // Usamos Container para el contenedor de la descripción
+            Container(
+              padding: EdgeInsets.all(5),
+              child: Text('Actualizar'),
             ),
             // Container(
             //   padding: EdgeInsets.all(5),

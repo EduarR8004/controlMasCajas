@@ -89,9 +89,9 @@ class _State extends State<Login> {
   var _onPressed =()async{
     print('object');
     if (!_formKey.currentState.validate()){
-        Scaffold.of(context).showSnackBar(
-          SnackBar(content: Text('Processing Data'))
-        );
+      Scaffold.of(context).showSnackBar(
+        SnackBar(content: Text('Processing Data'))
+      );
     }else{
       var session= Insertar();
       await pr.show();
@@ -277,12 +277,12 @@ class _State extends State<Login> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text("Control",style: TextStyle(
+                                  Text("ControlMax",style: TextStyle(
                                   color: Color.fromRGBO(83, 86, 90, 1.0),
-                                  fontSize: 40,
+                                  fontSize: 45,
                                   fontWeight: FontWeight.bold
                                   )),
-                                  Icon(Icons.add_circle, size:60,color:Colors.blueGrey),
+                                  //Icon(Icons.add_circle, size:60,color:Colors.blueGrey),
                                 ],
                               ),
                               SizedBox(height: 10),

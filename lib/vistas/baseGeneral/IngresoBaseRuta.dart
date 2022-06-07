@@ -1,3 +1,4 @@
+import 'package:controlmas/utiles/Globals.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:controlmas/vistas/home.dart';
@@ -20,15 +21,24 @@ class IngresoBaseRutaRetiroDinero extends StatefulWidget {
 class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDinero> {
   dynamic usuario;
   String newValue;
+  bool crear= false;
   String selectedRegion;
   List<Usuario> users=[];
   Menu menu = new Menu();
   List<Usuario>pasoParametro=[];
   String dropdown ="Ingrese el gasto";
   final format = DateFormat("yyyy-MM-dd");
+  TextStyle estilo=TextStyle(fontSize:16,);
   GlobalKey<FormState> keyForm = new GlobalKey();
   TextStyle estiloTitulo=TextStyle(fontWeight: FontWeight.bold,fontSize:16,);
-  TextStyle estilo=TextStyle(fontSize:16,);
+
+  @override
+  void initState() {
+    if(objetosUsuario.contains('ACS001') || objetosUsuario.contains("SA000")){
+      crear = true;
+    }
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -170,7 +180,7 @@ class _IngresoBaseRutaRetiroDineroState extends State<IngresoBaseRutaRetiroDiner
           ),
         ):Container(),
         SizedBox(height:50,),
-        widget.cuadre.length>2?Boton(onPresed:_ingresarDinero,texto:'Aceptar',):Container(child: Text('Por favor revise las fechas ingresadas',style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,)),),
+        crear?widget.cuadre.length>2?Boton(onPresed:_ingresarDinero,texto:'Aceptar',):Container(child: Text('Por favor revise las fechas ingresadas',style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,)),):Container(),
          
       ]
     );

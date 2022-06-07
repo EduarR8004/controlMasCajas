@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
         )
       ),
-      home://portada(),
-      Login(false),
+      home:portada(),
+      //Login(false),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -57,10 +57,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHttpOverrides extends HttpOverrides{
-@override
-HttpClient createHttpClient(SecurityContext context){
-return super.createHttpClient(context)
-..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
-}
+  @override
+  HttpClient createHttpClient(SecurityContext context){
+  return super.createHttpClient(context)
+  ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
 }
 

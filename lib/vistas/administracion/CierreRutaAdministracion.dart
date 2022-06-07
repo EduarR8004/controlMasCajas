@@ -1,3 +1,4 @@
+import 'package:controlmas/utiles/Globals.dart';
 import 'package:controlmas/utiles/Informacion.dart';
 import 'package:controlmas/vistas/home.dart';
 import 'package:controlmas/vistas/widgets/boton.dart';
@@ -25,15 +26,16 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
   String usuario;
   double retiro=0;
   ProgressDialog pr;
+  bool crear= false;
   bool mostrar= false;
+  double valorEntrega;
+  DateTime parseFinal;
   String fechaConsulta;
   FocusNode retiroNode;
   String selectedRegion;
-  Menu menu = new Menu();
-  double valorEntrega;
-  DateTime parseFinal;
   ReporteGasto _gastos;
   DateTime parseInicial;
+  Menu menu = new Menu();
   List<Usuario> users=[];
   List<Usuario> _users=[];
   AsignarAdmin _asignado;
@@ -66,6 +68,9 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
     parseFinal = DateTime.parse(fechaFinal);
     parseInicial = DateTime.parse(fechaInicial);
     dia=DateFormat('EEEE, d').format(now);
+    if(objetosUsuario.contains('CRA001') || objetosUsuario.contains("SA000")){
+      crear = true;
+    }
     super.initState();
   }
   // Future <double>porEntregar()async{
@@ -535,7 +540,7 @@ Widget tablaRecolectado(){
             child:tablaGasto(),
           ),
         ):Container(),
-        mostrar?Boton(onPresed: validarCierre,texto:'Aceptar',):Container(),
+        crear?mostrar?Boton(onPresed: validarCierre,texto:'Aceptar',):Container():Container(),
       ]
     );
   }

@@ -1604,7 +1604,7 @@ class Insertar {
     Map parametro={
       "lista":_enviados
     };
-    await callMethodList('/insertarGastos.php',parametro);
+    await callMethodOne('/insertarGastos.php',parametro);
   }
   baseConsulta()async{
     _enviarGastos=[];
@@ -1693,7 +1693,9 @@ class Insertar {
     Map parametro={
       "lista":_enviados
     };
-    await callMethodOne('/insertarClientes.php',parametro);
+    
+    var map =await callMethodOne('/insertarClientes.php',parametro);
+    return map;
   }
 
   enviarHistorial({bool actualizar})async{
@@ -3690,11 +3692,12 @@ class Insertar {
     try{
       var data;
       data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-          //throw new Exception(status.message);
-      }
+      return data;
+      // if (response.statusCode == 200) {
+      //     //throw new Exception(status.message);
+      // }
     }catch(e){
-      throw (e.toString());
+      return e;
     }
 
   }

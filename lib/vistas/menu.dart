@@ -76,7 +76,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       if(objetosUsuario.contains('AU001') || objetosUsuario.contains("SA000")){
         menu.add(Configuracion(subMenuUsuarios,"Configuración",Icon(Icons.build,size:30,color: Colors.black,),));
       }
-      if(objetosUsuario.contains('CC001') || objetosUsuario.contains("SA000")){
+      if(objetosUsuario.contains('ADM001') || objetosUsuario.contains("SA000")){
         menu.add(Configuracion(subMenu,"Administración",Icon(Icons.miscellaneous_services,size:30,color: Colors.black,)));
       }
       if(objetosUsuario.contains('ABC004') || objetosUsuario.contains("SA000")){
@@ -143,7 +143,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       if(objetosUsuario.contains('ABR002') || objetosUsuario.contains("SA000")){
         reportesGenereal.add(retirarBaseRuta(context));
       }
-      if(objetosUsuario.contains('ABR002') || objetosUsuario.contains("SA000")){
+      if(objetosUsuario.contains('OCS002') || objetosUsuario.contains("SA000")){
         reportesGenereal.add(entradaBaseGeneralRuta(context));
       }
       // if(objetosUsuario.contains('ABR002') || objetosUsuario.contains("SA000")){

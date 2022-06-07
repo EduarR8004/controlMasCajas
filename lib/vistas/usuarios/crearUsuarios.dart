@@ -296,7 +296,7 @@ class _RegisterPageState extends State<RegisterPage> {
         formItemsDesign(
           Icons.person,
           TextFormField(
-            enabled: false, 
+            enabled:widget.editar?false:true, 
             controller: user,
             focusNode: usuario,
             //autofocus: true,

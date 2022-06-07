@@ -649,7 +649,8 @@ Widget tablaRecolectadoMismoDia(){
       if (_porRecolectar.documentos <=_recolectado.documentos && cuadre==valorIngresar){
         var session= Insertar();
         await pr.show();
-        session.enviarClientes(actualizar: true).then((_){
+        session.enviarClientes(actualizar: true).then((data){
+          if(data.length > 0)
           session.actualizarVentasCierre().then((_){
             session.enviarGastos().then((_){
               session.enviarHistorial().then((_){
