@@ -132,20 +132,21 @@ class _HomeState extends State<Home> {
                           InkWell(
                             onTap: ()async {
                               if(Platform.isAndroid){
-                                var session= Insertar();
-                                session.copiaVentas().then((_) {
-                                  session.copiaCliente().then((_) {
-                                    session.copiaGasto().then((_) {
-                                      session.copiaHistorialMovimiento().then((_) {
-                                        session.borrarTablas().then((_) {
-                                          pr.hide();
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Portada(editar: false,),));});
-                                        });
-                                      });
-                                    });
-                                  });
-                                });   
+                                onPressedInformacion();
+                                // var session= Insertar();
+                                // session.copiaVentas().then((_) {
+                                //   session.copiaCliente().then((_) {
+                                //     session.copiaGasto().then((_) {
+                                //       session.copiaHistorialMovimiento().then((_) {
+                                //         session.borrarTablas().then((_) {
+                                //           pr.hide();
+                                //           WidgetsBinding.instance.addPostFrameCallback((_) {
+                                //           Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Portada(editar: false,),));});
+                                //         });
+                                //       });
+                                //     });
+                                //   });
+                                // });   
                               }else{
                                 WidgetsBinding.instance.addPostFrameCallback((_) {
                                   Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Login(true),));}
@@ -191,7 +192,7 @@ class _HomeState extends State<Home> {
               child:Center(
                 child: Container(
                   width: 600,
-                  height: 700,
+                  height: 650,
                   color:Colors.white,
                   child:Column(
                     children: [
@@ -241,12 +242,12 @@ class _HomeState extends State<Home> {
                           miCardCerrarCaja():Container(),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          miCardInformacion()
-                        ],
-                      )
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      //   children: [
+                      //     miCardInformacion()
+                      //   ],
+                      // )
                     ],
                   )
                 )
@@ -297,6 +298,9 @@ class _HomeState extends State<Home> {
                   session.copiaHistorialMovimiento().then((_) {
                     session.borrarTablas().then((_) {
                       pr.hide();
+                      baseInicial=0.0;
+                      tokenGlobal='';
+                      usuarioGlobal='';
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                       Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => Portada(editar: false,),));});
                     });

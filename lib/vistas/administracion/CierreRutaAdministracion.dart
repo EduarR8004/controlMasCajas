@@ -2,6 +2,7 @@ import 'package:controlmas/utiles/Globals.dart';
 import 'package:controlmas/utiles/Informacion.dart';
 import 'package:controlmas/vistas/home.dart';
 import 'package:controlmas/vistas/widgets/boton.dart';
+import 'package:controlmas/vistas/widgets/usuario.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:controlmas/vistas/menu.dart';
@@ -125,25 +126,6 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
      });
      return asignado;
   }
-
-  Future <List<Usuario>> listarUsuario()async{
-    var usuario= Insertar();
-    if(users.length > 0)
-    {
-      return users;
-    }
-    else
-    {
-      await usuario.descargarUsuarios().then((_){
-        var preUsuarios=usuario.obtenerUsuarios();
-        for ( var usuario in preUsuarios)
-        {
-          users.add(usuario);
-        }        
-      });
-      return users;
-    }
-  }
   
   validarCierre(){
     warningDialog(
@@ -195,78 +177,6 @@ class _CerrarCajaAdministradorState extends State<CerrarCajaAdministrador> {
       );                                     
     });
   }
-
-  Widget dataBody() {
-    return FutureBuilder<List<Usuario>>(
-      future:listarUsuario(),
-      builder:(context,snapshot){
-        if(snapshot.hasData){
-          _users = (users).toList();
-          return  Container(
-            height: 50,
-            width: 300,
-            alignment: Alignment.center,
-            margin: const EdgeInsets.fromLTRB(10, 5, 10,10),
-            decoration: BoxDecoration(
-              border: Border(bottom:BorderSide(width: 1,
-                color: Color.fromRGBO(83, 86, 90, 1.0),
-              ),),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: new DropdownButton<String>(
-                hint:Text('Seleccione un usuario', textAlign: TextAlign.center,style: TextStyle(
-                  fontSize: 15.0,
-                  fontFamily: 'Karla',
-                  ),), 
-                // Padding(
-                //   padding: EdgeInsets.fromLTRB(5, 2, 5,2),
-                //   //child: Center(
-                //       child:Text('Seleccione un usuario', textAlign: TextAlign.center,style: TextStyle(
-                //   fontSize: 15.0,
-                //   fontFamily: 'Karla',
-                //   ),),
-                // ),
-                //),
-                value:selectedRegion,
-                isDense: true,
-                onChanged: (String newValue) {
-                  setState(() {
-                    selectedRegion = newValue;
-                    if(newValue !='Seleccione un usuario'){
-                      usuario=selectedRegion;
-                      mostrar=true;
-                    }
-                  });
-                },
-                items: _users.map((Usuario map) {
-                  return new DropdownMenuItem<String>(
-                    value: map.usuario,
-                    //child: Center(
-                    child:
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0,2),
-                      child:
-                      new Text(map.nombreCompleto,textAlign: TextAlign.center,
-                        style: new TextStyle(color: Colors.black)
-                      ),
-                    ),
-                  //),
-                  );
-                }).toList(),
-              ),
-            ),
-          );
-        }else{
-          return
-          Center(
-            child:CircularProgressIndicator()
-            //Splash1(),
-          );
-        }
-      },
-    );
-  }
-
 
   Widget tablaGasto(){
   return FutureBuilder<List<ReporteGasto>>(
@@ -491,7 +401,7 @@ Widget tablaRecolectado(){
       mainAxisAlignment:MainAxisAlignment.start,
       crossAxisAlignment:CrossAxisAlignment.center,
       children: <Widget>[
-        dataBody(),
+        ListarUsuario(),
         Container(height:20,),
         mostrar?
         Expanded(

@@ -2882,6 +2882,7 @@ class Insertar {
     DatabaseProvider.db.deleteAll(new HistorialVenta());
     DatabaseProvider.db.deleteAll(new Departamento());
     DatabaseProvider.db.deleteAll(new HistoricoVenta());
+    DatabaseProvider.db.deleteAll(new CajaInicial());
     await DatabaseProvider.db.rawQuery(
       " DELETE FROM HistorialVenta"
       " WHERE novedad = ? ",['pago']                                        
@@ -2915,14 +2916,15 @@ class Insertar {
   }
 
   borrarTablas()async{
-    await DatabaseProvider.db.deleteAll(new Clave());
-    await DatabaseProvider.db.deleteAll(new Ciudad());
-    await DatabaseProvider.db.deleteAll(new Venta());
-    await DatabaseProvider.db.deleteAll(new Cliente());
-    await DatabaseProvider.db.deleteAll(new Asignar());
-    await DatabaseProvider.db.deleteAll(new HistorialVenta());
-    await DatabaseProvider.db.deleteAll(new Departamento());
-    await DatabaseProvider.db.deleteAll(new HistoricoVenta());
+    DatabaseProvider.db.deleteAll(new Clave());
+    DatabaseProvider.db.deleteAll(new Ciudad());
+    DatabaseProvider.db.deleteAll(new Venta());
+    DatabaseProvider.db.deleteAll(new Cliente());
+    DatabaseProvider.db.deleteAll(new Asignar());
+    DatabaseProvider.db.deleteAll(new HistorialVenta());
+    DatabaseProvider.db.deleteAll(new Departamento());
+    DatabaseProvider.db.deleteAll(new HistoricoVenta());
+    DatabaseProvider.db.deleteAll(new CajaInicial());
     return true;
   }
 
