@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:controlmas/vistas/administracion/ReporteRutaAdministracion.dart';
 import 'package:controlmas/vistas/claves/clavesVigentes.dart';
 import 'package:controlmas/vistas/portada.dart';
 import 'package:universal_io/io.dart';
@@ -83,7 +84,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
         menu.add(Configuracion(reportesSemanal,"Control Caja Semanal",Icon(Icons.content_paste_rounded,size:30,color: Colors.black,)));
       }
       if(objetosUsuario.contains('ABC004') || objetosUsuario.contains("SA000")){
-        menu.add(Configuracion(reportesGenereal,"Control Caja General",Icon(Icons.business_center_rounded,size:30,color: Colors.black,)));
+        menu.add(Configuracion(reportesGenereal,"Control Caja General",Icon(Icons.calculate_rounded,size:30,color: Colors.black,)));
       }
       menu.add(listaInicio(context));
       if(Platform.isAndroid){
@@ -130,6 +131,9 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
       }
       if(objetosUsuario.contains('RA001') || objetosUsuario.contains("SA000")){
         subMenu.add(estadoRutaAdmin(context));
+      }
+      if(objetosUsuario.contains('CAR001') || objetosUsuario.contains("SA000")){
+        subMenu.add(listaCartera(context));
       }
       if(objetosUsuario.contains('PA001') || objetosUsuario.contains("SA000")){
         reportesSemanal.add(listaProduccion(context));
@@ -225,6 +229,11 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   clavesVigentes(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => ClavesVigentes())
+    );
+  }
+  cartera(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ReporteCarteraAdministrador ())
     );
   }
   
@@ -462,7 +471,7 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
   }
   ListTile entradaBaseGeneralRuta(BuildContext context) {
     return ListTile(
-      title: Text("Cuadre semana por usuario",
+      title: Text("Cuadre semanal por usuario",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       leading: Icon(
         Icons.arrow_forward_ios_outlined,
@@ -678,6 +687,20 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
         color: Colors.black,
       ),
       onTap: () => clavesVigentes(context),
+    );
+  }
+
+  ListTile listaCartera(BuildContext context) {
+    return ListTile(
+      title: Text("Cartera",
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+      ),
+      leading: Icon(
+        Icons.business_center_rounded,
+        size: 25,
+        color: Colors.black,
+      ),
+      onTap: () => cartera(context),
     );
   }
 

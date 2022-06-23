@@ -33,6 +33,8 @@ class _CerrarCajaState extends State<CerrarCaja> {
   ConteoDebe _recolectado;
   ConteoDebe _porRecolectar;
   List<Asignar> asignado=[];
+  ConteoDebe _noPago;
+  List<ConteoDebe> noPago=[];
   List<ConteoDebe> nuevaVenta;
   List<ConteoDebe> recolectado=[];
   ConteoDebe _recolectadoMismoDia;
@@ -143,6 +145,14 @@ class _CerrarCajaState extends State<CerrarCaja> {
        porRecolectar=session.obtenerclientesVisitar();
      });
      return porRecolectar;
+  }
+
+  Future<List<ConteoDebe>> valoresNoPago()async{
+    var session= Insertar();
+     await session.clientesNoPago().then((_){
+       noPago=session.obtenerclientesVisitar();
+     });
+     return noPago;
   }
 
   Future<List<ConteoDebe>> nuevasVentas()async{
@@ -299,9 +309,6 @@ class _CerrarCajaState extends State<CerrarCaja> {
                   bases(),
                   SizedBox(width: 10),
                   Text("Act: "+_asignado.valor.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:17,)),
-                  
-                  
-                  
                 ],
               ),
             ],
@@ -322,13 +329,13 @@ class _CerrarCajaState extends State<CerrarCaja> {
         _porRecolectar = porRecolectar[0];
         return Padding(
           padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-          child: Column(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Clientes a visitar: "+_porRecolectar.documentos.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
-              
-              _porRecolectar.valorCuotas==null?Text("Total a recaudar: "+"0",style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)):Text("Total a recaudar: "+_porRecolectar.valorCuotas.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+              Text("Clientes ruta: "+_porRecolectar.documentos.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+              SizedBox(width:10,),
+              _porRecolectar.valorCuotas==null?Text("Por recaudar: "+"0",style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)):Text("Por recaudar: "+_porRecolectar.valorCuotas.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
             ],
           ),
         );
@@ -348,12 +355,13 @@ class _CerrarCajaState extends State<CerrarCaja> {
         _nuevaVenta = nuevaVenta[0];
         return Padding(
           padding:const EdgeInsets.fromLTRB(8, 2, 8, 2),
-          child: Column(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Nuevas Ventas: "+_nuevaVenta.documentos.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
-              Text("Valor Nuevas Ventas: "+_nuevaVenta.venta.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+              SizedBox(width:10,),
+              Text("Valor : "+_nuevaVenta.venta.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
             ],
           ),
         );
@@ -363,7 +371,31 @@ class _CerrarCajaState extends State<CerrarCaja> {
     },
   );
 }
-
+Widget tablaNoPago(){
+  return FutureBuilder<List<ConteoDebe>>(
+    //llamamos al método, que está en la carpeta db file database.dart
+    future: valoresNoPago(),
+    builder: (BuildContext context, AsyncSnapshot<List<ConteoDebe>> snapshot) {
+      if (snapshot.hasData) {
+        _noPago = noPago[0];
+        return Padding(
+          padding:const EdgeInsets.fromLTRB(8, 2, 8, 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("No pagos: "+_noPago.documentos.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+              SizedBox(width:10,),
+              Text("No recaudado : "+_noPago.valorCuotas.toString(),style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,)),
+            ],
+          ),
+        );
+      }else {
+        return Center(child: CircularProgressIndicator());
+      }
+    },
+  );
+}
 Widget tablaRecolectado(){
   return FutureBuilder<List<ConteoDebe>>(
     //llamamos al método, que está en la carpeta db file database.dart
@@ -498,7 +530,7 @@ Widget tablaRecolectadoMismoDia(){
             //endIndent: 20,
           ),
           Container(
-            height:45,
+            height:35,
             child: SizedBox(
               child:tablaBase(),
             ),
@@ -510,7 +542,7 @@ Widget tablaRecolectadoMismoDia(){
             //endIndent: 20,
           ),
           Container(
-            height:50,
+            height:35,
             child: SizedBox(
               child:tablaPorRecolectar(),
             ),
@@ -546,7 +578,19 @@ Widget tablaRecolectadoMismoDia(){
             //endIndent: 20,
           ),
           Container(
-            height:60,
+            height:35,
+            child: SizedBox(
+              child:tablaNoPago(),
+            ),
+          ),
+          const Divider(
+            height: 8,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:35,
             child: SizedBox(
               height:10,
               child:tablaNuevaVenta(),

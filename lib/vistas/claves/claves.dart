@@ -28,7 +28,7 @@ class _ClavesState extends State<Claves> {
   GlobalKey<FormState> keyForm = new GlobalKey();
   TextEditingController  couta = new TextEditingController();
   String dropdownCuotas ="Seleccione el tipo de clave";
-  List<String> cantidadCuotas=["Seleccione el tipo de clave","Copia de seguridad","500","600","700","800","900","1000","1100","1200","1300","1400","1500","1800","2000"];
+  List<String> cantidadCuotas=["Seleccione el tipo de clave","Copia de seguridad","500","550","600","650","700","750","800","850","900","950","1000","1050","1100","1150","1200","1250","1300","1350","1400","1450","1500","1550","1800","2000"];
   String generateRandomString(int len) {
     var r = Random();
     const _chars = '1234567890';

@@ -24,7 +24,7 @@ class DatabaseProvider {
 
   Future<Database> getDatabaseInstanace() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.path, "controlmax.db");
+    String path = join(directory.path, "controlmax2.db");
      return await openDatabase(path, version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
@@ -148,6 +148,7 @@ class DatabaseProvider {
             "idVenta TEXT primary key,"
             "documento TEXT,"
             "venta double,"
+            "valorDia double,"
             "solicitado double,"
             "cuotas double,"
             "fecha INT,"

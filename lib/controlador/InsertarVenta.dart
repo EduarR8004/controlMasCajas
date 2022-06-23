@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:convert';
+import 'package:controlmas/modelos/Cartera.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -51,6 +52,7 @@ class Insertar {
   List _ciudades=[];
   List _enviados=[];
   List _enviarGastos=[];
+  List<Cartera> _cartera=[];
   List _enviarClientes=[];
   List _enviarProduccion=[];
   List _objetosSeguridad;
@@ -1040,6 +1042,22 @@ class Insertar {
     );
     List<ConteoDebe> list = res.map((c) => ConteoDebe.fromMap(c)).toList();
     return this._nuevaVenta=list;
+  }
+
+  Future<List<ConteoDebe>>clientesNoPago()async{
+    _porRecolectar=[];
+    var res =await DatabaseProvider.db.rawQuery(
+      " SELECT count(distinct Cliente.documento) as documentos,"
+        "sum(Venta.solicitado) as venta,"
+        "sum(Venta.valorCuota) as valorCuotas,"
+        "Venta.saldo,"
+        "Venta.frecuencia"
+        " FROM Cliente "
+        " INNER JOIN Venta on Cliente.documento = Venta.documento"
+        " WHERE Venta.estado !=? AND Venta.motivo =?",['cancelado','No pago']                                        
+    );
+    List<ConteoDebe> list = res.map((c) => ConteoDebe.fromMap(c)).toList();
+    return this._porRecolectar=list;
   }
 
   Future<List<ConteoDebe>> clientesVisitados()async{
@@ -2088,30 +2106,30 @@ class Insertar {
   actualizarVentasCierreCopia()async{
     var res = await DatabaseProvider.db.rawQuery(
       "SELECT "
-      "documento,"
       "idVenta,"
+      "documento,"
       "venta,"
+      "valorDia,"
       "solicitado,"
       "cuotas,"
       "fecha,"
-      "fechaTexto ,"
+      "fechaTexto,"
       "fechaPago,"
-      "interes ,"
+      "interes,"
       "numeroCuota,"
       "valorCuota,"
       "saldo,"
-      "estado ,"
-      "frecuencia ,"
-      "motivo ,"
+      "estado,"
+      "frecuencia,"
+      "motivo,"
       "valorTemporal,"
       "cuotasTemporal,"
-      "estadoTemporal ,"
+      "estadoTemporal,"
       "orden,"
-      "ruta ,"
-      "actualizar ,"
-      "diaRecoleccion ,"
-      "day ,"
-      "valorDia,"
+      "ruta,"
+      "actualizar,"
+      "diaRecoleccion,"
+      "day,"
       "usuario"
       " FROM CopiaVenta GROUP BY documento",[]
     );
@@ -2289,6 +2307,7 @@ class Insertar {
   }
 
   Future <List<RutaAdmin>>descargarRuta(usuario)async{
+    _rutaAdmin=[];
     List map;
     Map mapa={
       'token':tokenGlobal, 
@@ -2300,6 +2319,27 @@ class Insertar {
       "lista":_enviados
     };
     map = await callMethodList('/listarRuta.php',parametro);
+    List<RutaAdmin> ruta=[];
+    for ( var usuario in map)
+    {
+      ruta.add(RutaAdmin.fromJson(usuario));
+    }
+    return this._rutaAdmin= ruta;
+  }
+
+  Future <List<RutaAdmin>>descargarRutaNoPago(usuario)async{
+    _rutaAdmin=[];
+    List map;
+    Map mapa={
+      'token':tokenGlobal, 
+      'usuario':usuario,
+    };
+    _enviados=[];
+    _enviados.add(mapa);
+    Map parametro={
+      "lista":_enviados
+    };
+    map = await callMethodList('/listarRutaNoPago.php',parametro);
     List<RutaAdmin> ruta=[];
     for ( var usuario in map)
     {
@@ -3510,6 +3550,47 @@ class Insertar {
     }
     return this._porRecolectarAdmin= totalProduccionAdmin;
   }
+  Future<List<Cartera>> listarCartera(usuario)async{
+    _cartera=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'usuario':usuario,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/listarCartera.php',parametro);
+    List<Cartera> totalProduccionAdmin=[];
+    for ( var prod in map)
+    {
+      totalProduccionAdmin.add(Cartera.fromMap(prod));
+    }
+    return this._cartera= totalProduccionAdmin;
+  }
+
+  Future<List<Cartera>> listarNoPago(usuario)async{
+    _cartera=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'usuario':usuario,
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/listarNoPago.php',parametro);
+    List<Cartera> totalProduccionAdmin=[];
+    for ( var prod in map)
+    {
+      totalProduccionAdmin.add(Cartera.fromMap(prod));
+    }
+    return this._cartera= totalProduccionAdmin;
+  }
 
    Future<List<ConteoDebeAdmin>> valoresRecolectadosAdmin(fechaInicial,fechaFinal,usuario)async{
     String fechaConsulta = format.format(now);
@@ -3635,6 +3716,9 @@ class Insertar {
   obtenerClientesVisitarAdmin(){
     return this._porRecolectarAdmin;
   }
+  obtenerCartera(){
+    return this._cartera;
+  }
   obtenervaloresVentasHoyAdmin(){
     return this._ventasHoyUsuario;
   }
@@ -3684,7 +3768,7 @@ class Insertar {
   callMethodOne(String webservice,params)async {
     Response response;
     try{
-        response = await http.post(Uri.parse(ecuador+webservice), headers: {
+        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
       "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
     }catch(e){
@@ -3708,7 +3792,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-      response = await http.post(Uri.parse(ecuador+webservice), headers: {
+      response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -3726,7 +3810,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-        response = await http.post(Uri.parse(ecuador+webservice), headers: {
+        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;

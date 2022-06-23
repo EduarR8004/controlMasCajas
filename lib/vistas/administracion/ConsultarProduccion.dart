@@ -1,14 +1,15 @@
 import 'dart:async';
-import 'package:controlmas/vistas/baseGeneral/AsignarBaseRuta.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:controlmas/vistas/menu.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:controlmas/vistas/menu.dart';
+import 'package:controlmas/utiles/Globals.dart';
 import 'package:controlmas/modelos/Usuarios.dart';
 import 'package:controlmas/utiles/Informacion.dart';
 import 'package:controlmas/vistas/widgets/boton.dart';
 import 'package:controlmas/modelos/ReporteDiario.dart';
 import 'package:controlmas/controlador/InsertarVenta.dart';
+import 'package:controlmas/vistas/baseGeneral/AsignarBaseRuta.dart';
 import 'package:controlmas/vistas/administracion/ConsultarGastos.dart';
 import 'package:controlmas/vistas/administracion/FechasProduccion.dart';
 
@@ -309,16 +310,25 @@ class ConsultarProduccionState extends State<ConsultarProduccion> {
                       DataCell(
                         Text( user.baseRuta.toString(),style:TextStyle(fontSize:15,color:double.parse(user.asignado)>= double.parse(user.baseRuta)? color:Colors.red),textAlign: TextAlign.center,),
                         onTap: (){
-                          if(user.baseRuta!='0'){
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) =>
-                                BaseRuta(true,valor:user.baseRuta,usuario:user.usuario,idBase:user.idBase,fecha:user.fecha,nombre: user.usuario,),
-                              )); 
-                            });
+                          if(objetosUsuario.contains('ABA003') || objetosUsuario.contains("SA000")){
+                            if(user.baseRuta!='0'){
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) =>
+                                  BaseRuta(true,valor:user.baseRuta,usuario:user.usuario,idBase:user.idBase,fecha:user.fecha,nombre: user.usuario,),
+                                )); 
+                              });
+                            }else{
+                              infoDialog(
+                                context, 
+                                'No tiene  base para editar en esa fecha.',
+                                negativeAction: (){
+                                },
+                              );
+                            }
                           }else{
                             infoDialog(
                               context, 
-                              'No tiene  base para editar en esa fecha.',
+                              'No tiene  permisos para editar la base.',
                               negativeAction: (){
                               },
                             );
