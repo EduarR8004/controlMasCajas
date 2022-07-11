@@ -1,3 +1,4 @@
+import 'package:controlmas/vistas/widgets/dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:controlmas/vistas/menu.dart';
 import 'package:controlmas/utiles/Informacion.dart';
@@ -14,7 +15,10 @@ class IngresoRetiroDinero extends StatefulWidget {
 class _IngresoRetiroDineroState extends State<IngresoRetiroDinero> {
   TextEditingController  couta = new TextEditingController();
   GlobalKey<FormState> keyForm = new GlobalKey();
+  String dropdownCuotas ="Seleccione el tipo";
   String dropdown ="Ingrese el gasto";
+  bool mostrarTipoClave= false;
+  List<String> cantidadCuotas=["Seleccione el tipo","Base general","Secretaria","Arrendo"];
   Menu menu = new Menu();
   @override
   Widget build(BuildContext context) {
@@ -50,6 +54,17 @@ class _IngresoRetiroDineroState extends State<IngresoRetiroDinero> {
       ),
     );
   }
+  void _alCambiar(newValue){
+    if(newValue!="Seleccione el tipo")
+    { 
+      setState(() {
+        dropdownCuotas =newValue.toString();
+        mostrarTipoClave= true;
+      });
+    }else{
+
+    }
+  }
   formItemsDesign(icon, item) {
    return Padding(
      padding: EdgeInsets.symmetric(vertical:4),
@@ -62,6 +77,10 @@ class _IngresoRetiroDineroState extends State<IngresoRetiroDinero> {
       crossAxisAlignment:CrossAxisAlignment.start,
       children: <Widget>[
         formItemsDesign(
+          Icons.check,
+          DropdownSoatView(texto:dropdownCuotas ,documentosLista:cantidadCuotas,alCambiar: _alCambiar,dropdownValor: dropdownCuotas),
+        ),
+        mostrarTipoClave? formItemsDesign(
           Icons.attach_money,
           TextFormField(
             controller: couta,
@@ -75,7 +94,7 @@ class _IngresoRetiroDineroState extends State<IngresoRetiroDinero> {
               }
             },
           ),
-        ),
+        ):Container(),
         Boton(onPresed: widget.editar?_retirarDinero:_ingresarDinero,texto:'Aceptar',),
          
       ]
@@ -86,7 +105,7 @@ class _IngresoRetiroDineroState extends State<IngresoRetiroDinero> {
     double valorIngresar = double.parse(couta.text);
     if(couta.text!=""){
       var session= Insertar();
-      session.ingresoBasePrincipal(valorIngresar)
+      session.ingresoBasePrincipal(valorIngresar,dropdownCuotas.toString())
       .then((_) {
         successDialog(
           context, 
@@ -112,7 +131,7 @@ class _IngresoRetiroDineroState extends State<IngresoRetiroDinero> {
     double valorIngresar = double.parse(couta.text);
     if(couta.text!=""){
       var session= Insertar();
-      session.retiroBasePrincipal(valorIngresar)
+      session.retiroBasePrincipal(valorIngresar,dropdownCuotas.toString())
       .then((_) {
         successDialog(
           context, 

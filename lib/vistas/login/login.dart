@@ -286,7 +286,7 @@ class _State extends State<Login> {
                                 ],
                               ),
                               SizedBox(height: 10),
-                              Icon(Icons.bar_chart_sharp, size:150,color:Colors.blueGrey),
+                              Icon(Icons.bar_chart_sharp, size:150,color:Theme.of(context).accentColor),
                               SizedBox(height: 10),
                               usuarioContrasena(_onPressed),
                             ],

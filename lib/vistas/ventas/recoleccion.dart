@@ -237,7 +237,7 @@ class _RecoleccionState extends State<Recoleccion> {
 
   pagoConClave(){
     Insertar session= Insertar();
-    session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave: claveNueva)
+    session.insertarVenta(widget.data,coutaIngresar,cuotarecolectada,bloqueo,clave: clavePago.text)
     .then((data) {
       if(data['respuesta']==true){
         successDialog(
@@ -299,9 +299,7 @@ class _RecoleccionState extends State<Recoleccion> {
           },
         ); 
       }
-      
     }else{
-      
       if(otra){
         coutaIngresar=double.parse(couta.text);
         cuotaRegistro = double.parse(widget.data.valorCuota.toString());
@@ -361,7 +359,7 @@ class _RecoleccionState extends State<Recoleccion> {
           //     );
           //   }
           // }else{
-          if(coutaIngresar  == widget.data.saldo  )
+          if(coutaIngresar  == widget.data.saldo && clave== false )
           {
             warningDialog(
               context, 
@@ -374,8 +372,10 @@ class _RecoleccionState extends State<Recoleccion> {
                 pagoSinClave();
               },
             );
-          }else{
+          }else if(coutaIngresar < widget.data.saldo && clave== false){
             pagoSinClave();
+          }else{
+            pagoConClave();
           }
           //}
         }
@@ -387,9 +387,9 @@ class _RecoleccionState extends State<Recoleccion> {
         // if(cuotarecolectada >= 5){
         //   claveNueva=clavePago.text;
         // }else{
-          claveNueva='Continuar';
+          //claveNueva='Continuar';
         //}
-        if(cuotarecolectada > widget.data.saldo  )
+        if(cuotarecolectada > widget.data.saldo)
         {
           warningDialog(
             context, 
@@ -398,7 +398,7 @@ class _RecoleccionState extends State<Recoleccion> {
             },
           );
         }else{
-          if(coutaIngresar  == widget.data.saldo  )
+          if(coutaIngresar  == widget.data.saldo && clave== false )
           {
             warningDialog(
               context, 
@@ -408,9 +408,11 @@ class _RecoleccionState extends State<Recoleccion> {
               },
               neutralText: "Si",
               neutralAction: (){
-                pagoConClave();
+                pagoSinClave();
               },
             );
+          }else if(coutaIngresar < widget.data.saldo && clave== false){
+            pagoSinClave();
           }else{
             pagoConClave();
           }
@@ -428,6 +430,7 @@ class _RecoleccionState extends State<Recoleccion> {
         cuotaRegistro = double.parse(widget.data.valorCuota.toString());
         coutaIngresar=(cuotarecolectada*cuotaRegistro);
         otra = false; 
+        clave= false;
         // if(cuotarecolectada >= 5){
         //   clave = true;
         // }else{
@@ -446,38 +449,42 @@ class _RecoleccionState extends State<Recoleccion> {
         dropdownCuotas =newValue.toString();
         reportar = true;   
         otra = false;
+        clave= false;
       });
     }else if(newValue=="Bloqueado"){
       setState(() {
         dropdownCuotas =newValue.toString();
         bloqueo = true;
+        clave = true;
       });
     }else if(newValue=="Eliminar"){
       setState(() {
         dropdownCuotas =newValue.toString();
         eliminar = true;
+        clave= false;
       });
     }
     else{
       setState(() {
         dropdownCuotas =newValue.toString();
         otra = false; 
+        clave= false;
       });
     }
   }
 
-  void _alCambiarNovedad(newValue){
-    if(newValue!="Reportar Novedad")
-    {
-      setState(() {
-        dropdown =newValue.toString();
-      });
-    }else{
-      setState(() {
-        dropdown =newValue.toString();
-      });
-    }
-  }
+  // void _alCambiarNovedad(newValue){
+  //   if(newValue!="Reportar Novedad")
+  //   {
+  //     setState(() {
+  //       dropdown =newValue.toString();
+  //     });
+  //   }else{
+  //     setState(() {
+  //       dropdown =newValue.toString();
+  //     });
+  //   }
+  // }
   
   formItemsDesign(icon, item) {
    return Padding(
@@ -615,7 +622,7 @@ class _RecoleccionState extends State<Recoleccion> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(3, 8, 3, 8),
-          child: Text("Cuotas restantes :"+" "+(widget.data.cuotas-widget.data.numeroCuota).toStringAsFixed(1),style: textStyleDataCell,),
+          child: Text("Cuotas restantes :"+" "+(widget.data.saldo/widget.data.valorCuota).toStringAsFixed(1),style: textStyleDataCell,),
         ),
         diferencia>1?
         Padding(
@@ -697,4 +704,7 @@ class _RecoleccionState extends State<Recoleccion> {
     clavePago.dispose();
     super.dispose();
   }
+}
+
+class Ball {
 }

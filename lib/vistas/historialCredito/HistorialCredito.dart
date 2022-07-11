@@ -97,6 +97,7 @@ class _HistorialCreditoViewState extends State<HistorialCreditoView> {
       onWillPop: () async => false,
       child:
       SafeArea(
+        top: false,
         child: Scaffold(
           appBar: new AppBar(title: new Text('Historial de pago'),actions: <Widget>[
           ],

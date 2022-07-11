@@ -28,6 +28,8 @@ class _EditarVentaViewState extends State<EditarVentaView> {
   FocusNode ventaFocus;
   FocusNode claveVerificar;
   String dropdownInicial;
+  double numeroCuota;
+  double valorCuota;
   String frecuencia="Frecuencia";
   List <String> activo=['Activo','Inactivo'];
   String cuotasError="Ingrese el numero de cuotas";
@@ -51,6 +53,7 @@ class _EditarVentaViewState extends State<EditarVentaView> {
     telefono = FocusNode();
     ventaFocus = FocusNode();
     claveVerificar = FocusNode();
+    List procesar=widget.cliente.solicitado.toString().split('.');
     nombreCliente.text =widget.cliente.nombre; 
     documentoNumero.text =widget.cliente.documento; 
     telefono1.text =widget.cliente.telefono; 
@@ -61,7 +64,9 @@ class _EditarVentaViewState extends State<EditarVentaView> {
     direccion.text = widget.cliente.direccion;
     actividadEconomica.text = widget.cliente.actividadEconomica;
     cuotas.text=widget.cliente.cuotas.toString();
-    venta.text=widget.cliente.solicitado.toString();
+    valorCuota=widget.cliente.valorCuota;
+    numeroCuota=widget.cliente.numeroCuota;
+    venta.text=procesar[0].toString().trim();
     //_myCity=widget.cliente.ciudad;
     //_myState=widget.cliente.departamento;
     
@@ -88,6 +93,7 @@ class _EditarVentaViewState extends State<EditarVentaView> {
 
   crearCliente()async{  
     var session= Insertar();
+    double abonado=valorCuota*numeroCuota;
     session.editarVenta(
       nombre:nombreCliente.text,
       direccion:direccion.text,
@@ -105,7 +111,8 @@ class _EditarVentaViewState extends State<EditarVentaView> {
       saldo:widget.cliente.saldo,
       usuario: widget.cliente.usuario,
       ventaAnterior:widget.cliente.solicitado,
-      numeroCuota:widget.cliente.numeroCuota 
+      numeroCuota:widget.cliente.numeroCuota,
+      abonado:abonado,
     ).then((_) {
       warningDialog(
         context, 
@@ -163,7 +170,7 @@ class _EditarVentaViewState extends State<EditarVentaView> {
                 key: keyForm,
                   child:Container(
                     width: 600,
-                    height: 1250,
+                    height: 1000,
                     margin: new EdgeInsets.fromLTRB(0,20,0,0),
                     color:Colors.white,
                     child:formUI(),
@@ -498,16 +505,16 @@ class _EditarVentaViewState extends State<EditarVentaView> {
   _onPressed (){
     int valor=int.parse(venta.text);
     double  saldo =widget.cliente.venta - widget.cliente.saldo;
-    if(valor < saldo){
-      ventaFocus.requestFocus();
-      warningDialog(
-        context, 
-        'La nueva venta debe se superior al saldo del usuario',
-        negativeAction: (){
-        },
-      );
-      return;
-    }
+    // if(valor < saldo){
+    //   ventaFocus.requestFocus();
+    //   warningDialog(
+    //     context, 
+    //     'La nueva venta debe se superior al saldo del usuario',
+    //     negativeAction: (){
+    //     },
+    //   );
+    //   return;
+    // }
     if(venta.text==''){
       ventaFocus.requestFocus();
       warningDialog(
@@ -580,19 +587,19 @@ class _EditarVentaViewState extends State<EditarVentaView> {
     }
     if (!keyForm.currentState.validate()){
       Scaffold.of(context).showSnackBar(
-        SnackBar(content: Text('Processing Data'))
+        SnackBar(content: const Text('Processing Data'))
       );                            
     }else{
-      if(widget.cliente.numeroCuota==0){
-        crearCliente();
-      }else{
-        warningDialog(
-        context, 
-        'La venta ya tiene cuotas recolectadas, no se puede editar',
-        negativeAction: (){
-        },
-      );
-      }
+      //if(widget.cliente.numeroCuota==0){
+      crearCliente();
+      // }else{
+      //   warningDialog(
+      //     context, 
+      //     'La venta ya tiene cuotas recolectadas, no se puede editar',
+      //     negativeAction: (){
+      //     },
+      //   );
+      // }
       
     } 
   }

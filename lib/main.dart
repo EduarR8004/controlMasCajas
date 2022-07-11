@@ -17,36 +17,66 @@ void main() async  {
    HttpOverrides.global = new MyHttpOverrides ();
   runApp(MyApp());
 }
+class CambiarTema extends InheritedWidget{
 
-class MyApp extends StatelessWidget {
+  const CambiarTema({Widget child,this.onTap,Key key}):super(child: child,key: key);
+  final VoidCallback onTap;
+  static CambiarTema of(BuildContext context)=>context.findAncestorWidgetOfExactType<CambiarTema>();
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget)=> false;
+
+}
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool cambiarColor = true;
+  @override
   Widget build(BuildContext context) => OverlaySupport(
-    child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Control Más',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-        appBarTheme:AppBarTheme(
-          brightness: Brightness.dark,
-        )
+    child: CambiarTema(
+      onTap: (){  
+        setState(() {
+          cambiarColor=!cambiarColor;
+        });
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Control Más',
+        theme: cambiarColor?ThemeData(
+          primarySwatch: Colors.blueGrey,
+          primaryColor: Colors.blueGrey,
+          accentColor: Colors.blueGrey,
+          // appBarTheme:AppBarTheme(
+          //   brightness: Brightness.dark,
+          // )
+        ):ThemeData(
+          primarySwatch:Colors.red,
+          primaryColor: Colors.red,
+          accentColor: Colors.red,
+          // appBarTheme:AppBarTheme(
+          //   brightness: Brightness.dark,
+          // )
+        ),
+        home:portada(),
+        //Login(false),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en','US'), // English
+          const Locale('es','CO'), // Spanish
+         // const Locale('fr'), // French
+         // const Locale('zh'), // Chinese
+        ],
       ),
-      home:portada(),
-      //Login(false),
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('en','US'), // English
-        const Locale('es','CO'), // Spanish
-       // const Locale('fr'), // French
-       // const Locale('zh'), // Chinese
-      ],
     ),
   );
- 
+
   Widget portada(){
     if(Platform.isAndroid){
       return Portada(editar: false,);

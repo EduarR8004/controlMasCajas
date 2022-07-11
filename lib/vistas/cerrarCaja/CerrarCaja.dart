@@ -199,7 +199,7 @@ class _CerrarCajaState extends State<CerrarCaja> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0,0,10,0),
-                      child: Text("Entrega : "+resultado.toStringAsFixed(1) ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: color)),
+                      child: Text("Entrega total : "+resultado.toStringAsFixed(1) ,style: TextStyle(fontWeight:FontWeight.bold,fontSize:18,color: color)),
                     ),
                     Text('|'),
                     Padding(
@@ -235,7 +235,7 @@ class _CerrarCajaState extends State<CerrarCaja> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.attach_money,),
+                      icon: const Icon(Icons.add_circle_outline_sharp ,size: 30,),
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
@@ -255,7 +255,7 @@ class _CerrarCajaState extends State<CerrarCaja> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.money_off,),
+                      icon: const Icon(Icons.do_disturb_on_outlined,size: 30,),
                       color: Colors.black,
                       onPressed: () {
                         setState(() {
@@ -508,7 +508,6 @@ Widget tablaRecolectadoMismoDia(){
       ),
     );
   }
-
   Widget formUI() {
     return  
     Container( 
@@ -542,6 +541,43 @@ Widget tablaRecolectadoMismoDia(){
             //endIndent: 20,
           ),
           Container(
+            height:60,
+            child: SizedBox(
+              child:tablaRecolectado(),
+            ),
+          ),
+          const Divider(
+            height: 8,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
+            height:25,
+            child: SizedBox(
+              height:10,
+              child:tablaNuevaVenta(),
+            ),
+          ),
+          Container(
+            height:25,
+            child: SizedBox(
+              child:tablaRecolectadoMismoDia(),
+            ),
+          ),
+          // const Divider(
+          //   height: 8,
+          //   thickness: 2,
+          //   //indent: 20,
+          //   //endIndent: 20,
+          // ),
+          const Divider(
+            height: 8,
+            thickness: 2,
+            //indent: 20,
+            //endIndent: 20,
+          ),
+          Container(
             height:35,
             child: SizedBox(
               child:tablaPorRecolectar(),
@@ -556,44 +592,7 @@ Widget tablaRecolectadoMismoDia(){
           Container(
             height:35,
             child: SizedBox(
-              child:tablaRecolectadoMismoDia(),
-            ),
-          ),
-          const Divider(
-            height: 8,
-            thickness: 2,
-            //indent: 20,
-            //endIndent: 20,
-          ),
-          Container(
-            height:60,
-            child: SizedBox(
-              child:tablaRecolectado(),
-            ),
-          ),
-          const Divider(
-            height: 8,
-            thickness: 2,
-            //indent: 20,
-            //endIndent: 20,
-          ),
-          Container(
-            height:35,
-            child: SizedBox(
               child:tablaNoPago(),
-            ),
-          ),
-          const Divider(
-            height: 8,
-            thickness: 2,
-            //indent: 20,
-            //endIndent: 20,
-          ),
-          Container(
-            height:35,
-            child: SizedBox(
-              height:10,
-              child:tablaNuevaVenta(),
             ),
           ),
           const Divider(
@@ -623,11 +622,7 @@ Widget tablaRecolectadoMismoDia(){
               decoration: new InputDecoration(
                 labelText: 'Retiro',
               ),
-              validator:(value){
-                if (value.isEmpty) {
-                  return 'Por favor Ingrese el valor recibido';
-                }
-              },
+              validator:retornarValor,
               onChanged:(text){
                 setState(() {
                   retiro=text==''?0.0:double.parse(text);  
@@ -643,13 +638,9 @@ Widget tablaRecolectadoMismoDia(){
               controller: couta,
               keyboardType: TextInputType.number,
               decoration: new InputDecoration(
-                labelText: 'Cerrar Caja',
+                labelText: 'Entrega Total',
               ),
-              validator:(value){
-                if (value.isEmpty) {
-                  return 'Por favor Ingrese el valor recibido';
-                }
-              },
+              validator:cerrarCaja,
             ),
           ),  
         ]
@@ -657,10 +648,26 @@ Widget tablaRecolectadoMismoDia(){
     );
   }
 
+  String cerrarCaja(value){
+    String texto='';
+    if (value.isEmpty) {
+      texto= 'Por favor Ingrese el valor recibido';
+    }
+    return texto;
+  }
+
+  String retornarValor(value){
+    String texto='';
+    if (value.isEmpty) {
+      texto='Por favor Ingrese el valor a retirar';
+    }
+    return texto;
+  }
+
    _crearRecoleccion()async{  
     if(couta.text!=""){
-      double valorBaseDia=double.parse(baseDia.text);
-      double nuevoRetiro = double.parse(retiro.toStringAsFixed(0));
+      //double valorBaseDia=double.parse(baseDia.text);
+      double nuevoRetiro = double.parse(retiroAlmacenado.toStringAsFixed(0));
       double preCuadre = ((_recolectado.valorCuotas+_asignado.valor)-(_gasto.valor+_nuevaVenta.venta))-nuevoRetiro;
       double cuadre= double.parse(preCuadre.toStringAsFixed(0));
       double valorIngresar = double.parse(couta.text);
@@ -698,7 +705,7 @@ Widget tablaRecolectadoMismoDia(){
           session.actualizarVentasCierre().then((_){
             session.enviarGastos().then((_){
               session.enviarHistorial().then((_){
-                session.reporteDiario(_recolectado.valorCuotas.toString(),_gasto.valor.toString(),_nuevaVenta.venta.toString(),_asignado.valor.toString(),cuadre.toString(),valorBaseDia.toString()).then((_){
+                session.reporteDiario(_recolectado.valorCuotas.toString(),_gasto.valor.toString(),_nuevaVenta.venta.toString(),_asignado.valor.toString(),cuadre.toString(),nuevoRetiro.toString()).then((_){
                   pr.hide();
                   successDialog(
                     context, 

@@ -204,13 +204,18 @@ class _HistorialState extends State<Historial> {
   Widget build(BuildContext context) {
     //Size size = MediaQuery.of(context).size;
     var menu = new Menu();
-    return SafeArea(
-      child: Scaffold(
-        appBar: new AppBar(title: new Text('Historial Cliente'),actions: <Widget>[
-        ],
-        ),
-        drawer: menu,
-        body: body(),
+    return WillPopScope(
+      onWillPop: null,
+      child:
+      SafeArea(
+        top: false,
+        child: Scaffold(
+          appBar: new AppBar(title: new Text('Historial Cliente'),actions: <Widget>[
+          ],
+          ),
+          drawer: menu,
+          body: body(),
+        )
       )
     );
   }

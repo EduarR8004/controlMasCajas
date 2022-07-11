@@ -1,3 +1,4 @@
+import 'package:controlmas/main.dart';
 import 'package:controlmas/vistas/portada.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:universal_io/io.dart';
@@ -29,6 +30,7 @@ class _HomeState extends State<Home> {
   ProgressDialog pr;
   double tamano=120;
   double espacio=30;
+   bool isChecked = false;
   List<String> objMenu=[];
    @override
   void initState() {
@@ -102,6 +104,8 @@ class _HomeState extends State<Home> {
         key: _scaffoldKey,
         child: Scaffold(
           appBar: new AppBar(
+            shadowColor: Theme.of(context).accentColor,
+            foregroundColor: Theme.of(context).accentColor,
             flexibleSpace: Container(
             //height: 60,
             //width: 700,
@@ -214,7 +218,7 @@ class _HomeState extends State<Home> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            child: Icon(Icons.bar_chart_sharp, size:tamano,color:Colors.blueGrey),
+                            child: Icon(Icons.bar_chart_sharp, size:tamano,color:Theme.of(context).accentColor),
                             margin: EdgeInsets.all(10),
                             padding: EdgeInsets.symmetric(horizontal:10),                             
                           )
@@ -242,12 +246,19 @@ class _HomeState extends State<Home> {
                           miCardCerrarCaja():Container(),
                         ],
                       ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      //   children: [
-                      //     miCardInformacion()
-                      //   ],
-                      // )
+                      SizedBox(height: 10,),
+                      Text('Color'),
+                      Checkbox(
+                        checkColor: Colors.white,
+                        //fillColor: Colors.blueGrey,
+                        value: isChecked,
+                        onChanged: (bool value) {
+                          CambiarTema.of(context).onTap();
+                          setState(() {
+                            isChecked = value;
+                          });
+                        },
+                      ),
                     ],
                   )
                 )
@@ -388,7 +399,7 @@ class _HomeState extends State<Home> {
               },
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
-                child:Icon(Icons.person_add_alt_1  , size:80,color:Colors.blueGrey),
+                child:Icon(Icons.person_add_alt_1  , size:80,color:Theme.of(context).accentColor),
               ),
             ),
             Container(
@@ -427,7 +438,7 @@ class _HomeState extends State<Home> {
               },
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Icon(Icons.two_wheeler_rounded  , size:80,color:Colors.blueGrey),
+                child: Icon(Icons.two_wheeler_rounded  , size:80,color:Theme.of(context).accentColor),
               ),
             ),
             Container(
@@ -465,12 +476,12 @@ class _HomeState extends State<Home> {
               child:
               Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Icon(Icons.auto_stories  , size:80,color:Colors.blueGrey),
+                child: Icon(Icons.auto_stories  , size:80,color:Theme.of(context).accentColor),
               ),
             ),
             // Usamos Container para el contenedor de la descripción
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(5),
               child: Text('Historial'),
             ),
           ],
@@ -505,7 +516,7 @@ class _HomeState extends State<Home> {
               child: 
               Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Icon(Icons.point_of_sale   , size:80,color:Colors.blueGrey),
+                child: Icon(Icons.point_of_sale, size:80,color:Theme.of(context).accentColor),
               ),
             ),
             // Usamos Container para el contenedor de la descripción
@@ -545,7 +556,7 @@ class _HomeState extends State<Home> {
               child: 
               Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Icon(Icons.bar_chart_sharp,size:80,color:Colors.blueGrey),
+                child: Icon(Icons.bar_chart_sharp,size:80,color:Theme.of(context).accentColor),
               ),
             ),
             // Usamos Container para el contenedor de la descripción
@@ -589,7 +600,7 @@ class _HomeState extends State<Home> {
               child: 
               Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Icon(Icons.money_off,size:80,color:Colors.blueGrey),
+                child: Icon(Icons.money_off,size:80,color:Theme.of(context).accentColor),
               ),
             ),
             // Usamos Container para el contenedor de la descripción
@@ -633,7 +644,7 @@ class _HomeState extends State<Home> {
               child: 
               Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Icon(Icons.upload_rounded,size:80,color:Colors.blueGrey),
+                child: Icon(Icons.upload_rounded,size:80,color:Theme.of(context).accentColor),
               ),
             ),
             // Usamos Container para el contenedor de la descripción
@@ -650,4 +661,5 @@ class _HomeState extends State<Home> {
       )
     );
   }
+
 }

@@ -532,6 +532,7 @@ class Insertar {
     usuario,
     ventaAnterior,
     numeroCuota,
+    abonado
   })async{  
     double totalVenta;
     double cuota=double.parse(cuotas);
@@ -544,10 +545,16 @@ class Insertar {
     }
     String fechaConsulta = format.format(DateTime.fromMillisecondsSinceEpoch(fecha,isUtc: false));
     double equivaleInteres = (double.parse(valorVenta)*interes)/100;
-    if(numeroCuota==0){
-      totalVenta = (double.parse(valorVenta)+equivaleInteres);
+    totalVenta = (double.parse(valorVenta)+equivaleInteres);
+    double saldo = totalVenta-abonado;
+    String estado='';
+    if( abonado >= totalVenta ){
+      estado ='pago';
+    }else{
+      estado ='debe';
     }
     double coutaPagar=totalVenta/cuota;
+    double numeroCuota=abonado/coutaPagar;
     double valorNeto=double.parse(valorVenta);
     DateTime  fechaPagara = DateTime.fromMillisecondsSinceEpoch(fecha);
     final format1 = DateFormat("yyyy-MM-dd");
@@ -562,10 +569,10 @@ class Insertar {
       'fecha':fecha,
       'fechaPago': nuevaFecha.millisecondsSinceEpoch,
       'interes':intereses,
-      'numeroCuota':0,
+      'numeroCuota':numeroCuota,
       'valorCuota': coutaPagar,
-      'saldo':totalVenta, 
-      'estado':"debe",
+      'saldo':saldo, 
+      'estado':estado,
       'usuario':usuario, 
       'frecuencia':frecuencia,
       'solicitado':valorNeto,
@@ -1165,8 +1172,22 @@ class Insertar {
     double cantidadCuota;
     String estadoTemporal;
     String fecha = format.format(now);
-    if(clave!='Continuar'){
+    if(clave!='Continuar' && bloqueo == false){
       var consultaClave =await DatabaseProvider.db.rawQuery("SELECT clave FROM Claves WHERE clave = ? AND tipo = ?",[clave,coutaIngresar.toString()]);
+      if(consultaClave.length <= 0){
+        Map repuesta={
+          "respuesta":false,
+          "mensaje":"Por favor verificar la clave ingresada",
+        };
+        return repuesta;
+      }else{
+        await DatabaseProvider.db.rawQuery(
+          " DELETE FROM Claves"
+          " WHERE clave = ? ",[clave]                                        
+        );
+      }
+    }else if(clave!='Continuar' && bloqueo == true){
+      var consultaClave =await DatabaseProvider.db.rawQuery("SELECT clave FROM Claves WHERE clave = ? AND tipo = ?",[clave,'Bloqueado']);
       if(consultaClave.length <= 0){
         Map repuesta={
           "respuesta":false,
@@ -1351,6 +1372,8 @@ class Insertar {
   
   reportarMotivo(Ventas item,String novedad)async{
      String fecha = format.format(now);
+     DateTime fechaOrden;
+     int diffHours;
     // await DatabaseProvider.db.rawQuery(
     //   "UPDATE Venta SET motivo =?,"
     //   "ruta =?,"
@@ -1374,6 +1397,7 @@ class Insertar {
       "Venta.valorTemporal,"
       "Venta.cuotasTemporal,"
       "Venta.estadoTemporal,"
+      "Venta.orden,"
       "Venta.saldo"
       " FROM Venta "
       " WHERE Venta.idVenta = ? ",[item.idVenta]                                          
@@ -1381,22 +1405,35 @@ class Insertar {
     List<Venta> list = res.map((c) => Venta.fromMap(c)).toList();
     double numeroCuota;
     numeroCuota=list[0].cuotasTemporal;
+    fechaOrden= DateTime.fromMillisecondsSinceEpoch(list[0].orden);
+    diffHours = now.difference(fechaOrden).inHours;
     double nuevoSaldo =list[0].valorTemporal;
-    
-    await DatabaseProvider.db.rawQuery(
-      "UPDATE Venta SET numeroCuota = ?,"
-      "saldo = ?, "
-      "motivo = ?,"
-      "orden = ?,"
-      "estado = ?,"
-      "actualizar = ?,"
-      "ruta = ?"
-      " WHERE idVenta = ? ",[numeroCuota,nuevoSaldo,novedad,now.millisecondsSinceEpoch,'debe',"si","no",item.idVenta]                                      
-    );
-    await DatabaseProvider.db.rawQuery(
-      " UPDATE Cliente SET estado = ?"
-      " WHERE documento = ? ",['debe',item.documento]                                        
-    );
+    if(diffHours < 14){
+      await DatabaseProvider.db.rawQuery(
+        "UPDATE Venta SET numeroCuota = ?,"
+        "saldo = ?, "
+        "motivo = ?,"
+        "estado = ?,"
+        "actualizar = ?,"
+        "ruta = ?"
+        " WHERE idVenta = ? ",[numeroCuota,nuevoSaldo,novedad,'debe',"si","no",item.idVenta]                                      
+      );
+    }else{
+      await DatabaseProvider.db.rawQuery(
+        "UPDATE Venta SET numeroCuota = ?,"
+        "saldo = ?, "
+        "motivo = ?,"
+        "orden = ?,"
+        "estado = ?,"
+        "actualizar = ?,"
+        "ruta = ?"
+        " WHERE idVenta = ? ",[numeroCuota,nuevoSaldo,novedad,now.millisecondsSinceEpoch,'debe',"si","no",item.idVenta]                                      
+      );
+    }
+    // await DatabaseProvider.db.rawQuery(
+    //   " UPDATE Cliente SET estado = ?"
+    //   " WHERE documento = ? ",['debe',item.documento]                                        
+    // );
     final ventaMotivo = HistorialVenta(
       idVenta:item.idVenta,
       documento:item.documento,
@@ -2307,11 +2344,13 @@ class Insertar {
   }
 
   Future <List<RutaAdmin>>descargarRuta(usuario)async{
+    var fechaConsulta = format.format(now);
     _rutaAdmin=[];
     List map;
     Map mapa={
       'token':tokenGlobal, 
       'usuario':usuario,
+      'fecha':fechaConsulta
     };
     _enviados=[];
     _enviados.add(mapa);
@@ -3350,7 +3389,7 @@ class Insertar {
     
   }
 
-  ingresoBasePrincipal(double valor)async{
+  ingresoBasePrincipal(double valor,tipo)async{
     _enviarBaseRuta=[];
     final format = DateFormat("yyyy-MM-dd");
     var fecha = format.format(now);
@@ -3359,6 +3398,7 @@ class Insertar {
       'token':tokenGlobal, 
       'usuario':usuarioGlobal,
       'ingreso':valor,
+      'tipo':tipo,
     };
      _enviarBaseRuta.add(mapa);
 
@@ -3369,7 +3409,7 @@ class Insertar {
     
   }
 
-  retiroBasePrincipal(double valor)async{
+  retiroBasePrincipal(double valor,tipo)async{
     _enviarBaseRuta=[];
     final format = DateFormat("yyyy-MM-dd");
     var fecha = format.format(now);
@@ -3378,6 +3418,7 @@ class Insertar {
       'token':tokenGlobal, 
       'usuario':usuarioGlobal,
       'retiro':valor,
+      'tipo':tipo
     };
      _enviarBaseRuta.add(mapa);
 
@@ -3563,6 +3604,29 @@ class Insertar {
       "lista":_parametrosEnviados
     };
     var map = await callMethodList('/listarCartera.php',parametro);
+    List<Cartera> totalProduccionAdmin=[];
+    for ( var prod in map)
+    {
+      totalProduccionAdmin.add(Cartera.fromMap(prod));
+    }
+    return this._cartera= totalProduccionAdmin;
+  }
+
+  Future<List<Cartera>> listarCarteraFechas(fechaIni,fechaFin,usuario)async{
+    _cartera=[];
+    Map mapa={
+      'token':tokenGlobal,
+      'usuario':usuario,
+      'fechaInicial':fechaIni,
+      'fechaFinal':fechaFin
+    };
+    _parametrosEnviados=[];
+    _parametrosEnviados.add(mapa);
+
+    Map parametro={
+      "lista":_parametrosEnviados
+    };
+    var map = await callMethodList('/totalCarteraFechas.php',parametro);
     List<Cartera> totalProduccionAdmin=[];
     for ( var prod in map)
     {
@@ -3768,7 +3832,7 @@ class Insertar {
   callMethodOne(String webservice,params)async {
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+        response = await http.post(Uri.parse(ecuador+webservice), headers: {
       "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
     }catch(e){
@@ -3792,7 +3856,7 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-      response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+      response = await http.post(Uri.parse(ecuador+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -3810,7 +3874,8 @@ class Insertar {
     //var sess=this._token;
     Response response;
     try{
-        response = await http.post(Uri.parse(urlOrigen+webservice), headers: {
+      
+        response = await http.post(Uri.parse(ecuador+webservice), headers: {
        "Content-Type": "application/json; charset=utf-8",
       }, body: jsonEncode(params));
       var data;
@@ -3826,5 +3891,6 @@ class Insertar {
 }
 
 //8070109
+
 
 

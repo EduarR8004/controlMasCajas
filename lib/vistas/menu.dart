@@ -706,12 +706,23 @@ class _MenuState extends State<Menu> with WidgetsBindingObserver{
 
   DrawerHeader header() {
     return DrawerHeader(
-      decoration: BoxDecoration(color:Colors.blueGrey),
+      decoration: const BoxDecoration(
+        gradient: RadialGradient(
+          center: Alignment.topLeft,
+          radius: 1.5,
+          colors: <Color>[
+            ///Colors.red,
+            Colors.white,
+            Colors.blueGrey,
+            //
+          ],
+        ),
+      ),
       child:Row(
         children: [
           Icon(Icons.bar_chart_sharp , size:80,color:Colors.white),
           Text("ControlMax",style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold
           ))

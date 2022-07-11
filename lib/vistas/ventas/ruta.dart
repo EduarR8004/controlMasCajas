@@ -105,7 +105,6 @@ class _RecoleccionViewState extends State<RecoleccionView> {
             Text(item.nombre+" "+item.primerApellido,style: TextStyle(
               fontSize: 18,)
             ),
-            
             Row(
               children: [
                 Text("D:"+item.idCliente+" "+item.alias,style: TextStyle(
@@ -117,7 +116,7 @@ class _RecoleccionViewState extends State<RecoleccionView> {
         ),
         subtitle:Row(
           children: [
-            Text((item.cuotas-item.numeroCuota).toStringAsFixed(1),style: TextStyle(fontWeight:FontWeight.bold,color: Colors.black,fontSize:18,)),
+            Text((item.saldo/item.valorCuota).toStringAsFixed(1),style: TextStyle(fontWeight:FontWeight.bold,color: Colors.black,fontSize:18,)),
             Text(" / ",style: TextStyle(fontWeight:FontWeight.bold,color: Colors.black,fontSize:18,)),
             Text(item.saldo.toStringAsFixed(1),style: TextStyle(fontWeight:FontWeight.bold,color: Colors.black,fontSize:18,)),
             Text(" / ",style: TextStyle(fontWeight:FontWeight.bold,color: Colors.black,fontSize:18,)),
@@ -125,7 +124,6 @@ class _RecoleccionViewState extends State<RecoleccionView> {
             iconoEstado,
             SizedBox(width: 12.0),
             Text(item.valorDia.toStringAsFixed(1),style: TextStyle(fontSize:18,color: color)),
-            
           ],
         ), 
         onTap: () {
@@ -143,6 +141,7 @@ class _RecoleccionViewState extends State<RecoleccionView> {
       onWillPop: () async => false,
       child:
       SafeArea(
+        top: false,
         child: Scaffold(
           appBar: new AppBar(title: new Text('Ruta'),actions: <Widget>[
           ],

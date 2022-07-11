@@ -1,4 +1,7 @@
 import 'package:controlmas/modelos/Cartera.dart';
+import 'package:controlmas/utiles/Globals.dart';
+import 'package:controlmas/utiles/Informacion.dart';
+import 'package:controlmas/vistas/administracion/CarteraFechas.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:controlmas/vistas/menu.dart';
@@ -26,6 +29,7 @@ class _ReporteCarteraAdministradorState extends State<ReporteCarteraAdministrado
   ProgressDialog pr;
   List<Gasto> gastos;
   bool mostrar= false;
+  bool carteraFechas=false;
   String fechaConsulta;
   FocusNode retiroNode;
   String selectedRegion;
@@ -63,6 +67,9 @@ class _ReporteCarteraAdministradorState extends State<ReporteCarteraAdministrado
     parseFinal = DateTime.parse(fechaFinal);
     parseInicial = DateTime.parse(fechaInicial);
     dia=DateFormat('EEEE, d').format(now);
+    if(objetosUsuario.contains('CAF001') || objetosUsuario.contains("SA000")){
+      carteraFechas = true;
+    }
     super.initState();
   }
   // Future <double>porEntregar()async{
@@ -345,6 +352,23 @@ Widget tablaNoRecolectado(){
                 ),
               )
             )
+          ),
+          floatingActionButton:carteraFechas?FloatingActionButton(
+            onPressed: () {
+              Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => CarteraFechas()));
+            },
+            child:const Icon(Icons.calendar_today_rounded),
+            //backgroundColor: Color.fromRGBO(56, 124, 43, 1.0),
+          ):FloatingActionButton(
+            onPressed:(){
+              infoDialog(
+                context, 
+                'No tiene permisos para la funcionalidad',
+                negativeAction: (){
+                },
+              );
+            },
           ),
         ),
       ),

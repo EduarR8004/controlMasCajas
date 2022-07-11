@@ -152,7 +152,7 @@ class DataTableGastosState extends State<DataTableGastos> {
                 scrollDirection: Axis.horizontal,
                   child: DataTable(
                     headingRowColor:
-                    MaterialStateColor.resolveWith((states) =>Colors.blueGrey, ),
+                    MaterialStateColor.resolveWith((states) =>Theme.of(context).accentColor, ),
                     //Color.fromRGBO(136,139, 141, 1.0)
                     sortAscending: sort,
                     sortColumnIndex: 0,

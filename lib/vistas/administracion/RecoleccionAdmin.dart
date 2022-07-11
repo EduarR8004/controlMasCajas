@@ -90,18 +90,18 @@ class _RecoleccionAdminState extends State<RecoleccionAdmin> {
   }
 
   _editarVenta()async{  
-    if(widget.data.numeroCuota==0){
+    //if(widget.data.numeroCuota==0){
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => EditarVentaView(cliente: widget.data,))
       );
-    }else{
-      warningDialog(
-        context, 
-        'La venta ya tiene cuotas recolectadas, no se puede editar',
-        neutralAction: (){
-        },
-      );
-    }
+    // }else{
+    //   warningDialog(
+    //     context, 
+    //     'La venta ya tiene cuotas recolectadas, no se puede editar',
+    //     neutralAction: (){
+    //     },
+    //   );
+    // }
   }
 
   _eliminarVenta()async{  
